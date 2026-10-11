@@ -1,6 +1,6 @@
 export const switchStyles = {
   root: `
-    relative inline-flex h-6 w-11 shrink-0
+    group relative inline-flex h-6 w-11 shrink-0
     cursor-pointer items-center
     rounded-full border-0 p-0
     outline-none
@@ -18,9 +18,6 @@ export const switchStyles = {
     focus-visible:ring-2
     focus-visible:ring-primary-500
     focus-visible:ring-offset-2
-
-    dark:data-checked:bg-primary-500
-    dark:data-checked:hover:bg-primary-700
   `,
 
   thumb: `
@@ -29,6 +26,7 @@ export const switchStyles = {
     translate-x-0.5
     transition-transform duration-200
 
-    data-checked:translate-x-[22px]
+    ltr:group-data-[checked]:translate-x-[22px]
+    rtl:group-data-[checked]:-translate-x-[22px]
   `,
 };

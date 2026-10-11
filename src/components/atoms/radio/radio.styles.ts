@@ -1,18 +1,23 @@
-
 export const radioStyles = {
-  group: "flex items-center gap-6",
+  group: "flex items-center gap-6 ",
 
   root: `
     relative flex size-[20px] shrink-0 items-center justify-center
     rounded-full border-[1px] transition-colors duration-200
     focus-visible:outline-none
-    focus-visible:ring-2 focus-visible:ring-primary-500
-    focus-visible:ring-offset-3
+    focus-visible:ring-10 focus-visible:ring-primary-500
+    focus-visible:ring-offset-10
     disabled:cursor-not-allowed disabled:opacity-50
 
     border-[#DFE1E7] bg-[#E9ECF6]
     data-[checked]:border-primary-700
-    data-[checked]:bg-white 
+
+    data-[checked]:bg-black 
+    data-[checked]:size-5
+    data-[checked]:bg-primary-500
+
+
+
 
     dark:border-[#3B3D46]
     dark:bg-primary-200
