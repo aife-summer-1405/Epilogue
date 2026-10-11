@@ -18,6 +18,9 @@ export const radioStyles = {
     dark:bg-primary-200
     dark:data-[checked]:border-primary-600
     dark:data-[checked]:bg-[#292D3D]
+
+        cursor-pointer
+
   `,
 
   indicator: `

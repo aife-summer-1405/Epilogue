@@ -1,10 +1,5 @@
-'use client';
+ 'use client';
 
-import { HugeiconsIcon } from '@hugeicons/react';
-import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-} from '@hugeicons/core-free-icons';
 
 import type { ButtonProps } from './button.type';
 import {
@@ -19,28 +14,36 @@ const Button = ({
   state = 'default',
   size = 'md',
   variant = 'primary',
-  isIconRight = false,
+  startIcon,
+  endIcon,
   hasIcon = true,
   className = '',
   disabled = false,
   type = 'button',
   ...props
-}: ButtonProps & { hasIcon?: boolean }) => {
+}: ButtonProps) => {
   const isButtonDisabled = disabled || state === 'disabled';
   const currentState = isButtonDisabled ? 'disabled' : 'default';
 
-  const dynamicPadding = !hasIcon
+  const visibleStartIcon = hasIcon ? startIcon : undefined;
+  const visibleEndIcon = hasIcon ? endIcon : undefined;
+
+  const hasVisibleIcon = Boolean(visibleStartIcon || visibleEndIcon);
+
+  const dynamicPadding = !hasVisibleIcon
     ? 'px-6'
-    : isIconRight
-      ? 'pl-7 pr-4'
-      : 'pl-4 pr-6';
+    : visibleStartIcon && visibleEndIcon
+      ? 'px-4'
+      : visibleStartIcon
+        ? 'pl-4 pr-6'
+        : 'pl-6 pr-4';
 
   return (
     <button
       type={type}
       disabled={isButtonDisabled}
       className={cn(
-        'inline-flex items-center justify-center content-center',
+        'inline-flex items-center justify-center',
         'rounded-full transition-all duration-300',
         'shrink-0 font-medium whitespace-nowrap',
         dynamicPadding,
@@ -51,30 +54,22 @@ const Button = ({
       )}
       {...props}
     >
-      {hasIcon && isIconRight && (<HugeiconsIcon
-        icon={ArrowRight01Icon}
-        size={24}
-        color="currentColor"
-        strokeWidth={1.5}
-        className="shrink-0"
-      />
+      {visibleStartIcon && (
+        <span className="inline-flex shrink-0 items-center justify-center">
+          {visibleStartIcon}
+        </span>
       )}
 
       <span className="inline-flex items-center justify-center leading-none">
         {children}
       </span>
 
-      {hasIcon && !isIconRight && (
-        <HugeiconsIcon
-          icon={ArrowLeft01Icon}
-          size={24}
-          color="currentColor"
-          strokeWidth={1.5}
-          className="shrink-0"
-        />
+      {visibleEndIcon && (
+        <span className="inline-flex shrink-0 items-center justify-center">
+          {visibleEndIcon}
+        </span>
       )}
     </button>
-
   );
 };
 

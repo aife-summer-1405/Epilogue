@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -13,6 +12,7 @@ import { radioStyles } from "./radio.styles";
 export default function Radio({
   options,
   className,
+  labelClassName,
   ...props
 }: RadioProps) {
   return (
@@ -20,13 +20,26 @@ export default function Radio({
       {...props}
       className={cn(radioStyles.group, className)}
     >
+      
       {options.map((option) => (
-       <RadioGroupItem
-  key={option.value}
-  value={option.value}
-  disabled={option.disabled}
-  className={cn(radioStyles.root, className)}
-/>
+        <label
+          key={option.value}
+          className={cn(
+            "inline-flex items-center gap-2",
+            option.disabled && "cursor-not-allowed opacity-50"
+          )}
+        >
+                 <span className={cn("text-sm", labelClassName)}>
+            {option.label}
+          </span>
+          <RadioGroupItem
+            value={option.value}
+            disabled={option.disabled}
+            className={radioStyles.root}
+          />
+
+   
+        </label>
       ))}
     </RadioGroup>
   );

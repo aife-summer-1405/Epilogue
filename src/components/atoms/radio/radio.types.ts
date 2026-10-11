@@ -1,6 +1,5 @@
-
 import type { ComponentProps } from "react";
-import type { RadioGroup } from "@/components/ui/radio-group";
+import { RadioGroup } from "@/components/ui/radio-group";
 
 export type RadioProps = Omit<
   ComponentProps<typeof RadioGroup>,
@@ -8,7 +7,9 @@ export type RadioProps = Omit<
 > & {
   options: {
     value: string;
+    label: string;
     disabled?: boolean;
   }[];
   className?: string;
+  labelClassName?: string;
 };

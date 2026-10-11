@@ -15,6 +15,8 @@ export const checkboxStyles = {
 
     [&_svg]:text-primary-600
     [&_svg]:opacity-100
+
+    cursor-pointer
   `,
   icon: "size-9",
 };

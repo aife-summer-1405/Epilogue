@@ -5,7 +5,7 @@ import HomeLogo from "@/components/atoms/Logo/home-logo";
 import Radio from "@/components/atoms/radio/Radio";
 import SignButton from "@/components/atoms/Sign-button/signButton";
 import Switch from "@/components/atoms/switch/Switch";
-import { ArrowRight01Icon, User } from "@hugeicons/core-free-icons";
+import { ArrowLeft01Icon, ArrowRight01Icon, User } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 
@@ -22,9 +22,26 @@ export default function ComponentsPreview() {
                 </h2>
 
                 <div className="flex flex-wrap items-center gap-4">
-                    <Button variant="primary">Primary</Button>
-                    <Button variant="secondary" size="md">Secondary</Button>
-                    <Button variant="outline">Outline</Button>
+                    <Button hasIcon={false} variant="primary">Primary</Button>
+                    <Button
+                        endIcon={
+                            <HugeiconsIcon
+                                icon={ArrowRight01Icon}
+                                size={24}
+                                strokeWidth={1.5}
+                            />
+                        }
+                        variant="secondary"
+                        size="md"
+                    >Secondary
+                    </Button>
+                    <Button startIcon={
+                        <HugeiconsIcon
+                            icon={ArrowLeft01Icon}
+                            size={24}
+                            strokeWidth={1.5}
+                        />
+                    } variant="outline">Outline</Button>
                     <Button variant="danger">Danger</Button>
                     <Button variant="link">Link</Button>
                     <Button variant="tertiary">Tertiary</Button>
@@ -52,7 +69,7 @@ export default function ComponentsPreview() {
 
                     <ButtonOnlyIcon
                         variant="secondary"
-                        size="sm"
+                        size="md"
                         hasIcon={false}
                     >
                         <HugeiconsIcon
@@ -65,7 +82,7 @@ export default function ComponentsPreview() {
 
                     <ButtonOnlyIcon
                         variant="danger"
-                        size="sm"
+                        size="lg"
                         hasIcon={false}
                     >
                         <HugeiconsIcon
@@ -129,16 +146,20 @@ export default function ComponentsPreview() {
                 <span className="text-sm text-black dark:text-white">
                     Checkbox
                 </span>
-                <Checkbox
-                />
+            <Checkbox
+  label="متن"
+ 
+/>
                 <span className="text-sm text-black dark:text-white">
                     Radio
                 </span>
-                <Radio
-                    options={[
-                        { value: "option-1" },
-                    ]}
-                />
+   <Radio
+  name="payment"
+  options={[
+    { value: "female", label: "زن" },
+    { value: "male", label: "مرد" },
+  ]}
+/>
             </section>
         </main>
     );
