@@ -16,7 +16,7 @@ export const categoryCardStyles = {
     absolute inset-x-5 bottom-5
     flex items-center justify-between
     gap-3 rounded-[16px]
-    bg-white px-3 py-2.5 
+    bg-white dark:bg-[#353535] dark:text-white px-3 py-2.5 
   `,
 
   title: `

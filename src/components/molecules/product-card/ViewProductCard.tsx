@@ -11,7 +11,6 @@ import {
     User02Icon,
     BedIcon,
     CarParking02Icon,
-    ArrowRight01Icon,
     ArrowLeft01Icon,
 } from "@hugeicons/core-free-icons";
 
@@ -42,16 +41,16 @@ export default function ViewProductCard({
     return (
         <article
             className={cn(
-                "flex w-full max-w-[781px] flex-col overflow-hidden",
+                "flex w-full max-w-195.25 flex-col overflow-hidden",
                 "rounded-[26px] border border-gray-200 bg-white",
-                "text-black dark:border-natural-700 dark:bg-natural-900 dark:text-white",
+                "text-black dark:bg-[#272727] dark:text-white",
                 "sm:flex-row sm:items-stretch sm:gap-3 sm:p-2",
                 className,
             )}
             onClick={onClick}
         >
             {/* Image */}
-            <div className="relative aspect-[340/230] w-full shrink-0 overflow-hidden rounded-[20px] bg-natural-200  sm:aspect-auto sm:w-[34%]">
+            <div className="relative aspect-340/230 w-full shrink-0 overflow-hidden rounded-[20px] bg-natural-200  sm:aspect-auto sm:w-[34%]">
                 <Image
                     src={image}
                     alt={title}
@@ -68,7 +67,7 @@ export default function ViewProductCard({
 
             {/* Details */}
             <div className="flex min-w-0 flex-1 flex-col justify-between gap-3 p-4 sm:order-1 sm:p-2">
-                <h3 className="line-clamp-1 text-lg font-bold sm:text-xl">
+                <h3 className="line-clamp-1 text-lg font-bold sm:text-2xl">
                     {title}
                 </h3>
 
@@ -131,7 +130,7 @@ export default function ViewProductCard({
                 <div className="flex flex-wrap items-center justify-between gap-3">
 
 
-                    <div className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-full bg-gray-100 px-3 py-3 dark:bg-natural-800 sm:flex-none">
+                    <div className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-full bg-gray-100 px-3 py-3 dark:bg-[#353535] dark:text-white sm:flex-none">
                         {isOff ? (
                             <>
                                 {originalPrice && (
@@ -153,7 +152,7 @@ export default function ViewProductCard({
                             </>
                         ) : (
                             <>
-                                <div className="flex gap-[48px]">
+                                <div className="flex gap-12">
                                     <span className="shrink-0 text-xs text-[#969696]">
                                         اجاره ماهیانه:
                                     </span>

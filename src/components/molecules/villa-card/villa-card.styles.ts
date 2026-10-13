@@ -19,7 +19,7 @@ export const villaCardStyles = {
     absolute inset-x-4 bottom-4
     flex items-center justify-between
     gap-3 rounded-2xl
-    bg-white px-[12px] py-2.5
+    bg-white dark:bg-[#353535] dark:text-white px-[12px] py-2.5
   `,
 
   title: `

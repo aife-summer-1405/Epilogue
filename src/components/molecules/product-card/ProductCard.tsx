@@ -36,21 +36,22 @@ export default function ProductCard({
     return (
         <article
             className={cn(
-                "w-full max-w-[422px] overflow-hidden rounded-[28px]",
+                "w-full max-w-105.5 overflow-hidden rounded-[28px]",
                 "border border-gray-100 bg-white ",
-                "dark:border-natural-900 dark:bg-natural-900 dark:text-white",
+                "dark:bg-[#272727] dark:text-white",
                 className,
             )}
             onClick={onClick}
         >
             {/* Image */}
-            <div className="relative aspect-[340/230] w-full overflow-hidden bg-natural-200">
+            <div className="relative aspect-340/230 w-full overflow-hidden bg-natural-200">
                 <Image
                     src={image}
                     alt={title}
                     fill
                     sizes="(max-width: 640px) 100vw, 350px"
                     className="object-cover"
+                    onClick={onDetailsClick}
                 />
 
                 {/* Badges */}
@@ -58,7 +59,7 @@ export default function ProductCard({
 
 
                     <span className="inline-flex items-center justify-center gap-1 rounded-full bg-primary-500 px-2 py-1 text-xs text-white">
-                        <span className="text-[14px]  text-white relative top-[2px]">
+                        <span className="text-[14px]  text-white relative top-0.5">
                             {rating.toFixed(1)}
 
                         </span>
@@ -72,7 +73,7 @@ export default function ProductCard({
                     </span>
                     {isOff && (
                         <span className="rounded-full  bg-red-600 px-2 py-1 text-[14px]  text-white">
-                            <span className="text-[14px]  text-white relative top-[2px]">
+                            <span className="text-[14px]  text-white relative top-0.5">
 
                                 %{off}
 
@@ -120,13 +121,13 @@ export default function ProductCard({
                 </div>
 
                 {/* Price */}
-                <div className="flex min-h-[54px] items-center justify-between gap-3 rounded-2xl bg-gray-100 px-3 py-3 dark:bg-natural-800">
+                <div className="flex min-h-13.5 items-center justify-between gap-3 rounded-2xl bg-gray-100 px-3 py-3 dark:bg-[#353535] dark:text-white">
                     {isOff ? (
                         <>
                             {originalPrice && (
-                                    <span className="relative shrink-0 text-[16px] text-red-500">
+                                <span className="relative shrink-0 text-[16px] text-red-500">
                                     {originalPrice} تومان
-                                                                            <span className="absolute left-0 top-1/2 h-px w-full rotate-[-8deg] bg-red-500" />
+                                    <span className="absolute left-0 top-1/2 h-px w-full rotate-[-8deg] bg-red-500" />
 
                                 </span>
                             )}
