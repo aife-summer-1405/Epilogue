@@ -3,7 +3,7 @@ import type { ButtonSize, ButtonState, ButtonVariant } from './button.type';
 const iconGap = `  
   gap-[8px]
   hover:gap-[16px]
-  active:gap-[16px]`;
+  active:gap-[10px]`;
 
 export const buttonSizeVariants: Record<ButtonSize, string> = {
   sm: `     
