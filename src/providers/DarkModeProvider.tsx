@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 
 const DarkModeProvider = () => {
-  //   useEffect(() => {
-  //     document.documentElement.classList.add("dark");
-  //     return () => {};
-  //   }, []);
+  useEffect(() => {
+    document.documentElement.classList.remove("dark");
+    return () => {};
+  }, []);
   return null;
 };
 
