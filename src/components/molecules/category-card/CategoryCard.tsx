@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
+import Image from "next/image";
+import { useState } from "react";
 
-import { cn } from '@/lib/utils';
-import { categoryCardStyles as styles } from './category-card.styles';
-import type { CategoryCardProps } from './category-card.types';
-import ButtonOnlyIcon from '@/components/atoms/buttonOnlyIcon/buttonOnlyIcon';
+import { cn } from "@/lib/utils";
+import { categoryCardStyles as styles } from "./category-card.styles";
+import type { CategoryCardProps } from "./category-card.types";
+import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
 
 export default function CategoryCard({
   image,
@@ -34,13 +34,11 @@ export default function CategoryCard({
       />
 
       <div className={styles.content}>
-        <span className={cn(styles.title, titleClassName)}>
-          {title}
-        </span>
+        <span className={cn(styles.title, titleClassName)}>{title}</span>
 
         <ButtonOnlyIcon
           size="sm"
-          variant={isHovered ? 'primary' : 'outline'}
+          variant={isHovered ? "primary" : "outline"}
           onClick={onClick}
         />
       </div>

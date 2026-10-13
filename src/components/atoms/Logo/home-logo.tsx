@@ -1,7 +1,7 @@
-import type { HomeLogoProps } from './home-logo.types';
-import { homeLogoStyles } from './home-logo.styles';
+import type { HomeLogoProps } from "./home-logo.types";
+import { homeLogoStyles } from "./home-logo.styles";
 
-export default function HomeLogo({ className = '' }: HomeLogoProps) {
+export default function HomeLogo({ className = "" }: HomeLogoProps) {
   return (
     <div className={`${homeLogoStyles.container} ${className}`}>
       <svg

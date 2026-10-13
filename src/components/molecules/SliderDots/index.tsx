@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface SliderDotsProps {
   totalSlides: number;
@@ -24,12 +24,10 @@ const SliderDots: React.FC<SliderDotsProps> = ({
             onClick={() => onDotClick?.(index)}
             disabled={!onDotClick}
             aria-label={`Go to slide ${index + 1}`}
-            aria-current={isActive ? 'true' : 'false'}
+            aria-current={isActive ? "true" : "false"}
             className={`h-2.5 w-2.5 rounded-full transition-colors ${
-              isActive
-                ? 'bg-blue-700'
-                : 'bg-gray-400 hover:bg-gray-500'
-            } ${onDotClick ? 'cursor-pointer' : 'cursor-default'}`}
+              isActive ? "bg-blue-700" : "bg-gray-400 hover:bg-gray-500"
+            } ${onDotClick ? "cursor-pointer" : "cursor-default"}`}
           />
         );
       })}

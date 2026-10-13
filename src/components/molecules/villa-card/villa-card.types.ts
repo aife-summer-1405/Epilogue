@@ -1,4 +1,3 @@
-
 export type VillaCardProps = {
   image: string;
   title: string;

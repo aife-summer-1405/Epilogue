@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from "react";
 
 export interface PaginationProps {
   currentPage: number;
@@ -32,7 +32,10 @@ const Pagination: React.FC<PaginationProps> = ({
 
     if (totalPages >= totalPageNumbers) {
       const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-      const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+      const rightSiblingIndex = Math.min(
+        currentPage + siblingCount,
+        totalPages,
+      );
 
       const shouldShowLeftDots = leftSiblingIndex > 2;
       const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
@@ -42,25 +45,28 @@ const Pagination: React.FC<PaginationProps> = ({
 
       if (!shouldShowLeftDots && shouldShowRightDots) {
         const leftItemCount = 3 + 2 * siblingCount;
-        const leftRange = Array.from({ length: leftItemCount }, (_, i) => i + 1);
-        return [...leftRange, '...', totalPages];
+        const leftRange = Array.from(
+          { length: leftItemCount },
+          (_, i) => i + 1,
+        );
+        return [...leftRange, "...", totalPages];
       }
 
       if (shouldShowLeftDots && !shouldShowRightDots) {
         const rightItemCount = 3 + 2 * siblingCount;
         const rightRange = Array.from(
           { length: rightItemCount },
-          (_, i) => totalPages - rightItemCount + i + 1
+          (_, i) => totalPages - rightItemCount + i + 1,
         );
-        return [firstPageIndex, '...', ...rightRange];
+        return [firstPageIndex, "...", ...rightRange];
       }
 
       if (shouldShowLeftDots && shouldShowRightDots) {
         const middleRange = Array.from(
           { length: rightSiblingIndex - leftSiblingIndex + 1 },
-          (_, i) => leftSiblingIndex + i
+          (_, i) => leftSiblingIndex + i,
         );
-        return [firstPageIndex, '...', ...middleRange, '...', lastPageIndex];
+        return [firstPageIndex, "...", ...middleRange, "...", lastPageIndex];
       }
     }
 
@@ -90,12 +96,16 @@ const Pagination: React.FC<PaginationProps> = ({
           stroke="currentColor"
           className="h-4 w-4"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15.75 19.5L8.25 12l7.5-7.5"
+          />
         </svg>
       </button>
 
       {paginationRange.map((pageNumber, index) => {
-        if (pageNumber === '...') {
+        if (pageNumber === "...") {
           return (
             <span
               key={`ellipsis-${index}`}
@@ -112,11 +122,11 @@ const Pagination: React.FC<PaginationProps> = ({
           <button
             key={pageNumber}
             onClick={() => onPageChange(pageNumber as number)}
-            aria-current={isCurrentPage ? 'page' : undefined}
+            aria-current={isCurrentPage ? "page" : undefined}
             className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
               isCurrentPage
-                ? 'bg-blue-700 text-white shadow-sm'
-                : 'text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+                ? "bg-blue-700 text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
             }`}
           >
             {pageNumber}
@@ -138,7 +148,11 @@ const Pagination: React.FC<PaginationProps> = ({
           stroke="currentColor"
           className="h-4 w-4"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M8.25 4.5l7.5 7.5-7.5 7.5"
+          />
         </svg>
       </button>
     </nav>

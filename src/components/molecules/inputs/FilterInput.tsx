@@ -7,14 +7,10 @@ import {
   ComboboxList,
 } from "@/components/ui/combobox";
 import { FC } from "react";
-
-type Framework = {
-  label: string;
-  value: string;
-};
+import { IFilterInputs } from "./IFilterInput";
 
 interface IProps {
-  items: Framework[];
+  items: IFilterInputs[];
   placeHolder: string;
   isTitle?: string;
   onValueChange?: (event: string | null) => void;

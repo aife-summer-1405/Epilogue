@@ -1,5 +1,5 @@
-import React from 'react';
-import Image from 'next/image';
+import React from "react";
+import Image from "next/image";
 
 export interface UserProfileBadgeProps {
   name: string;
@@ -43,9 +43,7 @@ const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
         </div>
 
         <div className="flex flex-col items-start">
-          <span className="text-sm font-bold text-gray-900">
-            {name}
-          </span>
+          <span className="text-sm font-bold text-gray-900">{name}</span>
           <span className="text-xs font-medium text-gray-400">
             {phoneNumber}
           </span>
@@ -60,7 +58,11 @@ const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
         stroke="currentColor"
         className="h-4 w-4 text-gray-400"
       >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+        />
       </svg>
     </button>
   );

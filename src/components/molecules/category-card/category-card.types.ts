@@ -1,4 +1,4 @@
-import type { IconSvgElement } from '@hugeicons/react';
+import type { IconSvgElement } from "@hugeicons/react";
 
 export type CategoryCardProps = {
   image: string;

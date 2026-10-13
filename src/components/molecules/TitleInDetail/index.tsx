@@ -1,5 +1,5 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 
 export interface TitleInDetailProps {
   title: string;
@@ -28,13 +28,17 @@ const TitleInDetail: React.FC<TitleInDetailProps> = ({
           stroke="currentColor"
           className="h-4 w-4"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15.75 19.5L8.25 12l7.5-7.5"
+          />
         </svg>
       </>
     );
 
     const baseClasses =
-      'inline-flex w-fit items-center gap-1.5 rounded-full border border-blue-600 bg-transparent px-3 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600/10';
+      "inline-flex w-fit items-center gap-1.5 rounded-full border border-blue-600 bg-transparent px-3 py-1 text-xs font-medium text-blue-600 transition-colors hover:bg-blue-600/10";
 
     if (actionHref) {
       return (

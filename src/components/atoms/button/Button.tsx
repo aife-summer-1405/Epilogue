@@ -1,29 +1,28 @@
- 'use client';
+"use client";
 
-
-import type { ButtonProps } from './button.type';
+import type { ButtonProps } from "./button.type";
 import {
   buttonSizeVariants,
   buttonVariants,
   buttonWidthVariants,
-} from './button.style';
-import { cn } from '@/lib/utils';
+} from "./button.style";
+import { cn } from "@/lib/utils";
 
 const Button = ({
   children,
-  state = 'default',
-  size = 'md',
-  variant = 'primary',
+  state = "default",
+  size = "md",
+  variant = "primary",
   startIcon,
   endIcon,
   hasIcon = true,
-  className = '',
+  className = "",
   disabled = false,
-  type = 'button',
+  type = "button",
   ...props
 }: ButtonProps) => {
-  const isButtonDisabled = disabled || state === 'disabled';
-  const currentState = isButtonDisabled ? 'disabled' : 'default';
+  const isButtonDisabled = disabled || state === "disabled";
+  const currentState = isButtonDisabled ? "disabled" : "default";
 
   const visibleStartIcon = hasIcon ? startIcon : undefined;
   const visibleEndIcon = hasIcon ? endIcon : undefined;
@@ -31,21 +30,21 @@ const Button = ({
   const hasVisibleIcon = Boolean(visibleStartIcon || visibleEndIcon);
 
   const dynamicPadding = !hasVisibleIcon
-    ? 'px-6'
+    ? "px-6"
     : visibleStartIcon && visibleEndIcon
-      ? 'px-4'
+      ? "px-4"
       : visibleStartIcon
-        ? 'pl-4 pr-6'
-        : 'pl-6 pr-4';
+        ? "pl-4 pr-6"
+        : "pl-6 pr-4";
 
   return (
     <button
       type={type}
       disabled={isButtonDisabled}
       className={cn(
-        'inline-flex items-center justify-center',
-        'rounded-full transition-all duration-300',
-        'shrink-0 font-medium whitespace-nowrap',
+        "inline-flex items-center justify-center",
+        "rounded-full transition-all duration-300",
+        "shrink-0 font-medium whitespace-nowrap",
         dynamicPadding,
         buttonSizeVariants[size],
         buttonWidthVariants[currentState],

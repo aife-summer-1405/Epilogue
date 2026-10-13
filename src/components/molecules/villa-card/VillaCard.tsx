@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -39,14 +38,13 @@ export default function VillaCard({
         <span className={styles.title}>{title}</span>
 
         <Button
-        size="md"
+          size="md"
           variant={isHovered ? "primary" : "outline"}
           hasIcon={false}
           onClick={onClick}
         >
           {isHovered ? "مشاهده" : `${count} مورد`}
         </Button>
-
       </div>
     </article>
   );

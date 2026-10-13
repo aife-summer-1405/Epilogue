@@ -1,4 +1,4 @@
-import type { ButtonSize, ButtonState, ButtonVariant } from './button.type';
+import type { ButtonSize, ButtonState, ButtonVariant } from "./button.type";
 
 const iconGap = `  
   gap-[8px]
@@ -24,12 +24,14 @@ export const buttonSizeVariants: Record<ButtonSize, string> = {
 };
 
 export const buttonWidthVariants: Record<ButtonState, string> = {
-  default: '',
-  disabled: '',
+  default: "",
+  disabled: "",
 };
 
-export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> = {
-
+export const buttonVariants: Record<
+  ButtonVariant,
+  Record<ButtonState, string>
+> = {
   primary: {
     default: `    
        bg-[var(--color-primary-500)]
