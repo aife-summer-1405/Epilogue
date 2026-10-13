@@ -3,7 +3,7 @@ import type { ButtonSize, ButtonState, ButtonVariant } from './button.type';
 const iconGap = `  
   gap-[8px]
   hover:gap-[16px]
-  active:gap-[16px]`;
+  active:gap-[10px]`;
 
 export const buttonSizeVariants: Record<ButtonSize, string> = {
   sm: `     
@@ -36,12 +36,14 @@ export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> 
        text-white
        hover:bg-[var(--color-primary-600)]
        active:bg-[var(--color-primary-400)]
+       cursor-pointer
        ${iconGap}
      `,
     disabled: `       
        bg-[var(--color-primary-200)]
        text-white
        cursor-not-allowed
+
      `,
   },
 
@@ -51,6 +53,7 @@ export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> 
       text-white
       hover:bg-[var(--color-secondary-700)]
       active:bg-[var(--color-secondary-400)]
+      cursor-pointer
       ${iconGap}
     `,
     disabled: `       
@@ -66,6 +69,7 @@ export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> 
       bg-transparent
       hover:text-neutral-900
       active:text-neutral-800
+      cursor-pointer
       ${iconGap}
     `,
     disabled: `       
@@ -81,6 +85,7 @@ export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> 
       bg-transparent
       hover:text-[var(--color-primary-600)]
       active:text-[var(--color-primary-400)]
+      cursor-pointer
       ${iconGap}
     `,
     disabled: `       
@@ -96,6 +101,7 @@ export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> 
       text-white
       hover:bg-danger-700
       active:bg-danger-400
+      cursor-pointer
       ${iconGap}
     `,
     disabled: `       
@@ -116,6 +122,7 @@ export const buttonVariants: Record<ButtonVariant, Record<ButtonState, string>> 
       hover:text-[var(--color-primary-600)]
       active:border-[var(--color-primary-400)]
       active:text-[var(--color-primary-400)]
+      cursor-pointer
       ${iconGap}
     `,
     disabled: `       

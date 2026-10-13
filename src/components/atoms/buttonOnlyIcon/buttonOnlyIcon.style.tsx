@@ -16,6 +16,7 @@ export const buttonOnlyIconBase = `  inline-flex
   rounded-full
   transition-all
   duration-200
+  cursor-pointer
   focus:outline-none`;
 
 export const buttonOnlyIconVariants: Record<

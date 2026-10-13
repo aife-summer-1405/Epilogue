@@ -5,8 +5,17 @@ import HomeLogo from "@/components/atoms/Logo/home-logo";
 import Radio from "@/components/atoms/radio/Radio";
 import SignButton from "@/components/atoms/Sign-button/signButton";
 import Switch from "@/components/atoms/switch/Switch";
-import { ArrowLeft01Icon, ArrowRight01Icon, User } from "@hugeicons/core-free-icons";
+import CategoryCard from "@/components/molecules/category-card/CategoryCard";
+import { ArrowLeft01Icon, ArrowRight01Icon, } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import villaImage from "@/app/assets/Image/Villa.png";
+import villa2Image from "@/app/assets/Image/Villa2.png";
+import bedroomImage from "@/app/assets/Image/BedRoom.png";
+
+
+import VillaCard from "@/components/molecules/villa-card/VillaCard";
+import ProductCard from "@/components/molecules/product-card/ProductCard";
+import ViewProductCard from "@/components/molecules/product-card/ViewProductCard";
 
 
 export default function ComponentsPreview() {
@@ -146,21 +155,187 @@ export default function ComponentsPreview() {
                 <span className="text-sm text-black dark:text-white">
                     Checkbox
                 </span>
-            <Checkbox
-  label="متن"
- 
-/>
+                <Checkbox
+                    label="متن"
+
+                />
                 <span className="text-sm text-black dark:text-white">
                     Radio
                 </span>
-   <Radio
-  name="payment"
-  options={[
-    { value: "female", label: "زن" },
-    { value: "male", label: "مرد" },
-  ]}
-/>
+                <Radio
+                    name="payment"
+                    options={[
+                        { value: "female", label: "زن" },
+                        { value: "male", label: "مرد" },
+                    ]}
+                />
             </section>
+
+            <section className="flex w-full items-center px-13.5 gap-4 pt-10">
+                  <VillaCard
+                    image={villa2Image.src}
+                    title="اجاره ویلا در سوادکوه"
+                    count={50}
+                />
+                              <VillaCard
+                    image={villa2Image.src}
+                    title="اجاره ویلا در سوادکوه"
+                    count={50}
+                />
+                              <VillaCard
+                    image={villa2Image.src}
+                    title="اجاره ویلا در سوادکوه"
+                    count={50}
+                />
+                              <VillaCard
+                    image={villa2Image.src}
+                    title="اجاره ویلا در سوادکوه"
+                    count={50}
+                />
+
+          
+          
+            </section>
+
+            <section className="flex items-center gap-4 px-13.5 pt-10">
+                <CategoryCard
+                    image={villaImage.src} title="ملک ویلایی"
+                />
+                       <CategoryCard
+                    image={villaImage.src} title="ملک ویلایی"
+                />
+                       <CategoryCard
+                    image={villaImage.src} title="ملک ویلایی"
+                />
+                       <CategoryCard
+                    image={villaImage.src} title="ملک ویلایی"
+                />
+                       <CategoryCard
+                    image={villaImage.src} title="ملک ویلایی"
+                />
+                       <CategoryCard
+                    image={villaImage.src} title="ملک ویلایی"
+                />
+      
+          
+            </section>
+
+            <section className="grid grid-cols-4 items-center px-15.75 gap-4 pt-10">
+
+                <ProductCard
+                    image={bedroomImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="4.500.000"
+                />
+                                <ProductCard
+                    image={bedroomImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="4.500.000"
+                />
+
+                <ProductCard
+                    image={bedroomImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="3.825.000"
+                    originalPrice="4.500.000"
+                    off={15}
+                />
+                                <ProductCard
+                    image={bedroomImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="3.825.000"
+                    originalPrice="4.500.000"
+                    off={15}
+                />
+
+            </section>
+            <section className="flex flex-col gap-4 pt-10">
+
+                <ViewProductCard
+                    image={villaImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا نیویورک"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="4.500.000"
+                />
+
+                <ViewProductCard
+                    image={villaImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا نیویورک"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="4.500.000"
+                    originalPrice="5.500.000"
+                    off={15}
+                />
+                              <ViewProductCard
+                    image={villaImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا نیویورک"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="4.500.000"
+                />
+
+                <ViewProductCard
+                    image={villaImage.src}
+                    title="خانه ویلایی با پارکینگ اختصاصی"
+                    address="خیابان 404 بروکلین، کالیفرنیا نیویورک"
+                    rating={4.5}
+                    bedrooms={3}
+                    bathrooms={3}
+                    guests={3}
+                    parking={1}
+                    monthlyRent="4.500.000"
+                    pricePerNight="4.500.000"
+                    originalPrice="5.500.000"
+                    off={15}
+                />
+
+            </section>
+
         </main>
     );
 }
