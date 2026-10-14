@@ -171,7 +171,7 @@ export default function ComponentsPreview() {
                 />
             </section>
 
-            <section className="flex items-center px-13.5 gap-4 pt-10">
+            <section className="flex w-full items-center px-13.5 gap-4 pt-10">
                   <VillaCard
                     image={villa2Image.src}
                     title="اجاره ویلا در سوادکوه"
@@ -192,16 +192,7 @@ export default function ComponentsPreview() {
                     title="اجاره ویلا در سوادکوه"
                     count={50}
                 />
-                              <VillaCard
-                    image={villa2Image.src}
-                    title="اجاره ویلا در سوادکوه"
-                    count={50}
-                />
-                                        <VillaCard
-                    image={villa2Image.src}
-                    title="اجاره ویلا در سوادکوه"
-                    count={50}
-                />
+
           
           
             </section>
@@ -225,12 +216,7 @@ export default function ComponentsPreview() {
                        <CategoryCard
                     image={villaImage.src} title="ملک ویلایی"
                 />
-                       <CategoryCard
-                    image={villaImage.src} title="ملک ویلایی"
-                />
-                       <CategoryCard
-                    image={villaImage.src} title="ملک ویلایی"
-                />
+      
           
             </section>
 

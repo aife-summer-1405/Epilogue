@@ -1,7 +1,7 @@
 export const categoryCardStyles = {
   root: `
     relative isolate
-    w-full max-w-[220px]
+    w-full
     aspect-[220/290]
     overflow-hidden rounded-[16px] 
     bg-natural-200

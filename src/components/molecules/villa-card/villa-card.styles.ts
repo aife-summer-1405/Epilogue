@@ -2,7 +2,7 @@
 export const villaCardStyles = {
   root: `
     group relative isolate
-    w-full max-w-[318px]
+    w-full
     aspect-[318/285]
     overflow-hidden rounded-3xl
     cursor-pointer 
@@ -24,6 +24,6 @@ export const villaCardStyles = {
 
   title: `
     min-w-0 truncate
-    text-base font-medium text-black
+    text-base font-medium text-black text-[18px]
   `,
 };

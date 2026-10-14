@@ -39,6 +39,7 @@ export default function VillaCard({
         <span className={styles.title}>{title}</span>
 
         <Button
+        size="md"
           variant={isHovered ? "primary" : "outline"}
           hasIcon={false}
           onClick={onClick}
