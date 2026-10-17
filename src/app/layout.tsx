@@ -1,6 +1,6 @@
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import DarkModeProvider from "@/providers/DarkModeProvider";
+import ThemeProvider from "@/providers/DarkModeProvider";
 import QueryProvider from "@/providers/QueryProvider";
 
 import localFont from "next/font/local";
@@ -70,10 +70,13 @@ export default function RootLayout({
         vazirmatn.variable,
       )}
     >
-      <QueryProvider>
-        <body className="min-h-full flex flex-col">{children}</body>
-      </QueryProvider>
-      <DarkModeProvider />
+      <ThemeProvider>
+
+        <QueryProvider>
+          <body className="min-h-full flex flex-col">{children}</body>
+        </QueryProvider>
+      </ThemeProvider>
+      {/* <DarkModeProvider /> */}
     </html>
   );
 }
