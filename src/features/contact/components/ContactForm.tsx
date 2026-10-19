@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import TextInput from "@/components/molecules/inputs/TextInput";
 import TextareaInput from "@/components/molecules/inputs/TextareaInput";
 import Button from "@/components/atoms/button/Button";
 import {
@@ -11,6 +10,7 @@ import {
   type ContactFormValues,
 } from "@/features/contact/schemas/contact.schema";
 import { submitContactMessage } from "../services/contact.action";
+import TextInput from "@/components/molecules/inputs/textInput/TextInput";
 
 export default function ContactForm() {
   const [isLoading, setIsLoading] = useState(false);

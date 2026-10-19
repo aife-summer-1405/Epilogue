@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -16,11 +16,10 @@ const onError = (error: AxiosError) => {
 instance.interceptors.request.use(
   async (config) => {
     if (!config.headers?.Authorization) {
-      const token = (await cookies()).get("accessToken")?.value;
-
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      // const token = (await cookies()).get("accessToken")?.value;
+      // if (token) {
+      //   config.headers.Authorization = `Bearer ${token}`;
+      // }
     }
     return config;
   },
