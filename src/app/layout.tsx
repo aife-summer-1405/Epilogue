@@ -63,30 +63,31 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fa"
       dir="rtl"
+      suppressHydrationWarning
       className={cn("h-full", "antialiased", vazirmatn.variable)}
     >
-<ThemeProvider>
-      <QueryProvider>
-        <body className="min-h-full flex flex-col">
-          <TooltipProvider>{children}</TooltipProvider>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            rtl
-            closeOnClick={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            transition={Bounce}
-            stacked
-            toastStyle={{
-              fontFamily: "var(--font-primary), sans-serif",
-            }}
-          />
-        </body>
-      </QueryProvider>
-       </ThemeProvider>
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>
+          <QueryProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              rtl
+              closeOnClick={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              transition={Bounce}
+              stacked
+              toastStyle={{
+                fontFamily: "var(--font-primary), sans-serif",
+              }}
+            />
+          </QueryProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
