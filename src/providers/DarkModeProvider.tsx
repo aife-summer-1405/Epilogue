@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 const DarkModeProvider = () => {
   useEffect(() => {
-    document.documentElement.classList.remove("dark");
+    document.documentElement.classList.add("dark");
     return () => {};
   }, []);
   return null;

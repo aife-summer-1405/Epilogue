@@ -2,8 +2,9 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import DarkModeProvider from "@/providers/DarkModeProvider";
 import QueryProvider from "@/providers/QueryProvider";
-
+import { Bounce, ToastContainer } from "react-toastify";
 import localFont from "next/font/local";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const vazirmatn = localFont({
   src: [
@@ -57,21 +58,32 @@ const vazirmatn = localFont({
   display: "swap",
 });
 
-export default function RootLayout({
-  children,
-}: LayoutProps<"/">) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fa"
       dir="rtl"
-      className={cn(
-        "h-full",
-        "antialiased",
-        vazirmatn.variable,
-      )}
+      className={cn("h-full", "antialiased", vazirmatn.variable)}
     >
       <QueryProvider>
-        <body className="min-h-full flex flex-col">{children}</body>
+        <body className="min-h-full flex flex-col">
+          <TooltipProvider>{children}</TooltipProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            rtl
+            closeOnClick={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            transition={Bounce}
+            stacked
+            toastStyle={{
+              fontFamily: "var(--font-primary), sans-serif",
+            }}
+          />
+        </body>
       </QueryProvider>
       <DarkModeProvider />
     </html>

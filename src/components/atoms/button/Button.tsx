@@ -34,8 +34,8 @@ const Button = ({
     : visibleStartIcon && visibleEndIcon
       ? "px-4"
       : visibleStartIcon
-        ? "pl-4 pr-6"
-        : "pl-6 pr-4";
+        ? "2xl:pl-4 2xl:pr-6 xl:pl-2 xl:pr-4 pl-4 pr-6"
+        : "2xl:pl-6 2xl:pr-4 xl:pl-4 xl:pr-2 pl-6 pr-4";
 
   return (
     <button

@@ -5,8 +5,11 @@ export const signButtonStyles = `
 
   gap-2
 
-  px-6
   py-4
+  px-6
+  2xl:px-15
+
+  flex-1
 
   rounded-full
 
@@ -17,7 +20,9 @@ export const signButtonStyles = `
 
   bg-transparent
 
-  text-black
+  text-base
+  leading-5.5
+  text-default-black
   font-semibold
 
   transition-all
