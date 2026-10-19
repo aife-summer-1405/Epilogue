@@ -12,46 +12,45 @@ import { FC } from "react";
 interface IProps {
   value: string;
   setValue: (value: string) => void;
+  invalid?: boolean;
 }
 
-const OtpInput: FC<IProps> = ({ value, setValue }) => {
+const slotClass =
+  "bg-neutral-100 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-600 first:border-l-2 " +
+  "transition text-neutral-800! text-[18px]! " +
+  "data-[active=true]:border-primary-500 data-[active=true]:ring-0! " +
+  "aria-invalid:border-danger-500 aria-invalid:text-danger-500";
+
+const OtpInput: FC<IProps> = ({ value, setValue, invalid }) => {
   return (
     <InputOTP
       id="otp-input"
       maxLength={6}
       value={value}
       containerClassName="flex gap-2"
-      onChange={(value) => setValue(value)}
+      onChange={setValue}
       pattern={REGEXP_ONLY_DIGITS}
     >
-      <InputOTPGroup className={`flex gap-1`}>
-        <InputOTPSlot
-          className={`bg-neutral-50 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-100 data-[active=true]:border-primary-500 transition data-[active=true]:ring-0! aria-invalid:text-danger-500 text-neutral-800! text-[18px]!`}
-          index={0}
-        />
-        <InputOTPSlot
-          className={`bg-neutral-50 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-100 data-[active=true]:border-primary-500 transition data-[active=true]:ring-0! aria-invalid:text-danger-500 text-neutral-800! text-[18px]!`}
-          index={1}
-        />
-        <InputOTPSlot
-          className={`bg-neutral-50 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-100 data-[active=true]:border-primary-500 transition data-[active=true]:ring-0! aria-invalid:text-danger-500 text-neutral-800! text-[18px]!`}
-          index={2}
-        />
+      <InputOTPGroup className="flex gap-1">
+        {[0, 1, 2].map((i) => (
+          <InputOTPSlot
+            key={i}
+            index={i}
+            aria-invalid={invalid}
+            className={slotClass}
+          />
+        ))}
       </InputOTPGroup>
-      <InputOTPSeparator className="text-neutral-300" />
-      <InputOTPGroup className={`flex gap-1`}>
-        <InputOTPSlot
-          className={`bg-neutral-50 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-100 data-[active=true]:border-primary-500 transition data-[active=true]:ring-0! aria-invalid:text-danger-500 text-neutral-800! text-[18px]!`}
-          index={3}
-        />
-        <InputOTPSlot
-          className={`bg-neutral-50 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-100 data-[active=true]:border-primary-500 transition data-[active=true]:ring-0! aria-invalid:text-danger-500 text-neutral-800! text-[18px]!`}
-          index={4}
-        />
-        <InputOTPSlot
-          className={`bg-neutral-50 rounded-[12px]! w-11 h-12.5 border-2 border-neutral-100 data-[active=true]:border-primary-500 transition data-[active=true]:ring-0! aria-invalid:text-danger-500 text-neutral-800! text-[18px]!`}
-          index={5}
-        />
+      <InputOTPSeparator className="text-neutral-700" />
+      <InputOTPGroup className="flex gap-1">
+        {[3, 4, 5].map((i) => (
+          <InputOTPSlot
+            key={i}
+            index={i}
+            aria-invalid={invalid}
+            className={slotClass}
+          />
+        ))}
       </InputOTPGroup>
     </InputOTP>
   );

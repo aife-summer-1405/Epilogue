@@ -4,6 +4,7 @@ import { homeLogoStyles } from "./home-logo.styles";
 export default function HomeLogo({ className = "" }: HomeLogoProps) {
   return (
     <div className={`${homeLogoStyles.container} ${className}`}>
+      <span className={homeLogoStyles.text}>Home</span>
       <svg
         viewBox="0 0 80 80"
         fill="none"
@@ -44,8 +45,6 @@ export default function HomeLogo({ className = "" }: HomeLogoProps) {
           strokeLinejoin="round"
         />
       </svg>
-
-      <span className={homeLogoStyles.text}>Home</span>
     </div>
   );
 }
