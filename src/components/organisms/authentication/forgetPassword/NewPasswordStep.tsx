@@ -14,6 +14,7 @@ import {
 } from "@/lib/validations/authentication/auth";
 import { resetPasswordUser } from "@/services/auth.service";
 import { useForgetPassStore } from "@/store/auth.store";
+import { resetPasswordAction } from "@/app/actions/auth/auth.actions";
 
 const NewPasswordStep = () => {
   const router = useRouter();
@@ -27,31 +28,19 @@ const NewPasswordStep = () => {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["ResetPassword"],
-    mutationFn: resetPasswordUser,
-    onSuccess: () => {
+    mutationFn: resetPasswordAction,
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.message);
+        if (result.resetFlow) resetValues();
+        return;
+      }
       toast.success("رمز عبور با موفقیت تغییر کرد.");
       resetValues();
       router.replace("/auth/login");
     },
-    onError: (error) => {
-      if (isAxiosError(error)) {
-        if (error.status === 400) {
-          if (error.response?.data.message === "Invalid reset code") {
-            toast.error(
-              "کد وارد شده صحیح نمی باشد لطفا مراحل را از ابتدا طی کنید.",
-            );
-            resetValues();
-          } else {
-            toast.error("کد تایید شما منقضی شده است لطفا مجدد تلاش کنید.");
-          }
-        } else if (error.status === 404) {
-          toast.error("کاربر یافت نشد.");
-        } else {
-          toast.error("مشکلی در تغییر رمزعبور پیش آمد لطفا مجدد تلاش کنید.");
-        }
-      } else {
-        toast.error("مشکلی در تغییر رمزعبور پیش آمد لطفا مجدد تلاش کنید.");
-      }
+    onError: () => {
+      toast.error("مشکلی در تغییر رمزعبور پیش آمد لطفا مجدد تلاش کنید.");
     },
   });
 

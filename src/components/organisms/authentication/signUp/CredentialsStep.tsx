@@ -1,19 +1,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { LockKeyIcon, SmartPhone01Icon } from "@hugeicons/core-free-icons";
 import Button from "@/components/atoms/button/Button";
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
 import BackButton from "../shared/BackButton";
-import {
-  signUpCredentialsSchema,
-  type SignUpCredentialsValues,
-} from "@/lib/validations/authentication/auth";
+import { signUpCredentialsSchema } from "@/lib/validations/authentication/auth";
 import { useSignUpStore } from "@/store/auth.store";
-import { completeRegistrationUser } from "@/services/auth.service";
+import { completeRegistrationAction } from "@/app/actions/auth/auth.actions";
+import { SignUpCredentialsValues } from "@/core/types/auth.types";
 
 const CredentialsStep = () => {
   const router = useRouter();
@@ -27,31 +24,25 @@ const CredentialsStep = () => {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["CompleteRegistration"],
-    mutationFn: completeRegistrationUser,
-    onSuccess: () => {
+    mutationFn: completeRegistrationAction,
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.message);
+        if (result.resetFlow) resetValues();
+        return;
+      }
       toast.success("حساب کاربری شما با موفقیت ساخته شد.");
       resetValues();
       router.replace("/auth/login");
     },
-    onError: (error) => {
-      if (isAxiosError(error)) {
-        if (error.status === 400) {
-          toast.error("لطفا مراحل ثبت نام را از ابتدا طی کنید.");
-          resetValues();
-        } else if (error.status === 404) {
-          toast.error("کاربر یافت نشد.");
-        } else {
-          toast.error("مشکلی در ثبت اطلاعات شما پیش آمد مجدد تلاش کنید.");
-        }
-      } else {
-        toast.error("مشکلی در ثبت اطلاعات شما پیش آمد مجدد تلاش کنید.");
-      }
+    onError: () => {
+      toast.error("مشکلی در ثبت اطلاعات شما پیش آمد مجدد تلاش کنید.");
     },
   });
 
   const onSubmit = (values: SignUpCredentialsValues) => {
     if (!userId) {
-      toast.error("نشست شما منقضی شده، دوباره ثبت نام کنید.");
+      toast.error("لطفا مراحل ثبت نام را از ابتدا طی کنید.");
       return;
     }
     mutate({ userId, password: values.password, phoneNumber: values.phone });

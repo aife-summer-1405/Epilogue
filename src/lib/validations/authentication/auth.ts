@@ -48,9 +48,3 @@ export const newPasswordSchema = z
     path: ["confirmPassword"],
     message: "رمز عبور و تکرار آن یکسان نیستند",
   });
-
-export type NewPasswordValues = z.infer<typeof newPasswordSchema>;
-export type LoginValues = z.infer<typeof loginSchema>;
-export type SignUpEmailValues = z.infer<typeof signUpEmailSchema>;
-export type SignUpOtpValues = z.infer<typeof signUpOtpSchema>;
-export type SignUpCredentialsValues = z.infer<typeof signUpCredentialsSchema>;

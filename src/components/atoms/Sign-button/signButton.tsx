@@ -4,10 +4,16 @@ import type { SignButtonProps } from "./sign-button.types";
 import { signButtonStyles, signButtonIcon } from "./sign-button.styles";
 import { cn } from "@/lib/utils";
 
-export default function SignButton({ text, icon, onClick }: SignButtonProps) {
+export default function SignButton({
+  text,
+  icon,
+  onClick,
+  disabled,
+}: SignButtonProps) {
   return (
     <button
       dir="ltr"
+      disabled={disabled}
       type="button"
       className={cn(signButtonStyles)}
       onClick={onClick}
