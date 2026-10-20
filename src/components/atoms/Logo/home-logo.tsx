@@ -1,9 +1,12 @@
 import type { HomeLogoProps } from "./home-logo.types";
 import { homeLogoStyles } from "./home-logo.styles";
 
-export default function HomeLogo({ className = "" }: HomeLogoProps) {
+export default function HomeLogo({ className = "", onClick }: HomeLogoProps) {
   return (
-    <div className={`${homeLogoStyles.container} ${className}`}>
+    <div
+      onClick={onClick}
+      className={`${homeLogoStyles.container} ${className}`}
+    >
       <span className={homeLogoStyles.text}>Home</span>
       <svg
         viewBox="0 0 80 80"

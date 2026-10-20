@@ -1,15 +1,14 @@
 import { FormEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "@/components/atoms/button/Button";
 import OtpInput from "@/components/molecules/inputs/OtpInput";
 import BackButton from "../shared/BackButton";
 import { useCountdown } from "@/hooks/useCountDown";
 import { useSignUpStore } from "@/store/auth.store";
-import { sigUpVerifyEmailUser } from "@/services/auth.service";
 import { useSignUpEmail } from "@/hooks/mutations/useSignUpEmail";
 import { signUpOtpSchema } from "@/lib/validations/authentication/auth";
+import { signUpVerifyEmailAction } from "@/app/actions/auth/auth.actions";
 
 const OtpStep = () => {
   const [otp, setOtp] = useState("");
@@ -21,27 +20,17 @@ const OtpStep = () => {
 
   const { mutate, isPending } = useMutation({
     mutationKey: ["VerifyEmail"],
-    mutationFn: sigUpVerifyEmailUser,
-    onSuccess: () => {
+    mutationFn: signUpVerifyEmailAction,
+    onSuccess: (result) => {
+      if (!result.success) {
+        toast.error(result.message);
+        return;
+      }
       toast.success("ایمیل شما با موفقیت تایید شد.");
       addInfo({ step: 3 });
     },
-    onError: (error) => {
-      if (isAxiosError(error)) {
-        if (error.status === 400) {
-          if (error.response?.data.message === "Invalid verification code") {
-            toast.error("کد وارد شده صحیح نمی باشد.");
-          } else {
-            toast.error("کد تایید شما منقضی شده است لطفا مجدد تلاش کنید.");
-          }
-        } else if (error.status === 404) {
-          toast.error("کاربر یافت نشد.");
-        } else {
-          toast.error("مشکلی در تایید کد پیش آمد، لطفا مجدد تلاش کنید.");
-        }
-      } else {
-        toast.error("مشکلی در تایید کد پیش آمد، لطفا مجدد تلاش کنید.");
-      }
+    onError: () => {
+      toast.error("مشکلی در تایید کد پیش آمد، لطفا مجدد تلاش کنید.");
     },
   });
 

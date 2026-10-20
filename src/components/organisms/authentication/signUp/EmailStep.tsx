@@ -1,10 +1,8 @@
 import Button from "@/components/atoms/button/Button";
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
+import { SignUpEmailValues } from "@/core/types/auth.types";
 import { useSignUpEmail } from "@/hooks/mutations/useSignUpEmail";
-import {
-  signUpEmailSchema,
-  SignUpEmailValues,
-} from "@/lib/validations/authentication/auth";
+import { signUpEmailSchema } from "@/lib/validations/authentication/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail01Icon } from "@hugeicons/core-free-icons";
 import { useForm } from "react-hook-form";
