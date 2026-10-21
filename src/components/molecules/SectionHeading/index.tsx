@@ -43,7 +43,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
           {subtitle && (
             <span
               className={`text-sm font-bold ${
-                timeLabel ? "text-red-500" : "text-blue-600 dark:text-blue-500"
+                timeLabel ? "text-red-500" : "text-primary-600"
               }`}
             >
               {subtitle}

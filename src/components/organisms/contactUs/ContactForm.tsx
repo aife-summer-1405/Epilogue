@@ -5,12 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import TextareaInput from "@/components/molecules/inputs/TextareaInput";
 import Button from "@/components/atoms/button/Button";
-import {
-  contactSchema,
-  type ContactFormValues,
-} from "@/features/contact/schemas/contact.schema";
-import { submitContactMessage } from "../services/contact.action";
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
+import { submitContactMessage } from "@/app/actions/contactUs/contactUs.actions";
+import {
+  ContactFormValues,
+  contactSchema,
+} from "@/lib/validations/contactUs/contact";
 
 export default function ContactForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -45,25 +45,19 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="flex flex-col rounded-[2rem] bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
-      <h3 className="mb-8 text-center text-xl font-bold text-gray-900">
+    <div className="flex flex-col rounded-[2rem] bg-default-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
+      <h3 className="mb-8 text-center text-xl font-bold text-default-text">
         با ما در ارتباط باشید
       </h3>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-6 [&_.border-neutral-600]:!border-none [&_.border-neutral-600]:!bg-gray-100 [&_input]:!bg-transparent [&_input]:!w-full [&_textarea]:!bg-transparent"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <TextInput
           name="fullName"
-          title=""
           control={control}
           placeholder="نام و نام خانوادگی"
           variableName="fullMd"
         />
         <TextInput
           name="email"
-          title=""
           control={control}
           placeholder="ایمیل"
           variableName="fullMd"
@@ -74,7 +68,6 @@ export default function ContactForm() {
           placeholder="پیام شما"
           variableName="mdMd"
         />
-
         <Button
           type="submit"
           variant="primary"
