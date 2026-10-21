@@ -47,7 +47,7 @@ const TextInput = <T extends FieldValues>({
 
       <div
         className={cn(
-          "border border-neutral-600 dark:bg-[#353535] flex items-center gap-3",
+          "border border-neutral-600 dark:border-neutral-200 dark:bg-[#353535] flex items-center gap-3",
           inputVariables[variableName].container,
         )}
       >

@@ -42,7 +42,7 @@ const TextareaInput = <T extends FieldValues>({
       label: "text-base leading-5.5",
     },
     mdMd: {
-      container: "px-3 py-4 rounded-[12px]",
+      container: "px-3 py-4 rounded-[16px]",
       label: "text-[20px] leading-6",
     },
     mdLg: {
@@ -62,7 +62,7 @@ const TextareaInput = <T extends FieldValues>({
         </label>
       )}
       <div
-        className={`${inputVariables[variableName].container} border border-neutral-600 flex items-start gap-3 bg-neutral-100/50`}
+        className={`${inputVariables[variableName].container} border border-neutral-600 dark:border-neutral-200 flex items-start gap-3 bg-neutral-100/50`}
       >
         {icons && (
           <HugeiconsIcon
@@ -72,7 +72,7 @@ const TextareaInput = <T extends FieldValues>({
         )}
         <textarea
           className={
-            "text-neutral-800 placeholder:text-neutral-500 text-base leading-5.5 outline-none w-full resize-none bg-transparent"
+            "text-neutral-800 placeholder:text-neutral-800 text-base leading-5.5 outline-none w-full resize-none bg-transparent"
           }
           id={name}
           rows={5}
