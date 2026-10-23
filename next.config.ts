@@ -12,6 +12,16 @@ const nextConfig: NextConfig = {
       },
     },
   },
+
+  images: {
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "aife-api.hexorix.net",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
