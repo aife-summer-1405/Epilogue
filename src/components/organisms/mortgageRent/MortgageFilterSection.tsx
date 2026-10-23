@@ -2,9 +2,9 @@
 
 import React, { useState } from "react";
 import Button from "@/components/atoms/button/Button";
-import FilterInput from "@/components/molecules/inputs/FilterInput";
+import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
 import { GetHousesParams } from "@/services/houses/houses.service";
-import { IFilterInputs } from "@/components/molecules/inputs/IFilterInput";
+import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
 
 interface MortgageFilterSectionProps {
   initialFilters: GetHousesParams;
@@ -67,7 +67,8 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
   locationOptions,
   onApplyFilter,
 }) => {
-  const [localFilters, setLocalFilters] = useState<Partial<GetHousesParams>>(initialFilters);
+  const [localFilters, setLocalFilters] =
+    useState<Partial<GetHousesParams>>(initialFilters);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isMobileSortOpen, setIsMobileSortOpen] = useState(false);
 
@@ -83,7 +84,7 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
   const handleFieldChange = (
     field: keyof GetHousesParams,
     rawValue: unknown,
-    isNumeric = false
+    isNumeric = false,
   ) => {
     const val = extractValue(rawValue);
     setLocalFilters((prev) => ({
@@ -103,7 +104,6 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
 
   return (
     <div className="w-full" dir="rtl">
-      
       <div className="mb-4 flex w-full items-center justify-center gap-3 rounded-full bg-gray-100 p-2 dark:bg-[#272727] lg:hidden">
         <button
           type="button"
@@ -118,7 +118,11 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
             stroke="currentColor"
             className="h-4 w-4"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
+            />
           </svg>
           <span>مرتب سازی</span>
         </button>
@@ -136,7 +140,11 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
             stroke="currentColor"
             className="h-4 w-4"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
+            />
           </svg>
           <span>فیلتر</span>
         </button>
@@ -146,17 +154,30 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
         <div className="fixed inset-0 z-100 flex items-end justify-center bg-black/60 backdrop-blur-sm transition-all sm:items-center">
           <div className="w-full animate-in slide-in-from-bottom-10 rounded-t-[2rem] bg-white p-6 shadow-xl dark:bg-[#272727] sm:max-w-sm sm:rounded-3xl sm:slide-in-from-bottom-0 sm:fade-in">
             <div className="mb-4 flex items-center justify-between border-b border-gray-100 pb-4 dark:border-zinc-700">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">مرتب‌سازی بر اساس</h3>
-              <button 
-                onClick={() => setIsMobileSortOpen(false)} 
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                مرتب‌سازی بر اساس
+              </h3>
+              <button
+                onClick={() => setIsMobileSortOpen(false)}
                 className="rounded-full bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-600"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="h-4 w-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
-            
+
             <div className="flex flex-col gap-2">
               {SORT_OPTIONS.map((opt) => {
                 const isSelected = localFilters.sort === opt.value;
@@ -164,13 +185,13 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   <button
                     key={opt.value}
                     onClick={() => {
-                    const updated: Partial<GetHousesParams> = {
+                      const updated: Partial<GetHousesParams> = {
                         ...localFilters,
                         sort: opt.value as GetHousesParams["sort"],
-                    };
-                    setLocalFilters(updated);
-                    onApplyFilter(updated);
-                    setIsMobileSortOpen(false);
+                      };
+                      setLocalFilters(updated);
+                      onApplyFilter(updated);
+                      setIsMobileSortOpen(false);
                     }}
                     className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-right text-sm font-semibold transition-colors ${
                       isSelected
@@ -180,8 +201,19 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   >
                     <span>{opt.label}</span>
                     {isSelected && (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="h-5 w-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2.5}
+                        stroke="currentColor"
+                        className="h-5 w-5"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 12.75l6 6 9-13.5"
+                        />
                       </svg>
                     )}
                   </button>
@@ -199,7 +231,6 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
         } w-full flex-col gap-6 rounded-3xl bg-white p-6 shadow-sm dark:bg-[#272727]`}
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
-          
           <div className="flex flex-col gap-3 lg:col-span-4">
             <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
               جستجو
@@ -210,14 +241,19 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                 placeholder="نام هتل یا منطقه مورد نظر..."
                 value={localFilters.search || ""}
                 onChange={(e) =>
-                  setLocalFilters((prev) => ({ ...prev, search: e.target.value }))
+                  setLocalFilters((prev) => ({
+                    ...prev,
+                    search: e.target.value,
+                  }))
                 }
                 className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
           </div>
 
-          <div className={`lg:col-span-2 ${filterWrapperClass} hidden lg:block`}>
+          <div
+            className={`lg:col-span-2 ${filterWrapperClass} hidden lg:block`}
+          >
             <FilterInput
               isTitle="مرتب سازی بر اساس"
               placeHolder="انتخاب کنید"
@@ -255,7 +291,6 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
         </div>
 
         <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
-          
           <div className="flex items-end gap-3 lg:col-span-2">
             <div className="flex w-full flex-col gap-3">
               <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
@@ -266,7 +301,9 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   type="number"
                   placeholder="وارد کنید"
                   value={localFilters.maxPrice ?? ""}
-                  onChange={(e) => handleFieldChange("maxPrice", e.target.value, true)}
+                  onChange={(e) =>
+                    handleFieldChange("maxPrice", e.target.value, true)
+                  }
                   className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
                 />
               </div>
@@ -284,7 +321,9 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   type="number"
                   placeholder="وارد کنید"
                   value={localFilters.minRent ?? ""}
-                  onChange={(e) => handleFieldChange("minRent", e.target.value, true)}
+                  onChange={(e) =>
+                    handleFieldChange("minRent", e.target.value, true)
+                  }
                   className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
                 />
               </div>
@@ -302,7 +341,9 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   type="number"
                   placeholder="وارد کنید"
                   value={localFilters.maxRent ?? ""}
-                  onChange={(e) => handleFieldChange("maxRent", e.target.value, true)}
+                  onChange={(e) =>
+                    handleFieldChange("maxRent", e.target.value, true)
+                  }
                   className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
                 />
               </div>
@@ -320,7 +361,9 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   type="number"
                   placeholder="وارد کنید"
                   value={localFilters.minArea ?? ""}
-                  onChange={(e) => handleFieldChange("minArea", e.target.value, true)}
+                  onChange={(e) =>
+                    handleFieldChange("minArea", e.target.value, true)
+                  }
                   className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
                 />
               </div>
@@ -337,7 +380,9 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                 type="number"
                 placeholder="وارد کنید"
                 value={localFilters.maxArea ?? ""}
-                onChange={(e) => handleFieldChange("maxArea", e.target.value, true)}
+                onChange={(e) =>
+                  handleFieldChange("maxArea", e.target.value, true)
+                }
                 className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
               />
             </div>
@@ -350,8 +395,19 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
               size="md"
               className="h-12 w-full bg-[#1e3a8a] text-sm text-white hover:bg-blue-900"
               startIcon={
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-4 w-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.8}
+                  stroke="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
+                  />
                 </svg>
               }
             >
