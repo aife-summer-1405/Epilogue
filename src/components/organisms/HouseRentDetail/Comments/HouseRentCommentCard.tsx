@@ -52,29 +52,31 @@ export default function HouseRentCommentCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-sm font-bold text-neutral-900">
+          <h3 className="truncate text-sm font-bold ">
             {fullName || "کاربر"}
           </h3>
 
-          <p className="mt-1 text-xs text-neutral-400">
+          <p className="mt-1 text-xs ">
             {formattedDate}
           </p>
         </div>
 
-        <div className="flex shrink-0 items-center gap-1 text-xs text-amber-500">
-          <HugeiconsIcon icon={StarIcon} size={15} />
-          <span>{Number.isFinite(rating) ? rating : 0}</span>
+        <div className="flex shrink-0 items-center gap-1 text-[15px] text-amber-500">
+          <span className="mt-1">{Number.isFinite(rating) ? rating : 0}</span>
+          <HugeiconsIcon icon={StarIcon} size={18} />
+
         </div>
       </div>
+      <div className="w-full border border-[#DDDDDD] my-3.75"></div>
 
       <div className="mt-3">
         {comment.title && (
-          <h4 className="mb-1 text-xs font-semibold text-neutral-700">
+          <h4 className="mb-1 text-xs font-semibold text-[#8B8D98]">
             {comment.title}
           </h4>
         )}
 
-        <p className="break-words text-xs leading-6 text-neutral-500">
+        <p className="break-words text-xs leading-6 text-[#8B8D98]">
           {comment.caption}
         </p>
       </div>

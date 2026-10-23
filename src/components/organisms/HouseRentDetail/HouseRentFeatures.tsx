@@ -5,14 +5,18 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Home09Icon,
   DocumentValidationIcon,
-  Building03Icon,
-  Calendar01Icon,
+
   RulerIcon,
   UserGroupIcon,
   Building02Icon,
   Car01Icon,
   Tree01Icon,
   Comment01Icon,
+  Home11Icon,
+  Stairs02Icon,
+  Calendar03Icon,
+  BedIcon,
+  Toilet01Icon,
 } from "@hugeicons/core-free-icons";
 
 interface Props {
@@ -37,7 +41,7 @@ export default function HouseRentFeatures({ house }: Props) {
     {
       label: "تعداد واحد",
       value: "۱ واحد",
-      icon: Home09Icon,
+      icon: Home11Icon,
     },
     {
       label: "سند",
@@ -47,12 +51,12 @@ export default function HouseRentFeatures({ house }: Props) {
     {
       label: "تعداد طبقات",
       value: "ثبت نشده",
-      icon: Building03Icon,
+      icon: Stairs02Icon,
     },
     {
       label: "سال ساخت",
       value: "ثبت نشده",
-      icon: Calendar01Icon,
+      icon: Calendar03Icon,
     },
     {
       label: "متراژ",
@@ -62,7 +66,7 @@ export default function HouseRentFeatures({ house }: Props) {
     {
       label: "تعداد خواب",
       value: `${house.rooms} اتاق`,
-      icon: Building03Icon,
+      icon: BedIcon,
     },
     {
       label: "ظرفیت",
@@ -77,7 +81,7 @@ export default function HouseRentFeatures({ house }: Props) {
     {
       label: "سرویس بهداشتی",
       value: `${house.bathrooms} عدد`,
-      icon: Building03Icon,
+      icon: Toilet01Icon,
     },
     {
       label: "پارکینگ",
@@ -98,9 +102,7 @@ export default function HouseRentFeatures({ house }: Props) {
 
   return (
     <section dir="rtl" className="w-full">
-      <h2 className="mb-4 text-base font-bold text-neutral-900">
-        امکانات و مشخصات اقامتگاه
-      </h2>
+
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {features.map((feature, index) => {
