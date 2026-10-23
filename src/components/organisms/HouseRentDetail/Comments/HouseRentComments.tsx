@@ -67,12 +67,12 @@ export default function HouseRentComments({ houseId }: Props) {
             className="w-full"
         >
             <Button className="mb-4" variant="outline" size="md"> نظرات کاربران</Button>
-            <div className="w-full min-w-0 rounded-2xl border border-neutral-200 bg-[#FFFFFA] p-3 sm:p-5 lg:p-6">
+            <div className="w-full min-w-0 rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-[#FFFFFA] p-3 sm:p-5 lg:p-6">
 
             <div className="mb-5 flex items-center justify-between gap-3">
 
 
-                <span className="rounded-full border border-blue-200 px-3 py-1 text-xs text-blue-700">
+                <span className="rounded-full dark:border-[#353535] dark:text-primary-200 border border-blue-200 px-3 py-1 text-xs text-blue-700">
                     {data?.totalCount ?? 0} نظر
                 </span>
             </div>

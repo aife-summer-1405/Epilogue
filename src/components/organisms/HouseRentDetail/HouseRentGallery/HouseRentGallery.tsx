@@ -7,8 +7,8 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Location01Icon,
   Copy01Icon,
-  Share08Icon,
   StarIcon,
+  Share01Icon,
 } from "@hugeicons/core-free-icons";
 
 import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
@@ -111,8 +111,7 @@ export function HouseRentGallery({
                 onClick={handleShare}
                 aria-label="اشتراک‌گذاری لینک ملک"
               >
-                <HugeiconsIcon icon={Share08Icon} size={19} />
-              </ButtonOnlyIcon>
+                <HugeiconsIcon icon={Share01Icon} />              </ButtonOnlyIcon>
             </div>
 
             {copied && (

@@ -12,7 +12,7 @@ export default function HouseRentInfo({ house }: Props) {
         چرا {house.title} را انتخاب کنیم؟
       </h2>
 
-      <p className="text-sm leading-7 text-[#8B8D98]">
+      <p className="text-sm leading-7 dark:text-white text-[#8B8D98]">
         {house.caption || "توضیحاتی برای این اقامتگاه ثبت نشده است."}
       </p>
 

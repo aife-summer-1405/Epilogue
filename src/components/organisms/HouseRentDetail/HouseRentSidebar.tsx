@@ -28,7 +28,7 @@ export default function HouseRentSidebar({ house }: Props) {
     return (
         <aside
             dir="rtl"
-            className="h-fit w-full rounded-2xl border border-neutral-200 bg-white p-5 lg:sticky lg:top-24 shadow-sm"
+            className="h-fit w-full rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-white p-5 lg:sticky lg:top-24 shadow-sm"
         >
             {/* Header */}
             <h2 className="mb-5 flex items-center justify-center gap-2 text-base font-bold ">
@@ -37,7 +37,7 @@ export default function HouseRentSidebar({ house }: Props) {
             </h2>
 
             {/* Seller Card */}
-            <div className="mb-6 flex flex-col items-center rounded-2xl border border-neutral-200 bg-white p-4 text-center shadow-xs">
+            <div className="mb-6 flex flex-col items-center rounded-2xl border border-neutral-200 dark:bg-[#353535] bg-white p-4 text-center shadow-xs">
                 {house.sellerAvatar ? (
                     <div className="relative mb-2 h-14 w-14 overflow-hidden rounded-full border border-neutral-100">
                         <Image
@@ -52,10 +52,10 @@ export default function HouseRentSidebar({ house }: Props) {
                         <HugeiconsIcon icon={UserAccountIcon} size={28} />
                     </div>
                 )}
-                <p className="font-semibold text-black">
+                <p className="font-semibold ">
                     {house.sellerName || "امیر محمد خیرآبادی"}
                 </p>
-                <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-black">
+                <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold ">
                     <HugeiconsIcon icon={Calendar03Icon} />
                     <span>{house.sellerDate || "3 تیر - 1404  10:10"}</span>
                 </div>
@@ -66,16 +66,17 @@ export default function HouseRentSidebar({ house }: Props) {
 
             {/* Price Boxes */}
             <div className="space-y-2.5 mb-6">
-                <div className="flex items-center justify-between rounded-xl bg-neutral-100 px-4 py-3 text-sm">
+                <div className="flex items-center justify-between rounded-xl dark:bg-[#353535] bg-neutral-100 px-4 py-3 text-sm">
                     <span className="flex items-center gap-2 font-medium ">
-                        <HugeiconsIcon icon={Money02Icon} />                        قیمت رهن از
+                        <HugeiconsIcon icon={Money02Icon} />               
+                                 قیمت رهن از
                     </span>
                     <span className="font-bold ">
                         {house.mortgagePrice || "4.500.000"}‌ت
                     </span>
                 </div>
 
-                <div className="flex items-center justify-between rounded-xl bg-neutral-100 px-4 py-3 text-sm">
+                <div className="flex items-center justify-between rounded-xl dark:bg-[#353535] bg-neutral-100 px-4 py-3 text-sm">
                     <span className="flex items-center gap-2 font-medium ">
                         <HugeiconsIcon icon={MoneyExchange01Icon} />                        قیمت اجاره از
                     </span>

@@ -18,6 +18,7 @@ import {
   BedIcon,
   Toilet01Icon,
 } from "@hugeicons/core-free-icons";
+import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
 
 interface Props {
   house: HouseRent;
@@ -108,26 +109,23 @@ export default function HouseRentFeatures({ house }: Props) {
         {features.map((feature, index) => {
           // بررسی وجود آیکون برای جلوگیری از خطای undefined
           const IconComponent = feature.icon || Home09Icon;
-          const isSelected = index === 0;
 
           return (
             <div
               key={feature.label}
-              className={`flex min-h-[95px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-[#B9BBC6] p-3 text-center transition-all `}
+              className={`flex min-h-[95px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-[#B9BBC6] p-3 text-center dark:border-[#272727] dark:bg-[#272727] transition-all hover:border-r-4 hover:border-[#1E40AF]`}
             >
-              <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                  isSelected ? "text-[#1E40AF]" : "text-blue-800"
-                }`}
+              <ButtonOnlyIcon hasIcon={false} variant="outline"
+                className={`flex items-center border rounded-full size-10 justify-center rounded-full`}
               >
                 <HugeiconsIcon icon={IconComponent} size={22} />
-              </div>
+              </ButtonOnlyIcon>
 
               <span className="text-sm font-bold text-[#1E40AF]">
                 {feature.label}
               </span>
 
-              <span className="text-xs text-[#80838D]">
+              <span className="text-xs dark:text-white text-[#80838D]">
                 {feature.value}
               </span>
             </div>

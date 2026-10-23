@@ -30,7 +30,7 @@ export default function HouseRentCommentCard({
   return (
     <article
       dir="rtl"
-      className={`rounded-xl border-r-2 border-blue-700 p-3 sm:p-4 ${
+      className={`rounded-xl  dark:bg-[#353535] border-r-4 border-[#1E40AF] p-3 sm:p-4 ${
         index % 3 === 0 ? "bg-[#F0F0F3]" : "bg-white"
       }`}
     >
@@ -41,7 +41,7 @@ export default function HouseRentCommentCard({
               src={comment.user.profilePicture}
               alt={fullName || "کاربر"}
               fill
-              sizes="40px"
+              sizes="64px"
               className="object-cover"
             />
           ) : (
@@ -52,7 +52,7 @@ export default function HouseRentCommentCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-sm font-bold ">
+          <h3 className="truncate text-[20px] font-bold ">
             {fullName || "کاربر"}
           </h3>
 
@@ -71,12 +71,12 @@ export default function HouseRentCommentCard({
 
       <div className="mt-3">
         {comment.title && (
-          <h4 className="mb-1 text-xs font-semibold text-[#8B8D98]">
+          <h4 className="mb-1 text-[14px] font-semibold dark:text-[#909090] text-[#8B8D98]">
             {comment.title}
           </h4>
         )}
 
-        <p className="break-words text-xs leading-6 text-[#8B8D98]">
+        <p className="break-words text-[14px] leading-6 dark:text-[#909090] text-[#8B8D98]">
           {comment.caption}
         </p>
       </div>
