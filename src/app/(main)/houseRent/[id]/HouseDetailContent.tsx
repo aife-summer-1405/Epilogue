@@ -8,6 +8,7 @@ import HouseRentFeatures from "@/components/organisms/HouseRentDetail/HouseRentF
 import HouseRentSidebar from "@/components/organisms/HouseRentDetail/HouseRentSidebar";
 import { HouseRent } from "@/core/types/RentHouse/house";
 import HouseRentComments from "@/components/organisms/HouseRentDetail/Comments/HouseRentComments";
+import SimilarAds from "@/components/organisms/HouseRentDetail/SimilarAds";
 
 interface HouseDetailContentProps {
   id: string;
@@ -61,13 +62,18 @@ export default function HouseDetailContent({
 
           {/* نظرات دقیقاً زیر امکانات */}
           <HouseRentComments houseId={property.id} />
+
         </div>
+        
 
         {/* سایدبار رزرو */}
         <div className="order-1 w-full shrink-0 lg:order-2 lg:w-[380px] xl:w-[420px]">
           <HouseRentSidebar house={property} />
         </div>
+        
       </div>
+            <SimilarAds />
+
     </main>
   );
 }

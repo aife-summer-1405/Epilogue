@@ -2,17 +2,12 @@
 
 import Image from "next/image";
 import Button from "@/components/atoms/button/Button";
-import HouseRentPrice from "./HouseRentPrice";
 import { HouseRent } from "@/core/types/RentHouse/house";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-    Home09Icon,
-    Calendar01Icon,
-    Building03Icon,
-    RefreshIcon,
+
     UserAccountIcon,
-    Call02Icon,
-    BubbleChatIcon,
+
     ArrowLeft01Icon,
     House04Icon,
     Calendar03Icon,
@@ -28,7 +23,7 @@ export default function HouseRentSidebar({ house }: Props) {
     return (
         <aside
             dir="rtl"
-            className="h-fit w-full rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-white p-5 lg:sticky lg:top-24 shadow-sm"
+            className="h-fit w-full rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-white p-5 lg:sticky lg:top-33"
         >
             {/* Header */}
             <h2 className="mb-5 flex items-center justify-center gap-2 text-base font-bold ">
