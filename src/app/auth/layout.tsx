@@ -1,5 +1,5 @@
 import { Suspense, type FC, type ReactNode } from "react";
-import ImageSlider from "@/components/organisms/authentication/ImageSlider";
+import ImageSlider from "@/components/molecules/imageSlider/ImageSlider";
 import slider1 from "@/app/assets/Image/Slider1.webp";
 import slider2 from "@/app/assets/Image/Slider2.webp";
 import slider3 from "@/app/assets/Image/Slider3.webp";
