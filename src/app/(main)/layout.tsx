@@ -1,5 +1,6 @@
 import Footer from "@/components/organisms/common/Footer";
 import Header from "@/components/organisms/common/Header";
+import { Suspense } from "react";
 
 
 export default function MainLayout({
@@ -9,8 +10,9 @@ export default function MainLayout({
 }>) {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header isLoggedIn={false} />
-
+      <Suspense fallback={null}>
+        <Header isLoggedIn={false} />
+      </Suspense>
       <main className="flex-1">
         {children}
       </main>

@@ -12,6 +12,17 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  // اضافه کردن تنظیمات تصاویر برای دامنه‌های خارجی
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "aife-api.hexorix.net",
+        port: "",
+        pathname: "/uploads/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
