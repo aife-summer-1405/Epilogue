@@ -36,7 +36,7 @@ interface HeaderProps {
 const navItems = [
   { label: "خانه", href: "/" },
   { label: "رهن و اجاره", href: "/villas" },
-  { label: "رزرو سریع", href: "/villas" },
+  { label: "رزرو سریع", href: "/fastReserve" },
   { label: "تماس با ما", href: "/contactUs" },
 ];
 

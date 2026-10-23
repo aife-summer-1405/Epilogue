@@ -5,32 +5,33 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { cn } from "@/lib/utils";
-import Image, { type StaticImageData } from "next/image";
-
-export interface ISlide {
-  src: string | StaticImageData;
-  alt: string;
-}
+import Image from "next/image";
+import { ISlide } from "@/core/types/sliderSlides.types";
 
 interface IProps {
   slides: ISlide[];
   className?: string;
+  autoPlay?: boolean;
 }
 
 const paginationStyles = "[&_.swiper-pagination]:bottom-6";
 
-const ImageSlider = ({ slides, className }: IProps) => {
+const ImageSlider = ({ slides, className, autoPlay = true }: IProps) => {
   return (
     <Swiper
       dir="rtl"
       modules={[Pagination, Autoplay]}
       slidesPerView={1}
       loop={slides.length > 1}
-      autoplay={{
-        delay: 2500,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-      }}
+      autoplay={
+        autoPlay
+          ? {
+              delay: 2500,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }
+          : false
+      }
       speed={600}
       pagination={{
         clickable: true,
