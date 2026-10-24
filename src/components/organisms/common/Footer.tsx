@@ -45,7 +45,7 @@ export default function Footer() {
                 {/* Main Sections */}
                 <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-6">
                     {/* Brand */}
-                    <section className="flex min-w-0 flex-col gap-5 md:order-1 md:w-[35%]">
+                    <section className="flex min-w-0 flex-col gap-5 md:order-0 md:w-[35%]">
                         <Link
                             href="/"
                             aria-label="صفحه اصلی"
