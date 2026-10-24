@@ -1,6 +1,6 @@
-import api from "@/lib/http/interceptors";
+import axios from "@/lib/http/interceptors";
 
 export const getComments = async () => {
-  const { data } = await api.get("/api/comments");
+  const { data } = await axios.get("/api/comments");
   return data;
 };
