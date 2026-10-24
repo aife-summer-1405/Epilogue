@@ -1,6 +1,6 @@
-import api from "@/lib/http/interceptors";
+import clientApi from "@/lib/http/interceptorsClient";
 
 export const getComments = async () => {
-  const { data } = await api.get("/comments");
+  const { data } = await clientApi.get("/comments");
   return data;
 };

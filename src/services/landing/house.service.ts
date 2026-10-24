@@ -1,6 +1,6 @@
-import api from "@/lib/http/interceptors";
+import clientApi from "@/lib/http/interceptorsClient";
 
 export const getHouses = async () => {
-  const { data } = await api.get("/houses");
+  const { data } = await clientApi.get("/houses");
   return data;
 };
