@@ -43,7 +43,9 @@ export interface GetHousesResponse {
   totalPages: number;
 }
 
-export const getHouses = async (params: GetHousesParams): Promise<GetHousesResponse> => {
+export const getHouses = async (
+  params: GetHousesParams,
+): Promise<GetHousesResponse> => {
   const searchParams = new URLSearchParams();
 
   Object.entries(params).forEach(([key, value]) => {
@@ -52,7 +54,8 @@ export const getHouses = async (params: GetHousesParams): Promise<GetHousesRespo
     }
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "https://aife-api.hexorix.net/api";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_URL || "https://aife-api.hexorix.net/api";
   const response = await fetch(`${baseUrl}/houses?${searchParams.toString()}`, {
     method: "GET",
     headers: {
@@ -77,7 +80,9 @@ export const getHouses = async (params: GetHousesParams): Promise<GetHousesRespo
   const items: HouseItem[] = result.data || result.houses || result.items || [];
   const totalCount = Number(result.totalCount ?? result.total ?? items.length);
   const limit = params.limit || 9;
-  const totalPages = Number(result.totalPages ?? (Math.ceil(totalCount / limit) || 1));
+  const totalPages = Number(
+    result.totalPages ?? (Math.ceil(totalCount / limit) || 1),
+  );
 
   return {
     data: items,
