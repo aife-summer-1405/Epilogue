@@ -233,7 +233,6 @@ useEffect(() => {
   `}
 >
                 <div className="mx-auto flex w-full items-center justify-between gap-3">
-                    {/* Logo */}
                     <Link
                         href="/"
                         aria-label="صفحه اصلی"
@@ -243,7 +242,6 @@ useEffect(() => {
                         <HomeLogo />
                     </Link>
 
-                    {/* Desktop Navigation */}
                     <nav
                         aria-label="منوی اصلی"
                         className="hidden min-w-0 items-center gap-3 rounded-full bg-[#EDEDED] p-2 text-neutral-950 dark:bg-[#272727] dark:text-white min-[1071px]:flex lg:gap-5"
@@ -252,13 +250,11 @@ useEffect(() => {
                         {renderSellerButton()}
                     </nav>
 
-                    {/* Desktop Actions */}
                     <div className="hidden shrink-0 items-center gap-2 min-[1071px]:flex">
                         {mounted && renderThemeButton()}
                         {renderAuthAction()}
                     </div>
 
-                    {/* Mobile Actions */}
                     <div className="flex shrink-0 items-center gap-2 min-[1071px]:hidden">
                         {renderAuthAction()}
 
@@ -284,7 +280,6 @@ useEffect(() => {
 )}
             </header>
 
-            {/* Full-screen Mobile Navigation */}
             {isMenuOpen && (
                 <div
                     id="mobile-navigation"

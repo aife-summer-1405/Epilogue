@@ -19,7 +19,7 @@ interface Props {
     house: HouseRent;
 }
 const formatPrice = (price: number) =>
-  new Intl.NumberFormat("fa-IR").format(price);
+    new Intl.NumberFormat("fa-IR").format(price);
 
 export default function HouseRentSidebar({ house }: Props) {
     return (
@@ -27,13 +27,11 @@ export default function HouseRentSidebar({ house }: Props) {
             dir="rtl"
             className="h-fit w-full rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-white p-5 lg:sticky lg:top-33"
         >
-            {/* Header */}
             <h2 className="mb-5 flex items-center justify-center gap-2 text-base font-bold ">
                 <HugeiconsIcon icon={House04Icon} size={24} />
                 رزرو خونه برای {house.title}
             </h2>
 
-            {/* Seller Card */}
             <div className="mb-6 flex flex-col items-center rounded-2xl border border-neutral-200 dark:bg-[#353535] bg-white p-4 text-center shadow-xs">
                 {house.sellerAvatar ? (
                     <div className="relative mb-2 h-14 w-14 overflow-hidden rounded-full border border-neutral-100">
@@ -58,18 +56,16 @@ export default function HouseRentSidebar({ house }: Props) {
                 </div>
             </div>
 
-            {/* Price Section Title */}
             <p className="mb-3 text-center text-sm font-bold ">قیمت</p>
 
-            {/* Price Boxes */}
             <div className="space-y-2.5 mb-6">
                 <div className="flex items-center justify-between rounded-xl dark:bg-[#353535] bg-neutral-100 px-4 py-3 text-sm">
                     <span className="flex items-center gap-2 font-medium ">
-                        <HugeiconsIcon icon={Money02Icon} />               
-                                 قیمت رهن از
+                        <HugeiconsIcon icon={Money02Icon} />
+                        قیمت رهن از
                     </span>
                     <span className="font-bold ">
-                        {house.discounted_price || "4.500.000"}‌ت
+                        {formatPrice(house.discounted_price)||"-"} ت
                     </span>
                 </div>
 
@@ -78,12 +74,11 @@ export default function HouseRentSidebar({ house }: Props) {
                         <HugeiconsIcon icon={MoneyExchange01Icon} />                        قیمت اجاره از
                     </span>
                     <span className="font-bold ">
-                        {house.price || "4.500.000"}‌ت
+                        {formatPrice(house.price)||"-"} ت
                     </span>
                 </div>
             </div>
 
-            {/* Actions Section */}
             <div className="space-y-4">
                 <div className="flex items-center justify-center gap-1.5 text-[14px] font-semibold  mb-4">
                     <HugeiconsIcon icon={UserAccountIcon} size={24} />

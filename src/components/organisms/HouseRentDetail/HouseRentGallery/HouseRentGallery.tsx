@@ -32,7 +32,6 @@ export function HouseRentGallery({
   const [activeImage, setActiveImage] = useState(0);
   const [copied, setCopied] = useState(false);
 
-  // حذف عکس‌های خالی یا نامعتبر
   const images = (Array.isArray(photos) ? photos : []).filter(
     (photo): photo is string =>
       typeof photo === "string" && photo.trim().length > 0
@@ -68,11 +67,9 @@ export function HouseRentGallery({
         await handleCopy();
       }
     } catch {
-      // اشتراک‌گذاری ممکن است توسط کاربر لغو شود
     }
   };
 
-  // چیدمان بر اساس تعداد عکس‌ها
   const galleryLayout =
     imageCount === 1
       ? "grid-cols-1 grid-rows-1 aspect-[4/3] sm:aspect-auto sm:h-[500px] lg:h-[626px]"
@@ -122,7 +119,7 @@ export function HouseRentGallery({
           </div>
 
           <div className="min-w-0 text-right">
-            <h1 className="break-words text-lg font-bold leading-8  sm:text-[24px]">
+            <h1 className="wrap-break-word text-lg font-bold leading-8  sm:text-[24px]">
               {title}
             </h1>
 
@@ -132,14 +129,14 @@ export function HouseRentGallery({
                 size={18}
                 className="shrink-0"
               />
-              <span className="break-words">{address}</span>
+              <span className="wrap-break-word">{address}</span>
             </div>
           </div>
         </div>
 
         {/* Responsive Gallery */}
         {imageCount === 0 ? (
-          <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl bg-neutral-100 text-sm text-neutral-500 sm:aspect-auto sm:h-[320px] md:h-[400px]">
+          <div className="flex aspect-4/3 w-full items-center justify-center rounded-2xl bg-neutral-100 text-sm text-neutral-500 sm:aspect-auto sm:h-[320px] md:h-[400px]">
             تصویری برای این ملک ثبت نشده است
           </div>
         ) : (
@@ -205,7 +202,6 @@ export function HouseRentGallery({
           </div>
         )}
 
-        {/* View all images */}
         {imageCount > 3 && (
           <button
             type="button"

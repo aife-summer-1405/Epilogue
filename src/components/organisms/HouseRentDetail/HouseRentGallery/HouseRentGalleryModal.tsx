@@ -80,7 +80,6 @@ export default function HouseRentGalleryModal({
       aria-label="گالری تصاویر ملک"
       onClick={onClose}
     >
-      {/* دکمه بستن */}
       <div className="absolute right-3 top-3 z-20 sm:right-6 sm:top-6">
         <ButtonOnlyIcon
           variant="outline"
@@ -93,7 +92,6 @@ export default function HouseRentGalleryModal({
         </ButtonOnlyIcon>
       </div>
 
-      {/* تصویر قبلی */}
       {imageCount > 1 && (
         <div className="absolute left-2 z-20 sm:left-6">
           <ButtonOnlyIcon
@@ -111,7 +109,6 @@ export default function HouseRentGalleryModal({
         </div>
       )}
 
-      {/* تصویر فعال */}
       <div
         className="relative h-[65vh] w-full max-w-5xl sm:h-[75vh]"
         onClick={(event) => event.stopPropagation()}
@@ -126,7 +123,6 @@ export default function HouseRentGalleryModal({
         />
       </div>
 
-      {/* تصویر بعدی */}
       {imageCount > 1 && (
         <div className="absolute right-2 z-20 sm:right-6">
           <ButtonOnlyIcon
@@ -144,7 +140,6 @@ export default function HouseRentGalleryModal({
         </div>
       )}
 
-      {/* شمارنده تصاویر */}
       <span className="absolute bottom-4 rounded-full bg-black/50 px-3 py-1 text-sm text-white">
         {activeImage + 1} / {imageCount}
       </span>

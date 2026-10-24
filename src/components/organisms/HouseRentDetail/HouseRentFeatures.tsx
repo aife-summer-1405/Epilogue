@@ -107,16 +107,15 @@ export default function HouseRentFeatures({ house }: Props) {
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {features.map((feature, index) => {
-          // بررسی وجود آیکون برای جلوگیری از خطای undefined
           const IconComponent = feature.icon || Home09Icon;
 
           return (
             <div
               key={feature.label}
-              className={`flex min-h-[95px] min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-[#B9BBC6] p-3 text-center dark:border-[#272727] dark:bg-[#272727] transition-all hover:border-r-4 hover:border-[#1E40AF]`}
+              className={`flex min-h-23.75 min-w-0 flex-col items-center justify-center gap-1.5 rounded-2xl border border-[#B9BBC6] p-3 text-center dark:border-[#272727] dark:bg-[#272727] transition-all hover:border-r-4 hover:border-[#1E40AF]`}
             >
               <ButtonOnlyIcon hasIcon={false} variant="outline"
-                className={`flex items-center border rounded-full size-10 justify-center rounded-full`}
+                className={`flex items-center border rounded-full size-10 justify-center`}
               >
                 <HugeiconsIcon icon={IconComponent} size={22} />
               </ButtonOnlyIcon>

@@ -37,7 +37,6 @@ export default function SimilarAds() {
       dir="rtl"
       className="w-full px-4 py-12  sm:px-6 lg:px-10.5"
     >
-      {/* Header */}
       <div className="mb-7 flex items-center justify-between gap-4">
         <h2 className="text-lg font-bold sm:text-xl">
           آگهی‌های مشابه
@@ -52,28 +51,24 @@ export default function SimilarAds() {
         </Button>
       </div>
 
-      {/* Loading */}
       {isLoading && (
         <p className="py-12 text-center text-sm text-neutral-400">
           در حال دریافت آگهی‌ها...
         </p>
       )}
 
-      {/* Error */}
       {isError && (
         <p className="py-12 text-center text-sm text-red-400">
           دریافت آگهی‌ها با خطا مواجه شد.
         </p>
       )}
 
-      {/* Empty */}
       {!isLoading && !isError && houses.length === 0 && (
         <p className="py-12 text-center text-sm text-neutral-400">
           آگهی‌ای برای نمایش وجود ندارد.
         </p>
       )}
 
-      {/* Slider */}
       {!isLoading && !isError && houses.length > 0 && (
         <>
           <div className="overflow-hidden">
@@ -149,7 +144,6 @@ export default function SimilarAds() {
             </div>
           </div>
 
-          {/* Slider Dots */}
           <div className="mt-7">
             <SliderDots
               totalSlides={slides.length}

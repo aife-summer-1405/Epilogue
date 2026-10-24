@@ -11,7 +11,6 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import {
   House04Icon,
   Calendar03Icon,
-  UserAccountIcon,
   Money02Icon,
   ArrowLeft01Icon,
 } from "@hugeicons/core-free-icons";
@@ -154,7 +153,6 @@ export default function HouseReserveSidebar({ house }: Props) {
       </h2>
 
       <div className="space-y-4">
-        {/* تاریخ رفت */}
         <div className="space-y-2">
           <label className="block  text-sm font-medium">
             تاریخ رفت
@@ -181,7 +179,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* تاریخ برگشت */}
         <div className="space-y-2">
           <label className="block text-sm font-medium">
             تاریخ برگشت
@@ -210,7 +207,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* تعداد مسافران */}
         <div className="space-y-2">
           <label
             htmlFor="travelerCount"
@@ -271,7 +267,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* وضعیت درخواست */}
         {createBooking.isError && (
           <p role="alert" className="text-sm text-red-600">
             ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.
@@ -284,7 +279,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </p>
         )}
 
-        {/* ثبت رزرو */}
         <Button
           type="button"
           size="md"

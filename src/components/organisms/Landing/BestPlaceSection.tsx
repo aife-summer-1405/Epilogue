@@ -21,7 +21,6 @@ export default function BestPlaceSection() {
                 timeLabel="2:25:20"
             />
 
-            {/* Responsive product list */}
             <div className="mt-4 flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
                 {products.map((product) => (
                     <div key={product.id} className="w-full min-w-0">

@@ -42,9 +42,7 @@ export default function Footer() {
             className="mx-2 mb-2 rounded-[20px] bg-[#EDEDED] px-5 py-8 text-neutral-950 dark:bg-[#272727] dark:text-white sm:mx-4 sm:px-8 sm:py-10 lg:px-[68px] lg:py-14"
         >
             <div className="mx-auto flex w-full  flex-col gap-8">
-                {/* Main Sections */}
                 <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-6">
-                    {/* Brand */}
                     <section className="flex min-w-0 flex-col gap-5 md:order-0 md:w-[35%]">
                         <Link
                             href="/"
@@ -102,7 +100,6 @@ export default function Footer() {
                         </div>
                     </section>
 
-                    {/* Footer Links */}
                     {footerSections.map((section, index) => (
                         <section
                             key={section.title}
@@ -128,7 +125,6 @@ export default function Footer() {
                         </section>
                     ))}
 
-                    {/* Contact */}
                     <section className="flex flex-col gap-4 md:order-3 md:min-w-[190px]">
                         <h2 className="text-base font-bold text-primary-500">
                             راه ارتباطی با ما
@@ -151,7 +147,6 @@ export default function Footer() {
                     </section>
                 </div>
 
-                {/* Copyright */}
                 <div className="border-t border-[#C5C5C5] pt-8  text-center dark:border-[#454545] sm:pt-8">
                     <p className="text-sm leading-7 text-[#858997]">
                         تمام حقوق مادی و معنوی این اثر برای برند شما محفوظ است.

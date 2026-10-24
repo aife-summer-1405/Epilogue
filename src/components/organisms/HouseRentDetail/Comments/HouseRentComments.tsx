@@ -79,7 +79,6 @@ export default function HouseRentComments({ houseId }: Props) {
                     </span>
                 </div>
 
-                {/* فرم ثبت نظر */}
                 <form className="mb-6 space-y-4" onSubmit={handleSubmit}>
                     <div>
                         <label
@@ -165,7 +164,6 @@ export default function HouseRentComments({ houseId }: Props) {
 
                 <div className="mb-5 border-t border-neutral-100" />
 
-                {/* لیست نظرات */}
                 {isPending ? (
                     <p className="py-8 text-center text-sm text-neutral-500">
                         در حال دریافت نظرات...

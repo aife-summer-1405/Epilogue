@@ -8,7 +8,6 @@ import { useHouses } from "@/hooks/queries/houses/useHouses";
 export default function SpecialOffersSection() {
   const { data, isPending, isError } = useHouses();
 
-  // فرض بر این است که پاسخ API مستقیماً آرایه است.
   const houses = Array.isArray(data) ? data : [];
 
   return (

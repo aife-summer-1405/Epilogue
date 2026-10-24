@@ -64,7 +64,6 @@ export default function CategorySection() {
           </h3>
         </div>
 
-        {/* Mobile slider */}
         <div
           className="
             flex gap-3 overflow-x-auto px-4 pb-2
@@ -86,7 +85,6 @@ export default function CategorySection() {
           ))}
         </div>
 
-        {/* Desktop grid */}
         <div className="hidden grid-cols-6 gap-3 px-[63px] lg:grid">
           {categories.map((category) => (
             <div key={category.id} className="min-w-0">
