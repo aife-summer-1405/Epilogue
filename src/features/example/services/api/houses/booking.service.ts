@@ -7,16 +7,15 @@ import {
 
 export const bookingService = {
   getById: async (id: number | string): Promise<Booking> => {
-    const response = await axios.get<CreateBookingResponse>(`/api/bookings/${id}`,);
+    const response = await axios.get<CreateBookingResponse>(
+      `/api/bookings/${id}`,
+    );
 
     return response.data.booking;
   },
 
-  create: async (
-    payload: CreateBookingPayload,
-  ): Promise<CreateBookingResponse> => {
-    const response = await axios.post<CreateBookingResponse>("/api/bookings",payload,);
-
+  create: async (payload: CreateBookingPayload) => {
+    const response = await axios.post("/api/bookings", payload);
     return response.data;
   },
 };

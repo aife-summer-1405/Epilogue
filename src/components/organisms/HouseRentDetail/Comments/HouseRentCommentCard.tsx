@@ -63,7 +63,7 @@ export default function HouseRentCommentCard({
 
         <div className="flex shrink-0 items-center gap-1 text-[15px] text-amber-500">
           <span className="mt-1">{Number.isFinite(rating) ? rating : 0}</span>
-          <HugeiconsIcon icon={StarIcon} size={18} />
+          <HugeiconsIcon icon={StarIcon} fill="#f7df0e" size={18} />
 
         </div>
       </div>

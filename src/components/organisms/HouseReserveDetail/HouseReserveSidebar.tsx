@@ -24,18 +24,41 @@ interface Props {
   house: HouseRent;
 }
 
-const today = new DateObject({ calendar: persian });
-const tomorrow = new DateObject({ calendar: persian }).add(1, "day");
+const getToday = () => new DateObject({ calendar: persian }).set({
+  hour: 0,
+  minute: 0,
+  second: 0,
+  millisecond: 0,
+});
+
+const getTomorrow = () => getToday().add(1, "day");
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fa-IR").format(price);
 
-const toGregorianDate = (date: DateObject) =>
-  date.convert("gregorian").format("YYYY-MM-DD");
+const toGregorianDate = (date: DateObject) => {
+  const gregorian = new DateObject(date).convert("gregorian");
+
+  const year = String(gregorian.year);
+  const month = String(gregorian.month.number).padStart(2, "0");
+  const day = String(gregorian.day).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+const getUtcTimestamp = (date: DateObject) => {
+  const gregorian = new DateObject(date).convert("gregorian");
+
+  return Date.UTC(
+    gregorian.year,
+    gregorian.month.number - 1,
+    gregorian.day
+  );
+};
 
 export default function HouseReserveSidebar({ house }: Props) {
-  const [startDate, setStartDate] = useState<DateObject | null>(today);
-  const [endDate, setEndDate] = useState<DateObject | null>(tomorrow);
+  const [startDate, setStartDate] = useState<DateObject | null>(getToday);
+  const [endDate, setEndDate] = useState<DateObject | null>(getTomorrow);
   const [travelerCount, setTravelerCount] = useState(1);
 
   const createBooking = useCreateBooking();
@@ -43,21 +66,60 @@ export default function HouseReserveSidebar({ house }: Props) {
   const nights = useMemo(() => {
     if (!startDate || !endDate) return 0;
 
-    const start = new Date(`${toGregorianDate(startDate)}T00:00:00`);
-    const end = new Date(`${toGregorianDate(endDate)}T00:00:00`);
+    const startTimestamp = getUtcTimestamp(startDate);
+    const endTimestamp = getUtcTimestamp(endDate);
 
-    return Math.max(
-      0,
-      Math.round((end.getTime() - start.getTime()) / 86400000)
-    );
+    const difference = endTimestamp - startTimestamp;
+
+    if (difference <= 0) return 0;
+
+    return difference / (24 * 60 * 60 * 1000);
   }, [startDate, endDate]);
 
-  // فرض شده rentPrice قیمت هر شب است.
-  const pricePerNight = Number(
-    String(house.rentPrice ?? 0).replace(/[٬,،]/g, "")
-  ) || 0;
+  const pricePerNight =
+    Number(String(house.price ?? 0).replace(/[٬,،]/g, "")) || 0;
 
   const totalPrice = pricePerNight * nights;
+
+  const handleStartDateChange = (date: DateObject | null) => {
+    if (!date || Array.isArray(date)) return;
+
+    const selectedDate = new DateObject(date).set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
+
+    setStartDate(selectedDate);
+
+    if (
+      !endDate ||
+      getUtcTimestamp(endDate) <= getUtcTimestamp(selectedDate)
+    ) {
+      setEndDate(new DateObject(selectedDate).add(1, "day"));
+    }
+  };
+
+  const handleEndDateChange = (date: DateObject | null) => {
+    if (!date || Array.isArray(date)) return;
+
+    const selectedDate = new DateObject(date).set({
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+    });
+
+    if (
+      startDate &&
+      getUtcTimestamp(selectedDate) <= getUtcTimestamp(startDate)
+    ) {
+      return;
+    }
+
+    setEndDate(selectedDate);
+  };
 
   const handleBooking = () => {
     if (!startDate || !endDate || nights <= 0) {
@@ -65,22 +127,28 @@ export default function HouseReserveSidebar({ house }: Props) {
       return;
     }
 
-    /*
-      API به traveler_details، sharedEmail و sharedMobile نیاز دارد.
-      چون این فیلدها از این کامپوننت حذف شده‌اند، باید از اطلاعات
-      کاربر لاگین‌شده یا منبع دیگری تأمین شوند.
-    */
-    alert(
-      "برای ثبت رزرو، اطلاعات تماس و مسافران باید از منبع دیگری تأمین شوند."
-    );
+    const houseId = Number(house.id);
+
+    if (!Number.isInteger(houseId) || houseId <= 0) {
+      alert("شناسه خانه معتبر نیست.");
+      return;
+    }
+
+    createBooking.mutate({
+      houseId,
+      reservedDates: [
+        toGregorianDate(startDate),
+        toGregorianDate(endDate),
+      ],
+    });
   };
 
   return (
     <aside
       dir="rtl"
-      className="h-fit w-full rounded-[22px] border border-neutral-200 mb-[32px] bg-white p-4 text-neutral-900  dark:bg-[#272727] dark:text-white "
+      className="mb-[32px] h-fit w-full rounded-[24px] border border-neutral-200 bg-white p-4  dark:border-[#272727] dark:bg-[#272727] dark:text-white"
     >
-      <h2 className="mb-5 flex items-center justify-center gap-2 text-base font-bold">
+      <h2 className="mb-5 flex items-center   justify-center gap-2 text-base font-bold">
         <HugeiconsIcon icon={House04Icon} size={22} />
         رزرو خونه برای {house.title}
       </h2>
@@ -88,26 +156,20 @@ export default function HouseReserveSidebar({ house }: Props) {
       <div className="space-y-4">
         {/* تاریخ رفت */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium">تاریخ رفت</label>
+          <label className="block  text-sm font-medium">
+            تاریخ رفت
+          </label>
 
           <div className="relative">
             <DatePicker
               value={startDate}
-              onChange={(date) => {
-                if (!date || Array.isArray(date)) return;
-
-                setStartDate(date);
-
-                if (endDate && date.toDate() >= endDate.toDate()) {
-                  setEndDate(date.add(1, "day"));
-                }
-              }}
+              onChange={handleStartDateChange}
               calendar={persian}
               locale={persian_fa}
               format="YYYY/M/D"
-              minDate={today}
+              minDate={getToday()}
               calendarPosition="bottom-right"
-              inputClass="!w-full !h-10 !rounded-full !border-0 !bg-neutral-100 !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
+              inputClass="!h-10 !py-6 !w-full text-[#8B8D98] !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
               containerClassName="!w-full"
             />
 
@@ -121,21 +183,22 @@ export default function HouseReserveSidebar({ house }: Props) {
 
         {/* تاریخ برگشت */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium">تاریخ برگشت</label>
+          <label className="block text-sm font-medium">
+            تاریخ برگشت
+          </label>
 
           <div className="relative">
             <DatePicker
               value={endDate}
-              onChange={(date) => {
-                if (!date || Array.isArray(date)) return;
-                setEndDate(date);
-              }}
+              onChange={handleEndDateChange}
               calendar={persian}
               locale={persian_fa}
               format="YYYY/M/D"
-              minDate={startDate ? startDate.add(1, "day") : tomorrow}
+              minDate={startDate
+                ? new DateObject(startDate).add(1, "day")
+                : getTomorrow()}
               calendarPosition="bottom-right"
-              inputClass="!w-full !h-10 !rounded-full !border-0 !bg-neutral-100 !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
+              inputClass="!h-10 !py-6 !w-full !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
               containerClassName="!w-full"
             />
 
@@ -156,9 +219,10 @@ export default function HouseReserveSidebar({ house }: Props) {
             تعداد مسافران
           </label>
 
-          <div className="flex items-center rounded-full bg-neutral-100 px-4 dark:bg-[#353535]">
-            <HugeiconsIcon icon={UserAccountIcon} size={20} />
-
+          <div className="flex items-center rounded-full bg-[#F0F0F3] px-4 dark:bg-[#353535]">
+            <span className="shrink-0 text-xs text-[#8B8D98]">
+              نفر
+            </span>
             <input
               id="travelerCount"
               type="number"
@@ -167,53 +231,77 @@ export default function HouseReserveSidebar({ house }: Props) {
               value={travelerCount}
               onChange={(event) => {
                 const value = Number(event.target.value);
-                setTravelerCount(
-                  Math.max(1, Math.min(20, value || 1))
-                );
+                setTravelerCount(Math.max(1, Math.min(20, value || 1)));
               }}
               className="w-full bg-transparent px-3 py-3 text-sm outline-none"
             />
 
-            <span className="shrink-0 text-xs text-neutral-500">نفر</span>
+
           </div>
         </div>
 
         {/* قیمت رزرو */}
         <div className="space-y-3 pt-1">
-          <p className="flex items-center dark:text-white text-black justify-center gap-2 text-sm font-bold">
+          <p className="flex items-center justify-center gap-2 text-sm font-bold text-black dark:text-white">
             <HugeiconsIcon icon={Money02Icon} size={24} />
             قیمت رزرو
           </p>
 
-          <div className="space-y-3 text-[14px]">
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[#8B8D98]">{nights} شب</span>
-              <span className="font-semibold dark:text-white text-black">
-                {formatPrice(pricePerNight)} تومان
-              </span>
-            </div>
+          <div className="flex items-center justify-between gap-2 text-sm">
+            <span className="text-[#8B8D98]">
+              1 شب
+            </span>
+
+            <span className=" text-black dark:text-white">
+              {formatPrice(pricePerNight)} تومان
+            </span>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-2 pt-1 text-sm font-bold">
-     
-            <p className="flex dark:text-white text-black items-center justify-center gap-2 text-sm font-bold">
-              <HugeiconsIcon icon={Money02Icon} size={24} />
-              قیمت نهایی
-            </p>
+
+          <p className="flex items-center justify-center gap-2 text-sm font-bold text-black dark:text-white">
+            <HugeiconsIcon icon={Money02Icon} size={24} />
+            قیمت نهایی
+          </p>
+
+          <div className="flex font-semibold bg-[#EDEDED] text-black dark:bg-[#353535] dark:text-white rounded-[24px] p-3 items-center justify-between gap-2 mx-11 text-sm">
+            {formatPrice(nights)} شب
             <span>{formatPrice(totalPrice)} تومان</span>
+
+
           </div>
         </div>
 
+        {/* وضعیت درخواست */}
+        {createBooking.isError && (
+          <p role="alert" className="text-sm text-red-600">
+            ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.
+          </p>
+        )}
+
+        {createBooking.isSuccess && (
+          <p className="text-sm text-green-600">
+            درخواست رزرو با موفقیت ثبت شد.
+          </p>
+        )}
+
+        {/* ثبت رزرو */}
         <Button
           type="button"
           size="md"
           variant="primary"
           disabled={createBooking.isPending || nights <= 0}
           onClick={handleBooking}
-          className="flex w-full "
+          className="flex w-full font-semibold items-center justify-center gap-2"
         >
-          <span>همین الان رزرو کن</span>
-          <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
+          <span className="pl-2">
+            {createBooking.isPending
+              ? "در حال ثبت رزرو..."
+              : "همین الان رزرو کن"}
+          </span>
+
+          {!createBooking.isPending && (
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={24} />
+          )}
         </Button>
       </div>
     </aside>

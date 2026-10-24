@@ -18,6 +18,8 @@ import {
 interface Props {
     house: HouseRent;
 }
+const formatPrice = (price: number) =>
+  new Intl.NumberFormat("fa-IR").format(price);
 
 export default function HouseRentSidebar({ house }: Props) {
     return (
@@ -52,7 +54,7 @@ export default function HouseRentSidebar({ house }: Props) {
                 </p>
                 <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold ">
                     <HugeiconsIcon icon={Calendar03Icon} />
-                    <span>{house.sellerDate || "3 تیر - 1404  10:10"}</span>
+                    <span>{house.last_updated || "3 تیر - 1404  10:10"}</span>
                 </div>
             </div>
 
@@ -67,7 +69,7 @@ export default function HouseRentSidebar({ house }: Props) {
                                  قیمت رهن از
                     </span>
                     <span className="font-bold ">
-                        {house.mortgagePrice || "4.500.000"}‌ت
+                        {house.discounted_price || "4.500.000"}‌ت
                     </span>
                 </div>
 
@@ -76,7 +78,7 @@ export default function HouseRentSidebar({ house }: Props) {
                         <HugeiconsIcon icon={MoneyExchange01Icon} />                        قیمت اجاره از
                     </span>
                     <span className="font-bold ">
-                        {house.rentPrice || "4.500.000"}‌ت
+                        {house.price || "4.500.000"}‌ت
                     </span>
                 </div>
             </div>

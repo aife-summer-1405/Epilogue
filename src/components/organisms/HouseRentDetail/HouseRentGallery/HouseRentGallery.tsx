@@ -88,7 +88,7 @@ export function HouseRentGallery({
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
             <Button size="sm">
               <span className="flex items-center gap-2">
-                <span>{rating} ستاره</span>
+                <span className="mt-1">{rating} ستاره</span>
                 <HugeiconsIcon icon={StarIcon} size={24} />
               </span>
             </Button>
@@ -122,11 +122,11 @@ export function HouseRentGallery({
           </div>
 
           <div className="min-w-0 text-right">
-            <h1 className="break-words text-lg font-bold leading-8 text-neutral-950 sm:text-xl">
+            <h1 className="break-words text-lg font-bold leading-8  sm:text-[24px]">
               {title}
             </h1>
 
-            <div className="mt-1 flex items-start justify-start gap-1 text-xs text-[#8B8D98] sm:text-sm">
+            <div className="mt-4 flex items-start justify-start gap-1 text-[14px] text-[#8B8D98] sm:text-sm">
               <HugeiconsIcon
                 icon={Location01Icon}
                 size={18}

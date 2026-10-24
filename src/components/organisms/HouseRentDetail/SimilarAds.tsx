@@ -35,7 +35,7 @@ export default function SimilarAds() {
   return (
     <section
       dir="rtl"
-      className="w-full px-4 py-8  sm:px-6 lg:px-[42px]"
+      className="w-full px-4 py-12  sm:px-6 lg:px-10.5"
     >
       {/* Header */}
       <div className="mb-7 flex items-center justify-between gap-4">

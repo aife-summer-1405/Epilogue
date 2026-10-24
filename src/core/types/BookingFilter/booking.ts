@@ -10,9 +10,6 @@ export interface TravelerDetails {
 export interface CreateBookingPayload {
   houseId: number;
   reservedDates: string[];
-  traveler_details: TravelerDetails[];
-  sharedEmail: string;
-  sharedMobile: string;
 }
 
 export interface Booking {

@@ -45,7 +45,7 @@ export default function HouseDetailContent({
   return (
     <main
       dir="rtl"
-      className="mx-auto w-full px-3 py-5 sm:px-6 md:px-10 lg:px-20"
+      className="mx-auto w-full  py-5 "
     >
       <HouseRentGallery
         title={property.title}
@@ -54,9 +54,9 @@ export default function HouseDetailContent({
         photos={property.photos ?? []}
       />
 
-      <div className="mt-8 flex flex-col justify-between gap-8 lg:flex-row lg:gap-[65px]">
+      <div className="mt-12 flex flex-col justify-between px-[42px] gap-8 lg:flex-row lg:gap-[65px]">
         {/* محتوای اصلی */}
-        <div className="order-2 min-w-0 w-full space-y-7 lg:order-1 lg:flex-1">
+        <div className="order-2 min-w-0 w-full space-y-8 lg:order-1 lg:flex-1">
           <HouseRentInfo house={property} />
 
 
