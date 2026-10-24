@@ -3,6 +3,7 @@ import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { StarIcon } from "@hugeicons/core-free-icons";
 import { HouseComment } from "@/core/types/RentHouse/Comments/HouseRentComments.types";
+import { formatPersianDate } from "@/utils/formatters";
 
 interface Props {
   comment: HouseComment;
@@ -17,15 +18,7 @@ export default function HouseRentCommentCard({
     `${comment.user?.firstName ?? ""} ${comment.user?.lastName ?? ""}`.trim();
 
   const rating = Number(comment.rating);
-  const date = new Date(comment.created_at);
-
-  const formattedDate = Number.isNaN(date.getTime())
-    ? ""
-    : new Intl.DateTimeFormat("fa-IR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }).format(date);
+const formattedDate = formatPersianDate(comment.created_at);
 
   return (
     <article

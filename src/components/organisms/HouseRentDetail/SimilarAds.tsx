@@ -8,6 +8,8 @@ import ProductCard from "@/components/molecules/product-card/ProductCard";
 import { useHouses } from "@/hooks/queries/houses/useHouses";
 import { SliderDots } from "@/components/molecules";
 import Button from "@/components/atoms/button/Button";
+import { formatPrice } from "@/utils/formatters";
+
 
 export default function SimilarAds() {
   const router = useRouter();
@@ -22,11 +24,7 @@ export default function SimilarAds() {
     slides.push(houses.slice(i, i + 3));
   }
 
-  const formatPrice = (value: string | number | null | undefined) => {
-    if (value == null || value === "") return "—";
 
-    return new Intl.NumberFormat("fa-IR").format(Number(value));
-  };
 
   const openDetails = (id: string) => {
     router.push(`/houseRent/${id}`);

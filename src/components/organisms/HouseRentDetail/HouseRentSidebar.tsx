@@ -14,12 +14,14 @@ import {
     Money02Icon,
     MoneyExchange01Icon,
 } from "@hugeicons/core-free-icons";
+import { formatPersianDate, formatPrice } from "@/utils/formatters";
+
+
 
 interface Props {
     house: HouseRent;
 }
-const formatPrice = (price: number) =>
-    new Intl.NumberFormat("fa-IR").format(price);
+
 
 export default function HouseRentSidebar({ house }: Props) {
     return (
@@ -52,8 +54,11 @@ export default function HouseRentSidebar({ house }: Props) {
                 </p>
                 <div className="mt-1 flex items-center gap-1.5 text-xs font-semibold ">
                     <HugeiconsIcon icon={Calendar03Icon} />
-                    <span>{house.last_updated || "3 تیر - 1404  10:10"}</span>
-                </div>
+                    <span>
+                        {house.last_updated
+                            ? formatPersianDate(house.last_updated)
+                            : "3 تیر - 1404 10:10"}
+                    </span>                </div>
             </div>
 
             <p className="mb-3 text-center text-sm font-bold ">قیمت</p>
@@ -65,7 +70,7 @@ export default function HouseRentSidebar({ house }: Props) {
                         قیمت رهن از
                     </span>
                     <span className="font-bold ">
-                        {formatPrice(house.discounted_price)||"-"} ت
+                        {formatPrice(house.discounted_price) || "-"} ت
                     </span>
                 </div>
 
@@ -74,7 +79,7 @@ export default function HouseRentSidebar({ house }: Props) {
                         <HugeiconsIcon icon={MoneyExchange01Icon} />                        قیمت اجاره از
                     </span>
                     <span className="font-bold ">
-                        {formatPrice(house.price)||"-"} ت
+                        {formatPrice(house.price) || "-"} ت
                     </span>
                 </div>
             </div>

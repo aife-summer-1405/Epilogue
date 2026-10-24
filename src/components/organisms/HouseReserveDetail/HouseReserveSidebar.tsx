@@ -18,6 +18,8 @@ import {
 import Button from "@/components/atoms/button/Button";
 import { HouseRent } from "@/core/types/RentHouse/house";
 import { useCreateBooking } from "@/hooks/mutations/useCreateBooking";
+import { formatPrice } from "@/utils/formatters";
+import { toGregorianDate, getUtcTimestamp } from "@/utils/date";
 
 interface Props {
   house: HouseRent;
@@ -32,28 +34,7 @@ const getToday = () => new DateObject({ calendar: persian }).set({
 
 const getTomorrow = () => getToday().add(1, "day");
 
-const formatPrice = (price: number) =>
-  new Intl.NumberFormat("fa-IR").format(price);
 
-const toGregorianDate = (date: DateObject) => {
-  const gregorian = new DateObject(date).convert("gregorian");
-
-  const year = String(gregorian.year);
-  const month = String(gregorian.month.number).padStart(2, "0");
-  const day = String(gregorian.day).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
-
-const getUtcTimestamp = (date: DateObject) => {
-  const gregorian = new DateObject(date).convert("gregorian");
-
-  return Date.UTC(
-    gregorian.year,
-    gregorian.month.number - 1,
-    gregorian.day
-  );
-};
 
 export default function HouseReserveSidebar({ house }: Props) {
   const [startDate, setStartDate] = useState<DateObject | null>(getToday);
@@ -195,7 +176,7 @@ export default function HouseReserveSidebar({ house }: Props) {
                 ? new DateObject(startDate).add(1, "day")
                 : getTomorrow()}
               calendarPosition="bottom-right"
-              inputClass="!h-10 !py-6 !w-full !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
+              inputClass="!h-10 !py-6 !w-full text-[#8B8D98] !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
               containerClassName="!w-full"
             />
 
@@ -229,7 +210,7 @@ export default function HouseReserveSidebar({ house }: Props) {
                 const value = Number(event.target.value);
                 setTravelerCount(Math.max(1, Math.min(20, value || 1)));
               }}
-              className="w-full bg-transparent px-3 py-3 text-sm outline-none"
+              className="w-full text-[#8B8D98] bg-transparent px-3 py-3 text-sm outline-none"
             />
 
 
