@@ -1,7 +1,7 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
@@ -25,18 +25,19 @@ interface Props {
   house: HouseRent;
 }
 
-const getToday = () => new DateObject({ calendar: persian }).set({
-  hour: 0,
-  minute: 0,
-  second: 0,
-  millisecond: 0,
-});
+const getToday = () =>
+  new DateObject({ calendar: persian }).set({
+    hour: 0,
+    minute: 0,
+    second: 0,
+    millisecond: 0,
+  });
 
 const getTomorrow = () => getToday().add(1, "day");
 
-
-
 export default function HouseReserveSidebar({ house }: Props) {
+  const router = useRouter();
+
   const [startDate, setStartDate] = useState<DateObject | null>(getToday);
   const [endDate, setEndDate] = useState<DateObject | null>(getTomorrow);
   const [travelerCount, setTravelerCount] = useState(1);
@@ -46,10 +47,8 @@ export default function HouseReserveSidebar({ house }: Props) {
   const nights = useMemo(() => {
     if (!startDate || !endDate) return 0;
 
-    const startTimestamp = getUtcTimestamp(startDate);
-    const endTimestamp = getUtcTimestamp(endDate);
-
-    const difference = endTimestamp - startTimestamp;
+    const difference =
+      getUtcTimestamp(endDate) - getUtcTimestamp(startDate);
 
     if (difference <= 0) return 0;
 
@@ -101,7 +100,7 @@ export default function HouseReserveSidebar({ house }: Props) {
     setEndDate(selectedDate);
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (!startDate || !endDate || nights <= 0) {
       alert("تاریخ رفت و برگشت را به‌درستی انتخاب کنید.");
       return;
@@ -114,28 +113,35 @@ export default function HouseReserveSidebar({ house }: Props) {
       return;
     }
 
-    createBooking.mutate({
-      houseId,
-      reservedDates: [
-        toGregorianDate(startDate),
-        toGregorianDate(endDate),
-      ],
-    });
+    try {
+      await createBooking.mutateAsync({
+        houseId,
+        reservedDates: [
+          toGregorianDate(startDate),
+          toGregorianDate(endDate),
+        ],
+      });
+
+      router.push(`/houseBooking/${house.id}`);
+    } catch (error) {
+      console.error("Booking failed:", error);
+    }
   };
 
   return (
     <aside
       dir="rtl"
-      className="mb-[32px] h-fit w-full rounded-[24px] border border-neutral-200 bg-white p-4  dark:border-[#272727] dark:bg-[#272727] dark:text-white"
+      className="mb-[32px] h-fit w-full rounded-[24px] border border-neutral-200 bg-white p-4 dark:border-[#272727] dark:bg-[#272727] dark:text-white"
     >
-      <h2 className="mb-5 flex items-center   justify-center gap-2 text-base font-bold">
+      <h2 className="mb-5 flex items-center justify-center gap-2 text-base font-bold">
         <HugeiconsIcon icon={House04Icon} size={22} />
         رزرو خونه برای {house.title}
       </h2>
 
       <div className="space-y-4">
+        {/* تاریخ رفت */}
         <div className="space-y-2">
-          <label className="block  text-sm font-medium">
+          <label className="block text-sm font-medium">
             تاریخ رفت
           </label>
 
@@ -160,6 +166,7 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
+        {/* تاریخ برگشت */}
         <div className="space-y-2">
           <label className="block text-sm font-medium">
             تاریخ برگشت
@@ -172,9 +179,11 @@ export default function HouseReserveSidebar({ house }: Props) {
               calendar={persian}
               locale={persian_fa}
               format="YYYY/M/D"
-              minDate={startDate
-                ? new DateObject(startDate).add(1, "day")
-                : getTomorrow()}
+              minDate={
+                startDate
+                  ? new DateObject(startDate).add(1, "day")
+                  : getTomorrow()
+              }
               calendarPosition="bottom-right"
               inputClass="!h-10 !py-6 !w-full text-[#8B8D98] !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !pl-10 !text-sm !outline-none dark:!bg-[#353535]"
               containerClassName="!w-full"
@@ -188,6 +197,7 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
+        {/* تعداد مسافران */}
         <div className="space-y-2">
           <label
             htmlFor="travelerCount"
@@ -200,6 +210,7 @@ export default function HouseReserveSidebar({ house }: Props) {
             <span className="shrink-0 text-xs text-[#8B8D98]">
               نفر
             </span>
+
             <input
               id="travelerCount"
               type="number"
@@ -210,10 +221,8 @@ export default function HouseReserveSidebar({ house }: Props) {
                 const value = Number(event.target.value);
                 setTravelerCount(Math.max(1, Math.min(20, value || 1)));
               }}
-              className="w-full text-[#8B8D98] bg-transparent px-3 py-3 text-sm outline-none"
+              className="w-full bg-transparent px-3 py-3 text-sm text-[#8B8D98] outline-none"
             />
-
-
           </div>
         </div>
 
@@ -226,28 +235,26 @@ export default function HouseReserveSidebar({ house }: Props) {
 
           <div className="flex items-center justify-between gap-2 text-sm">
             <span className="text-[#8B8D98]">
-              1 شب
+              {formatPrice(nights)} شب
             </span>
 
-            <span className=" text-black dark:text-white">
+            <span className="text-black dark:text-white">
               {formatPrice(pricePerNight)} تومان
             </span>
           </div>
-
 
           <p className="flex items-center justify-center gap-2 text-sm font-bold text-black dark:text-white">
             <HugeiconsIcon icon={Money02Icon} size={24} />
             قیمت نهایی
           </p>
 
-          <div className="flex font-semibold bg-[#EDEDED] text-black dark:bg-[#353535] dark:text-white rounded-[24px] p-3 items-center justify-between gap-2 mx-11 text-sm">
-            {formatPrice(nights)} شب
+          <div className="mx-11 flex items-center justify-between gap-2 rounded-[24px] bg-[#EDEDED] p-3 text-sm font-semibold text-black dark:bg-[#353535] dark:text-white">
+            <span>{formatPrice(nights)} شب</span>
             <span>{formatPrice(totalPrice)} تومان</span>
-
-
           </div>
         </div>
 
+        {/* وضعیت درخواست */}
         {createBooking.isError && (
           <p role="alert" className="text-sm text-red-600">
             ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.
@@ -260,13 +267,14 @@ export default function HouseReserveSidebar({ house }: Props) {
           </p>
         )}
 
+        {/* ثبت رزرو */}
         <Button
           type="button"
           size="md"
           variant="primary"
           disabled={createBooking.isPending || nights <= 0}
           onClick={handleBooking}
-          className="flex w-full font-semibold items-center justify-center gap-2"
+          className="flex w-full items-center justify-center gap-2 font-semibold"
         >
           <span className="pl-2">
             {createBooking.isPending
