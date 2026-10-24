@@ -26,7 +26,7 @@ export default function CategoryCard({
       onMouseLeave={() => setIsHovered(false)}
     >
       <Image
-        src={image}
+        src={image||""}
         alt={alt ?? title}
         fill
         sizes="(max-width: 640px) 100vw, 220px"

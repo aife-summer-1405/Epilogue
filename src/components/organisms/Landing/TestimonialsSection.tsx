@@ -5,19 +5,33 @@ import gsap from "gsap";
 
 import BackgroundImage from "@/app/assets/Image/Comment.jpg";
 import { CommentCard } from "@/components/molecules";
-import { useComments } from "@/hooks/queries/useComments";
+import { useComments } from "@/hooks/queries/landing/useComments";
 
-type Comment = {
-  id: number;
-  house_id: number;
-  user_id: number;
+interface Comment {
+  id: string;
+  house_id: string;
   title: string;
   caption: string;
-  rating: number;
-  parent_comment_id: number | null;
+  rating: string;
   created_at: string;
-  updated_at: string;
-};
+  user: {
+    firstName: string;
+    lastName: string;
+    profilePicture: string | null;
+  };
+  house: {
+    id: string;
+    title: string;
+    address: string;
+  };
+}
+
+interface CommentsResponse {
+  comments: Comment[];
+  totalCount: number;
+  currentPage: number;
+  totalPages: number;
+}
 
 export default function TestimonialsSection() {
   const { data, isPending, isError } = useComments();
@@ -25,7 +39,8 @@ export default function TestimonialsSection() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
-  const comments: Comment[] = Array.isArray(data) ? data : [];
+  const response = data as CommentsResponse | undefined;
+  const comments = response?.comments ?? [];
 
   useEffect(() => {
     const track = trackRef.current;
@@ -43,7 +58,6 @@ export default function TestimonialsSection() {
         ease: "none",
         repeat: -1,
         yoyo: true,
-        repeatDelay: 0,
         paused: true,
       });
 
@@ -123,19 +137,23 @@ export default function TestimonialsSection() {
               هنوز نظری ثبت نشده است.
             </p>
           ) : (
-            <div
-              ref={trackRef}
-              className="flex flex-col gap-4"
-            >
-              {comments.map((comment) => (
-                <div key={comment.id} className="w-full shrink-0">
-                  <CommentCard
-                    content={comment.caption}
-                    authorName="کاربر سایت"
-                    date={formatDate(comment.created_at)}
-                  />
-                </div>
-              ))}
+            <div ref={trackRef} className="flex flex-col gap-4">
+              {comments.map((comment) => {
+                const authorName =
+                  `${comment.user?.firstName ?? ""} ${
+                    comment.user?.lastName ?? ""
+                  }`.trim() || "کاربر سایت";
+
+                return (
+                  <div key={comment.id} className="w-full shrink-0">
+                    <CommentCard
+                      content={comment.caption}
+                      authorName={authorName}
+                      date={formatDate(comment.created_at)}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
