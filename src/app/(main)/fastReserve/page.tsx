@@ -1,7 +1,7 @@
 import BreadCrumb from "@/components/molecules/breadcrumb/BreadCrumb";
 import ViewProductCard from "@/components/molecules/product-card/ViewProductCard";
 import FiltersSection from "@/components/organisms/fastReserve/FiltersSection";
-import { FC } from "react";
+import { FC, Suspense } from "react";
 import slider1 from "@/app/assets/Image/Slider1.webp";
 import slider2 from "@/app/assets/Image/Slider2.webp";
 import slider3 from "@/app/assets/Image/Slider3.webp";
@@ -32,7 +32,9 @@ const page: FC<IProps> = async ({ searchParams }) => {
   return (
     <div className="mx-auto flex flex-col items-center gap-12 max-w-10/12">
       <BreadCrumb list={list} />
-      <FiltersSection />
+      <Suspense>
+        <FiltersSection />
+      </Suspense>
       <div className="flex items-center gap-3 w-full">
         <div
           dir="ltr"

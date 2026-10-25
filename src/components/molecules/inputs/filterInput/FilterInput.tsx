@@ -23,9 +23,11 @@ interface IProps {
   placeHolder?: string;
   isTitle?: string;
   onValueChange?: (event: IValues | null) => void;
-  onInputValueChange?: () => string;
+  onInputValueChange?: (event: string) => void;
   className?: string;
   size?: Size;
+  isNumeric?: boolean;
+  defaultValue?: IFilterInputs;
 }
 
 const FilterInput: FC<IProps> = ({
@@ -36,6 +38,8 @@ const FilterInput: FC<IProps> = ({
   onInputValueChange,
   className,
   size = "default",
+  isNumeric = false,
+  defaultValue,
 }) => {
   return (
     <div className={cn("flex flex-col gap-3", styles[size], className)}>
@@ -48,11 +52,20 @@ const FilterInput: FC<IProps> = ({
         items={items}
         onInputValueChange={onInputValueChange}
         onValueChange={onValueChange}
+        defaultValue={defaultValue}
       >
         <ComboboxInput
           className={`border-none! ring-0!`}
           placeholder={placeHolder}
           showClear
+          onBeforeInput={(e) => {
+            if (isNumeric) {
+              const data = (e as unknown as InputEvent).data;
+              if (data && !/^[0-9]+$/.test(data)) {
+                e.preventDefault();
+              }
+            }
+          }}
         />
         <ComboboxContent>
           <ComboboxEmpty>چیزی یافت نشد !</ComboboxEmpty>
