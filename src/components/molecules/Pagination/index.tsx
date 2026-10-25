@@ -80,65 +80,15 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <nav
       aria-label="Pagination"
-      className="inline-flex items-center gap-1 rounded-full bg-gray-100 p-1"
+      dir="rtl"
+      className="inline-flex items-center gap-1 rounded-full bg-gray-100 p-1.5 dark:bg-[#272727]"
     >
       <button
+        type="button"
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-500"
-        aria-label="Previous page"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={2}
-          stroke="currentColor"
-          className="h-4 w-4"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.75 19.5L8.25 12l7.5-7.5"
-          />
-        </svg>
-      </button>
-
-      {paginationRange.map((pageNumber, index) => {
-        if (pageNumber === "...") {
-          return (
-            <span
-              key={`ellipsis-${index}`}
-              className="flex h-9 w-9 items-center justify-center text-sm font-medium text-gray-500"
-            >
-              &#8230;
-            </span>
-          );
-        }
-
-        const isCurrentPage = pageNumber === currentPage;
-
-        return (
-          <button
-            key={pageNumber}
-            onClick={() => onPageChange(pageNumber as number)}
-            aria-current={isCurrentPage ? "page" : undefined}
-            className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
-              isCurrentPage
-                ? "bg-blue-700 text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
-            }`}
-          >
-            {pageNumber}
-          </button>
-        );
-      })}
-
-      <button
-        onClick={handleNext}
-        disabled={currentPage === totalPages}
-        className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-gray-500"
-        aria-label="Next page"
+        className="flex h-9 items-center justify-center gap-1 rounded-xl px-2.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
+        aria-label="صفحه قبلی"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +102,60 @@ const Pagination: React.FC<PaginationProps> = ({
             strokeLinecap="round"
             strokeLinejoin="round"
             d="M8.25 4.5l7.5 7.5-7.5 7.5"
+          />
+        </svg>
+      </button>
+
+      {paginationRange.map((pageNumber, index) => {
+        if (pageNumber === "...") {
+          return (
+            <span
+              key={`ellipsis-${index}`}
+              className="flex h-9 w-9 items-center justify-center text-sm font-medium text-gray-500 dark:text-gray-400"
+            >
+              &#8230;
+            </span>
+          );
+        }
+
+        const isCurrentPage = pageNumber === currentPage;
+
+        return (
+          <button
+            key={pageNumber}
+            type="button"
+            onClick={() => onPageChange(pageNumber as number)}
+            aria-current={isCurrentPage ? "page" : undefined}
+            className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-medium transition-colors ${
+              isCurrentPage
+                ? "bg-[#1e3a8a] text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
+            }`}
+          >
+            {pageNumber}
+          </button>
+        );
+      })}
+
+      <button
+        type="button"
+        onClick={handleNext}
+        disabled={currentPage === totalPages}
+        className="flex h-9 items-center justify-center gap-1 rounded-xl px-2.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
+        aria-label="صفحه بعدی"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={2}
+          stroke="currentColor"
+          className="h-4 w-4"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15.75 19.5L8.25 12l7.5-7.5"
           />
         </svg>
       </button>

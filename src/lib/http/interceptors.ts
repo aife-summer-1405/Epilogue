@@ -1,11 +1,13 @@
+"use server";
+
 import axios, { AxiosError, AxiosResponse } from "axios";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const instance = axios.create({
   baseURL: BASE_URL,
-  // timeout: 15000,
+  timeout: 15000,
 });
 
 const onSuccess = (response: AxiosResponse) => response;
@@ -16,11 +18,11 @@ const onError = (error: AxiosError) => {
 
 instance.interceptors.request.use(
   async (config) => {
-    if (!config.headers?.Authorization) {
-      // const token = (await cookies()).get("accessToken")?.value;
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`;
-      // }
+    if (!config.headers?.Authorization && config.headers.tokenNeeded === true) {
+      const token = (await cookies()).get("accessToken")?.value;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
