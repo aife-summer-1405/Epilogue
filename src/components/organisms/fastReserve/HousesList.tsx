@@ -4,6 +4,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { getHouses } from "@/app/actions/fastReserve/houses.actions";
 import ViewProductCard from "@/components/molecules/product-card/ViewProductCard";
+import Link from "next/link";
 
 interface IHouse {
   id: string;
@@ -36,6 +37,11 @@ export default function HousesList() {
   return (
     <div className={isFetching ? "grid gap-3 opacity-60" : "grid gap-3"}>
       {data?.houses.map((house: IHouse) => (
+                  <Link
+            key={house.id}
+            // هدایت به صفحه دیتیل با آیدی واقعی هر خانه
+            href={`/houseReserve/${house.id}`}
+             >
         <ViewProductCard
           key={house.id}
           slides={house.photos.map((src) => ({ src, alt: house.title }))}
@@ -49,6 +55,7 @@ export default function HousesList() {
           pricePerNight={house.discounted_price ?? house.price}
           monthlyRent={house.price}
         />
+        </Link>
       ))}
     </div>
   );

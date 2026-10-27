@@ -15,7 +15,7 @@ export const bookingService = {
   },
 
   create: async (payload: CreateBookingPayload) => {
-    const response = await axios.post("/api/bookings", payload);
+    const response = await axios.post("/bookings", payload);
     return response.data;
   },
 };

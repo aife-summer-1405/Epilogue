@@ -6,6 +6,7 @@ import ProductCard from "@/components/molecules/product-card/ProductCard";
 import MortgageFilterSection from "./MortgageFilterSection";
 import { useGetHouses } from "@/hooks/queries/useGetHouses";
 import { GetHousesParams, HouseItem } from "@/services/houses/houses.service";
+import Link from "next/link";
 
 const MortgageRentContent: React.FC = () => {
   const [queryParams, setQueryParams] = useState<GetHousesParams>({
@@ -95,6 +96,11 @@ const MortgageRentContent: React.FC = () => {
       {!isLoading && !isError && housesList.length > 0 && (
         <div className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:mt-8 lg:grid-cols-3">
           {housesList.map((house: HouseItem) => (
+                      <Link
+            key={house.id}
+            // هدایت به صفحه دیتیل با آیدی واقعی هر خانه
+            href={`/houseRent/${house.id}`}
+                  >
             <ProductCard
               key={house.id}
               image={house.photos?.[0] || house.image || ""}
@@ -112,7 +118,9 @@ const MortgageRentContent: React.FC = () => {
                 house.discount ? formatPrice(house.price) : undefined
               }
             />
+            </Link>
           ))}
+          
         </div>
       )}
 
