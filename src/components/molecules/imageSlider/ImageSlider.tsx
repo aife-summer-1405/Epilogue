@@ -5,8 +5,8 @@ import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { ISlide } from "@/core/types/sliderSlides.types";
+import ImageFallback from "../ImageFallBack/ImageFallBack";
 
 interface IProps {
   slides: ISlide[];
@@ -44,11 +44,10 @@ const ImageSlider = ({ slides, className, autoPlay = true }: IProps) => {
       {slides.map((slide, i) => (
         <SwiperSlide key={i}>
           <div className="relative size-full">
-            <Image
+            <ImageFallback
               src={slide.src}
               alt={slide.alt}
               fill
-              priority={i === 0}
               className="object-cover"
               sizes="(min-width: 1024px) 55vw, 100vw"
             />

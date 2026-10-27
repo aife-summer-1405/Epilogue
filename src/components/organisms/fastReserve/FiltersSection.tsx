@@ -5,8 +5,18 @@ import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
 import { cn } from "@/lib/utils";
 import { FilterRemoveIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { getLocations } from "@/services/fastReserve/locations.service";
+import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
+
+interface ILocations {
+  id: string;
+  areaName: string;
+  lat: string;
+  lng: string;
+}
 
 type FilterKeys =
   | "page"
@@ -45,7 +55,17 @@ const filterKeys = [
   "maxArea",
 ];
 
-const sortOptions = [
+const propertyTypeOptions: IFilterInputs[] = [
+  {
+    label: "آپارتمان",
+    value: "apartment",
+  },
+  { label: "ویلا", value: "villa" },
+  { label: "خانه", value: "house" },
+  { label: "زمین", value: "land" },
+  { label: "تجاری", value: "commercial" },
+];
+const sortOptions: IFilterInputs[] = [
   {
     label: "برروز ترین",
     value: "last_updated",
@@ -69,7 +89,34 @@ const FiltersSection = () => {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
 
-  const [sortDefault] = useState(() => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["Locations"],
+    queryFn: getLocations,
+  });
+
+  const locations = useMemo(
+    () =>
+      (data?.data ?? []).map((loc: ILocations) => ({
+        ...loc,
+        label: loc.areaName,
+        value: loc.areaName,
+      })),
+    [data],
+  );
+  const [locationsValue, setLocationsValue] = useState<null | IFilterInputs>(
+    () => {
+      const location = searchParams.get("location");
+      return location ? { label: location, value: location } : null;
+    },
+  );
+
+  const [propertyTypesValue, setPropertyTypesValue] =
+    useState<null | IFilterInputs>(() => {
+      const propertyType = searchParams.get("propertyType");
+      return propertyTypeOptions.find((o) => o.value === propertyType) ?? null;
+    });
+
+  const [sortValue, setSortValue] = useState<null | IFilterInputs>(() => {
     const sort = searchParams.get("sort");
     const order = searchParams.get("order");
     if (sort === "price") {
@@ -95,7 +142,7 @@ const FiltersSection = () => {
         value: "last_updated",
       };
     } else {
-      return undefined;
+      return null;
     }
   });
   const [minPriceValue, setMinPriceValue] = useState(
@@ -117,6 +164,7 @@ const FiltersSection = () => {
     <div className="flex flex-wrap items-end gap-x-5 gap-y-6.25">
       <FilterInput
         isTitle="جستوجو"
+        size="default"
         onValueChange={(event) => {
           if (event === null) {
             return setSearchParams("search", event);
@@ -129,13 +177,35 @@ const FiltersSection = () => {
       <FilterInput
         size="mini"
         isTitle="مقصد یا  هتل شما"
-        items={[{ label: "awdkalwdkm", value: "string" }]}
+        value={locationsValue}
+        items={!isLoading && locations}
+        onValueChange={(event) => {
+          setLocationsValue(event);
+          if (event === null) {
+            return setSearchParams("location", event);
+          }
+          setSearchParams("location", event.value);
+        }}
+      />
+      <FilterInput
+        size="mini"
+        isTitle="نوع ملک"
+        value={propertyTypesValue}
+        items={propertyTypeOptions}
+        onValueChange={(event) => {
+          setPropertyTypesValue(event);
+          if (event === null) {
+            return setSearchParams("propertyType", event);
+          }
+          setSearchParams("propertyType", event.value);
+        }}
       />
       <FilterInput
         size="mini"
         isTitle="مرتب سازی بر اساس"
-        defaultValue={sortDefault}
+        value={sortValue}
         onValueChange={(event) => {
+          setSortValue(event);
           if (event === null) {
             return setSearchParams("sort", event);
           } else if (event.value === "ascPrice") {
@@ -215,6 +285,9 @@ const FiltersSection = () => {
           });
           setMinPriceValue("");
           setMaxPriceValue("");
+          setLocationsValue(null);
+          setPropertyTypesValue(null);
+          setSortValue(null);
           return router.push(`?${params.toString()}`);
         }}
       >

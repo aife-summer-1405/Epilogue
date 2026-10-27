@@ -1,7 +1,7 @@
 import { ISlide } from "@/core/types/sliderSlides.types";
 
 export type ProductCardProps = {
-  image: string;
+  image?: string;
   title: string;
   address: string;
   rating: number;

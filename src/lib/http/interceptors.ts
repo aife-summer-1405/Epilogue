@@ -1,5 +1,4 @@
-"use server";
-
+import "server-only";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { cookies } from "next/headers";
 
