@@ -13,21 +13,17 @@ import { styles } from "./FilterInput.styles";
 
 type Size = "mini" | "default";
 
-interface IValues {
-  label: string;
-  value: string;
-}
-
 interface IProps {
   items: IFilterInputs[];
   placeHolder?: string;
   isTitle?: string;
-  onValueChange?: (event: IValues | null) => void;
+  onValueChange?: (event: IFilterInputs | null) => void;
   onInputValueChange?: (event: string) => void;
   className?: string;
   size?: Size;
   isNumeric?: boolean;
   defaultValue?: IFilterInputs;
+  value?: IFilterInputs | null;
 }
 
 const FilterInput: FC<IProps> = ({
@@ -37,9 +33,10 @@ const FilterInput: FC<IProps> = ({
   onValueChange,
   onInputValueChange,
   className,
-  size = "default",
+  size = "mini",
   isNumeric = false,
   defaultValue,
+  value,
 }) => {
   return (
     <div className={cn("flex flex-col gap-3", styles[size], className)}>
@@ -51,6 +48,7 @@ const FilterInput: FC<IProps> = ({
       <Combobox
         items={items}
         onInputValueChange={onInputValueChange}
+        value={value}
         onValueChange={onValueChange}
         defaultValue={defaultValue}
       >

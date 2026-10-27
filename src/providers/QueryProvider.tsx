@@ -13,6 +13,7 @@ const QueryProvider: FC<IProps> = ({ children }) => {
       new QueryClient({
         defaultOptions: {
           queries: {
+            retry: 1,
             refetchOnWindowFocus: false,
           },
         },

@@ -17,8 +17,8 @@ const nextConfig: NextConfig = {
     unoptimized: true,
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "aife-api.hexorix.net",
+        protocol: "http",
+        hostname: "87.107.2.216:3002",
       },
     ],
   },
