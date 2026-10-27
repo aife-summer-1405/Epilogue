@@ -1,21 +1,25 @@
 import DateObject from "react-date-object";
+import persian from "react-date-object/calendars/persian";
+import gregorian from "react-date-object/calendars/gregorian";
 
 export const toGregorianDate = (date: DateObject): string => {
-  const gregorian = new DateObject(date).convert("gregorian");
+  const gregorianDate = new DateObject({
+    date,
+    calendar: persian,
+  }).convert(gregorian);
 
-  const year = String(gregorian.year);
-  const month = String(gregorian.month.number).padStart(2, "0");
-  const day = String(gregorian.day).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
+  return gregorianDate.format("YYYY-MM-DD");
 };
 
 export const getUtcTimestamp = (date: DateObject): number => {
-  const gregorian = new DateObject(date).convert("gregorian");
+  const gregorianDate = new DateObject({
+    date,
+    calendar: persian,
+  }).convert(gregorian);
 
   return Date.UTC(
-    gregorian.year,
-    gregorian.month.number - 1,
-    gregorian.day
+    gregorianDate.year,
+    gregorianDate.month.number - 1,
+    gregorianDate.day
   );
 };
