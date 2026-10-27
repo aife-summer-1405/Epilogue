@@ -1,6 +1,6 @@
-import axios from "@/lib/http/interceptors";
+import clientApi from "@/lib/http/interceptorsClient";
 
 export const getCategories = async () => {
-  const { data } = await axios.get("/api/categories");
+  const { data } = await clientApi("/categories");
   return data;
 };

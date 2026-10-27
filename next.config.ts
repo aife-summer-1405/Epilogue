@@ -17,8 +17,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "aife-api.hexorix.net",
+        pathname: "/uploads/**",
+      },
+      // اگر هنوز بعضی عکس‌ها با آی‌پی می‌آیند:
+      {
         protocol: "http",
-        hostname: "87.107.2.216:3002",
+        hostname: "87.107.2.216",
+        port: "3002",
         pathname: "/uploads/**",
       },
     ],

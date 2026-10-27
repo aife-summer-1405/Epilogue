@@ -1,7 +1,5 @@
-import {
-  getHouseById,
-  getHouses,
-} from "@/features/example/services/api/houses/house.service";
+
+import { getHouseById, getHouses } from "@/features/example/services/api/houses/house.service";
 import { useQuery } from "@tanstack/react-query";
 
 // دریافت لیست خانه‌ها
