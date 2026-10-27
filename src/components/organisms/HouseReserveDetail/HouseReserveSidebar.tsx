@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useMemo, useState } from "react";
@@ -17,9 +18,8 @@ import {
 
 import Button from "@/components/atoms/button/Button";
 import { HouseRent } from "@/core/types/RentHouse/house";
-import { useCreateBooking } from "@/hooks/mutations/useCreateBooking";
 import { formatPrice } from "@/utils/formatters";
-import { toGregorianDate, getUtcTimestamp } from "@/utils/date";
+import { getUtcTimestamp } from "@/utils/date";
 
 interface Props {
   house: HouseRent;
@@ -41,8 +41,6 @@ export default function HouseReserveSidebar({ house }: Props) {
   const [startDate, setStartDate] = useState<DateObject | null>(getToday);
   const [endDate, setEndDate] = useState<DateObject | null>(getTomorrow);
   const [travelerCount, setTravelerCount] = useState(1);
-
-  const createBooking = useCreateBooking();
 
   const nights = useMemo(() => {
     if (!startDate || !endDate) return 0;
@@ -100,7 +98,7 @@ export default function HouseReserveSidebar({ house }: Props) {
     setEndDate(selectedDate);
   };
 
-  const handleBooking = async () => {
+  const handleBooking = () => {
     if (!startDate || !endDate || nights <= 0) {
       alert("تاریخ رفت و برگشت را به‌درستی انتخاب کنید.");
       return;
@@ -113,19 +111,13 @@ export default function HouseReserveSidebar({ house }: Props) {
       return;
     }
 
-    try {
-      await createBooking.mutateAsync({
-        houseId,
-        reservedDates: [
-          toGregorianDate(startDate),
-          toGregorianDate(endDate),
-        ],
-      });
+    const params = new URLSearchParams({
+      startDate: startDate.format("YYYY/MM/DD"),
+      endDate: endDate.format("YYYY/MM/DD"),
+      travelers: String(travelerCount),
+    });
 
-      router.push(`/houseBooking/${house.id}`);
-    } catch (error) {
-      console.error("Booking failed:", error);
-    }
+    router.push(`/houseBooking/${house.id}?${params.toString()}`);
   };
 
   return (
@@ -219,7 +211,9 @@ export default function HouseReserveSidebar({ house }: Props) {
               value={travelerCount}
               onChange={(event) => {
                 const value = Number(event.target.value);
-                setTravelerCount(Math.max(1, Math.min(20, value || 1)));
+                setTravelerCount(
+                  Math.max(1, Math.min(20, value || 1))
+                );
               }}
               className="w-full bg-transparent px-3 py-3 text-sm text-[#8B8D98] outline-none"
             />
@@ -254,37 +248,17 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* وضعیت درخواست */}
-        {createBooking.isError && (
-          <p role="alert" className="text-sm text-red-600">
-            ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.
-          </p>
-        )}
-
-        {createBooking.isSuccess && (
-          <p className="text-sm text-green-600">
-            درخواست رزرو با موفقیت ثبت شد.
-          </p>
-        )}
-
-        {/* ثبت رزرو */}
+        {/* رفتن به صفحه بعد */}
         <Button
           type="button"
           size="md"
           variant="primary"
-          disabled={createBooking.isPending || nights <= 0}
+          disabled={!startDate || !endDate || nights <= 0}
           onClick={handleBooking}
           className="flex w-full items-center justify-center gap-2 font-semibold"
         >
-          <span className="pl-2">
-            {createBooking.isPending
-              ? "در حال ثبت رزرو..."
-              : "همین الان رزرو کن"}
-          </span>
-
-          {!createBooking.isPending && (
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={24} />
-          )}
+          <span className="pl-2">همین الان رزرو کن</span>
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={24} />
         </Button>
       </div>
     </aside>
