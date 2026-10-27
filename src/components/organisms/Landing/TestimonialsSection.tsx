@@ -5,7 +5,7 @@ import gsap from "gsap";
 
 import BackgroundImage from "@/app/assets/Image/Comment.jpg";
 import { CommentCard } from "@/components/molecules";
-import { useComments } from "@/hooks/queries/landing/useComments";
+// import { useComments } from "@/hooks/queries/landing/useComments";
 
 interface Comment {
   id: string;
@@ -34,70 +34,67 @@ interface CommentsResponse {
 }
 
 export default function TestimonialsSection() {
-  const { data, isPending, isError } = useComments();
+  // const { data, isPending, isError } = useComments();
 
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  // const viewportRef = useRef<HTMLDivElement>(null);
+  // const trackRef = useRef<HTMLDivElement>(null);
 
-  const response = data as CommentsResponse | undefined;
-  const comments = response?.comments ?? [];
+  // const response = data as CommentsResponse | undefined;
+  // const comments = response?.comments ?? [];
 
-  useEffect(() => {
-    const track = trackRef.current;
-    const viewport = viewportRef.current;
+  // useEffect(() => {
+  //   const track = trackRef.current;
+  //   const viewport = viewportRef.current;
 
-    if (!track || !viewport || comments.length === 0) return;
+  //   if (!track || !viewport || comments.length === 0) return;
 
-    const ctx = gsap.context(() => {
-      const getMaxScroll = () =>
-        Math.max(0, track.scrollHeight - viewport.clientHeight);
+  //   const ctx = gsap.context(() => {
+  //     const getMaxScroll = () =>
+  //       Math.max(0, track.scrollHeight - viewport.clientHeight);
 
-      const animation = gsap.to(track, {
-        y: () => -getMaxScroll(),
-        duration: 20,
-        ease: "none",
-        repeat: -1,
-        yoyo: true,
-        paused: true,
-      });
+  //     const animation = gsap.to(track, {
+  //       y: () => -getMaxScroll(),
+  //       duration: 20,
+  //       ease: "none",
+  //       repeat: -1,
+  //       yoyo: true,
+  //       paused: true,
+  //     });
 
-      const updateAnimation = () => {
-        animation.invalidate();
-        animation.progress(0);
-        animation.play();
-      };
+  //     const updateAnimation = () => {
+  //       animation.invalidate();
+  //       animation.progress(0);
+  //       animation.play();
+  //     };
 
-      updateAnimation();
+  //     updateAnimation();
 
-      const observer = new ResizeObserver(updateAnimation);
-      observer.observe(track);
-      observer.observe(viewport);
+  //     const observer = new ResizeObserver(updateAnimation);
+  //     observer.observe(track);
+  //     observer.observe(viewport);
 
-      return () => {
-        observer.disconnect();
-        animation.kill();
-      };
-    }, viewport);
+  //     return () => {
+  //       observer.disconnect();
+  //       animation.kill();
+  //     };
+  //   }, viewport);
 
-    return () => ctx.revert();
-  }, [comments.length]);
+  //   return () => ctx.revert();
+  // }, [comments.length]);
 
-  const formatDate = (date: string) =>
-    new Intl.DateTimeFormat("fa-IR", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }).format(new Date(date));
+  // const formatDate = (date: string) =>
+  //   new Intl.DateTimeFormat("fa-IR", {
+  //     day: "numeric",
+  //     month: "long",
+  //     year: "numeric",
+  //   }).format(new Date(date));
 
   return (
     <section
       className="relative isolate w-full overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url("${BackgroundImage.src}")` }}
     >
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-black/40"
-      />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-black/40" />
 
       <div
         className="
@@ -112,15 +109,14 @@ export default function TestimonialsSection() {
           </h2>
 
           <p className="mt-5 text-sm leading-8 text-white/90 md:text-base">
-            پیدا کردن ویلای مناسب همیشه کار راحتی نیست. ما اینجاییم تا همه
-            چیز رو برای شما ساده کنیم. از بین صدها فایل، فقط بهترین و
-            معتبرترین گزینه‌ها رو گلچین می‌کنیم تا وقت ارزشمندتون صرف
-            جست‌وجوی بی‌پایان نشه. به تجربه‌ی اجاره‌ی راحت و بدون دغدغه
-            خوش اومدید.
+            پیدا کردن ویلای مناسب همیشه کار راحتی نیست. ما اینجاییم تا همه چیز
+            رو برای شما ساده کنیم. از بین صدها فایل، فقط بهترین و معتبرترین
+            گزینه‌ها رو گلچین می‌کنیم تا وقت ارزشمندتون صرف جست‌وجوی بی‌پایان
+            نشه. به تجربه‌ی اجاره‌ی راحت و بدون دغدغه خوش اومدید.
           </p>
         </div>
 
-        <div
+        {/* <div
           ref={viewportRef}
           className="relative h-[560px] min-w-0 overflow-hidden md:h-[650px]"
         >
@@ -156,7 +152,7 @@ export default function TestimonialsSection() {
               })}
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     </section>
   );
