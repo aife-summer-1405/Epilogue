@@ -3,12 +3,11 @@
 import ProductCard from "@/components/molecules/product-card/ProductCard";
 import Button from "@/components/atoms/button/Button";
 import { SectionHeading } from "@/components/molecules";
-import { useHouses } from "@/hooks/queries/useHouses";
+import { useHouses } from "@/hooks/queries/houses/useHouses";
 
 export default function SpecialOffersSection() {
   const { data, isPending, isError } = useHouses();
 
-  // فرض بر این است که پاسخ API مستقیماً آرایه است.
   const houses = Array.isArray(data) ? data : [];
 
   return (

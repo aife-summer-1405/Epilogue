@@ -210,36 +210,33 @@ export default function Header({
         `
     }
   `}
-      >
-        <div className="mx-auto flex w-full items-center justify-between gap-3">
-          {/* Logo */}
-          <Link
-            href="/"
-            aria-label="صفحه اصلی"
-            className="shrink-0"
-            onClick={closeMenu}
-          >
-            <HomeLogo />
-          </Link>
 
-          {/* Desktop Navigation */}
-          <nav
-            aria-label="منوی اصلی"
-            className="hidden min-w-0 items-center gap-3 rounded-full bg-[#EDEDED] p-2 text-neutral-950 dark:bg-[#272727] dark:text-white min-[1071px]:flex lg:gap-5"
-          >
-            {renderNavItems()}
-            {renderSellerButton()}
-          </nav>
+>
+                <div className="mx-auto flex w-full items-center justify-between gap-3">
+                    <Link
+                        href="/"
+                        aria-label="صفحه اصلی"
+                        className="shrink-0"
+                        onClick={closeMenu}
+                    >
+                        <HomeLogo />
+                    </Link>
 
-          {/* Desktop Actions */}
-          <div className="hidden shrink-0 items-center gap-2 min-[1071px]:flex">
-            {mounted && renderThemeButton()}
-            {renderAuthAction()}
-          </div>
+                    <nav
+                        aria-label="منوی اصلی"
+                        className="hidden min-w-0 items-center gap-3 rounded-full bg-[#EDEDED] p-2 text-neutral-950 dark:bg-[#272727] dark:text-white min-[1071px]:flex lg:gap-5"
+                    >
+                        {renderNavItems()}
+                        {renderSellerButton()}
+                    </nav>
 
-          {/* Mobile Actions */}
-          <div className="flex shrink-0 items-center gap-2 min-[1071px]:hidden">
-            {renderAuthAction()}
+                    <div className="hidden shrink-0 items-center gap-2 min-[1071px]:flex">
+                        {mounted && renderThemeButton()}
+                        {renderAuthAction()}
+                    </div>
+
+                    <div className="flex shrink-0 items-center gap-2 min-[1071px]:hidden">
+                        {renderAuthAction()}
 
             <ButtonOnlyIcon
               size="sm"
@@ -263,23 +260,23 @@ export default function Header({
         )}
       </header>
 
-      {/* Full-screen Mobile Navigation */}
-      {isMenuOpen && (
-        <div
-          id="mobile-navigation"
-          dir="rtl"
-          className="fixed inset-0 z-50 flex h-dvh w-full flex-col overflow-y-auto bg-primary-50 px-5 pt-8 pb-5 text-neutral-950 min-[1071px]:hidden"
-        >
-          {/* Menu Header */}
-          <div className="flex shrink-0 items-center justify-between border-b border-[#8B8D98] bg-primary-50 pb-5">
-            <Link
-              href="/"
-              aria-label="صفحه اصلی"
-              onClick={closeMenu}
-              className="shrink-0"
-            >
-              <HomeLogo />
-            </Link>
+
+            {isMenuOpen && (
+                <div
+                    id="mobile-navigation"
+                    dir="rtl"
+                    className="fixed inset-0 z-50 flex h-dvh w-full flex-col overflow-y-auto bg-primary-50 px-5 pt-8 pb-5 text-neutral-950 min-[1071px]:hidden"
+                >
+                    {/* Menu Header */}
+                    <div className="flex shrink-0 items-center justify-between border-b border-[#8B8D98] bg-primary-50 pb-5">
+                        <Link
+                            href="/"
+                            aria-label="صفحه اصلی"
+                            onClick={closeMenu}
+                            className="shrink-0"
+                        >
+                            <HomeLogo />
+                        </Link>
 
             <button
               type="button"

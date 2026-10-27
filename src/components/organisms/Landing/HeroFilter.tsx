@@ -42,9 +42,9 @@ export default function HeroFilter() {
   const [checkOut, setCheckOut] = useState<string | null>(null);
   const [guests, setGuests] = useState<string | null>(null);
 
+
   return (
     <div className="w-full">
-      {/* Search modes */}
       <div className="mb-3 flex flex-wrap items-center justify-start gap-2">
         {searchModes.map((item) => (
           <Button
@@ -58,7 +58,6 @@ export default function HeroFilter() {
         ))}
       </div>
 
-      {/* Filters */}
       <div
         className="
           flex w-full flex-col gap-4 rounded-[28px]
