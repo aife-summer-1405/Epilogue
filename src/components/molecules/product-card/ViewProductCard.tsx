@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   StarIcon,
@@ -18,9 +16,9 @@ import { cn } from "@/lib/utils";
 import { ProductCardProps } from "./product-card.types";
 import { Suspense } from "react";
 import ImageSlider from "@/components/molecules/imageSlider/ImageSlider";
+import formatPrice from "@/lib/formatters/price";
 
 export default function ViewProductCard({
-  image,
   title,
   address,
   rating,
@@ -124,7 +122,7 @@ export default function ViewProductCard({
               <>
                 {originalPrice && (
                   <span className="relative shrink-0 text-xs text-red-500">
-                    {originalPrice} تومان
+                    {formatPrice(Number(originalPrice))} تومان
                     <span className="absolute left-0 top-1/2 h-px w-full rotate-[-8deg] bg-red-500" />
                   </span>
                 )}
@@ -141,7 +139,7 @@ export default function ViewProductCard({
                   </span>
 
                   <span className="whitespace-nowrap flex gap-1 text-sm font-bold">
-                    {monthlyRent} ت/
+                    {formatPrice(Number(monthlyRent))} ت/
                     <span className="shrink-0 text-xs text-[#969696]">
                       هر شب
                     </span>
