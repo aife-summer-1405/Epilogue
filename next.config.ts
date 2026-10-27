@@ -13,12 +13,13 @@ const nextConfig: NextConfig = {
     },
   },
 
+  // اضافه کردن تنظیمات تصاویر برای دامنه‌های خارجی
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "http",
         hostname: "87.107.2.216:3002",
+        pathname: "/uploads/**",
       },
     ],
   },

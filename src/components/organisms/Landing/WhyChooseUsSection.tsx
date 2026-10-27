@@ -33,7 +33,6 @@ export default function WhyChooseUsSection() {
         
       "
     >
-      {/* Image */}
       <div className="relative min-h-[280px] w-full md:min-h-[720px]">
         <Image
           src={CoupleImage}
@@ -44,7 +43,6 @@ export default function WhyChooseUsSection() {
         />
       </div>
 
-      {/* Content */}
       <div className="flex flex-col justify-center px-5 py-8 sm:px-8 md:px-10 md:py-12">
         <h2 className=" text-[32px] font-bold dark:text-white text-neutral-950">
           چرا باید ما را انتخاب کنید

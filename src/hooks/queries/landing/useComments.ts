@@ -1,4 +1,5 @@
-import { getComments } from "@/services/landing/comments.service";
+
+import { getComments } from "@/features/example/services/api/Landing/commnents/comments.service";
 import { useQuery } from "@tanstack/react-query";
 
 export const useComments = () => {

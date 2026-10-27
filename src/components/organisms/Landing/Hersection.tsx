@@ -15,13 +15,11 @@ export default function HeroSection() {
         backgroundImage: `url("${Hero1.src}")`,
       }}
     >
-      {/* Overlay */}
       <div
         aria-hidden="true"
         className="absolute inset-0 z-0 bg-black/25"
       />
 
-      {/* Hero content */}
       <div
         className="
           relative z-10 mx-auto flex w-full max-w-[1200px]
