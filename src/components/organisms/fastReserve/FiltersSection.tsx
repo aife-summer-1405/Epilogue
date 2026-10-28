@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { getLocations } from "@/services/fastReserve/locations.service";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
+import { useHouses } from "@/hooks/queries/fastReserve/useHouses";
 
 interface ILocations {
   id: string;
@@ -88,6 +89,9 @@ const FiltersSection = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
+
+  const { data: housesData } = useHouses();
+  const totalCount = housesData?.pages[0]?.totalCount ?? 0;
 
   const { data, isLoading } = useQuery({
     queryKey: ["Locations"],
@@ -269,7 +273,7 @@ const FiltersSection = () => {
           }}
         />
       </div>
-      <Button>آگهی پیدا شد</Button>
+      <Button>{totalCount} آگهی پیدا شد</Button>
       <Button
         variant="danger"
         startIcon={
