@@ -93,7 +93,7 @@ const HousesListClient = () => {
             parking={house.parking}
             pricePerNight={house.discounted_price ?? house.price}
             monthlyRent={house.price}
-            onDetailsClick={() => router.push(`/houseReserve/${house.id}`)}
+            onDetailsClick={() => router.push(`/fastReserve/${house.id}`)}
           />
         ))}
         {isFetchingNextPage && (
