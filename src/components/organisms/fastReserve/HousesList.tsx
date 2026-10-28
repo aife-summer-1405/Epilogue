@@ -40,7 +40,7 @@ export default function HousesList() {
                   <Link
             key={house.id}
             // هدایت به صفحه دیتیل با آیدی واقعی هر خانه
-            href={`/houseReserve/${house.id}`}
+            href={`/fastReserve/${house.id}`}
              >
         <ViewProductCard
           key={house.id}

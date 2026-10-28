@@ -99,7 +99,7 @@ const MortgageRentContent: React.FC = () => {
                       <Link
             key={house.id}
             // هدایت به صفحه دیتیل با آیدی واقعی هر خانه
-            href={`/houseRent/${house.id}`}
+            href={`/mortgage-rent/${house.id}`}
                   >
             <ProductCard
               key={house.id}
