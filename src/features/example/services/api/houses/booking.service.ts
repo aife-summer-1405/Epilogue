@@ -1,4 +1,4 @@
-import axios from "@/lib/http/interceptors";
+import axios from "@/lib/http/interceptorsClient";
 import {
   Booking,
   CreateBookingPayload,
@@ -8,14 +8,20 @@ import {
 export const bookingService = {
   getById: async (id: number | string): Promise<Booking> => {
     const response = await axios.get<CreateBookingResponse>(
-      `/api/bookings/${id}`,
+      `/bookings/${id}`,
     );
 
     return response.data.booking;
   },
 
-  create: async (payload: CreateBookingPayload) => {
-    const response = await axios.post("/api/bookings", payload);
+  create: async (
+    payload: CreateBookingPayload,
+  ): Promise<CreateBookingResponse> => {
+    const response = await axios.post<CreateBookingResponse>(
+      "/bookings",
+      payload,
+    );
+
     return response.data;
   },
 };

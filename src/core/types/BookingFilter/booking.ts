@@ -1,4 +1,3 @@
-
 export interface TravelerDetails {
   firstName: string;
   lastName: string;
@@ -8,8 +7,11 @@ export interface TravelerDetails {
 }
 
 export interface CreateBookingPayload {
-  houseId: number;
+  houseId: number | string;
   reservedDates: string[];
+  traveler_details: TravelerDetails[];
+  sharedEmail: string;
+  sharedMobile: string;
 }
 
 export interface Booking {

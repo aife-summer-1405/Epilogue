@@ -27,7 +27,7 @@ export default function SimilarAds() {
 
 
   const openDetails = (id: string) => {
-    router.push(`/houseRent/${id}`);
+    router.push(`/mortgage-rent/${id}`);
   };
 
   return (
@@ -43,7 +43,7 @@ export default function SimilarAds() {
         <Button
         variant="outline"
           type="button"
-          onClick={() => router.push("/houseRent")}
+          onClick={() => router.push("/mortgage-rent")}
         >
           مشاهده همه
         </Button>
