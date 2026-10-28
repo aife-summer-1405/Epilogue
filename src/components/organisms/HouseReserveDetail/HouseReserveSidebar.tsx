@@ -20,6 +20,8 @@ import Button from "@/components/atoms/button/Button";
 import { HouseRent } from "@/core/types/RentHouse/house";
 import { formatPrice } from "@/utils/formatters";
 import { getUtcTimestamp } from "@/utils/date";
+import gregorian from "react-date-object/calendars/gregorian";
+import gregorian_en from "react-date-object/locales/gregorian_en";
 
 interface Props {
   house: HouseRent;
@@ -111,13 +113,22 @@ export default function HouseReserveSidebar({ house }: Props) {
       return;
     }
 
+    // تبدیل تاریخ شمسی به میلادی
+    const startDateGregorian = startDate
+      .convert(gregorian, gregorian_en)
+      .format("YYYY-MM-DD");
+
+    const endDateGregorian = endDate
+      .convert(gregorian, gregorian_en)
+      .format("YYYY-MM-DD");
+
     const params = new URLSearchParams({
-      startDate: startDate.format("YYYY/MM/DD"),
-      endDate: endDate.format("YYYY/MM/DD"),
+      startDate: startDateGregorian,
+      endDate: endDateGregorian,
       travelers: String(travelerCount),
     });
 
-    router.push(`/houseBooking/${house.id}?${params.toString()}`);
+    router.push(`/houseBooking/${houseId}?${params.toString()}`);
   };
 
   return (
