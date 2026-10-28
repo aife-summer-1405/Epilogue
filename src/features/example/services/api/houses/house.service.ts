@@ -1,7 +1,6 @@
 import clientApi from "@/lib/http/interceptorsClient";
 import { HouseRent, HousesResponse } from "@/core/types/RentHouse/house";
 import { HouseCommentsResponse } from "@/core/types/RentHouse/Comments/HouseRentComments.types";
-import instance from "@/lib/http/interceptors";
 
 // دریافت لیست همه‌ی خانه‌ها
 export const getHouses = async (): Promise<HousesResponse> => {
