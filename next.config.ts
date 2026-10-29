@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {
@@ -12,8 +11,6 @@ const nextConfig: NextConfig = {
       },
     },
   },
-
-  // اضافه کردن تنظیمات تصاویر برای دامنه‌های خارجی
   images: {
     remotePatterns: [
       {
@@ -21,12 +18,15 @@ const nextConfig: NextConfig = {
         hostname: "aife-api.hexorix.net",
         pathname: "/uploads/**",
       },
-      // اگر هنوز بعضی عکس‌ها با آی‌پی می‌آیند:
       {
         protocol: "http",
         hostname: "87.107.2.216",
         port: "3002",
         pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
     ],
   },

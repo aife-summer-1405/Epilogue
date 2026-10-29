@@ -7,9 +7,7 @@ import {
 
 export const bookingService = {
   getById: async (id: number | string): Promise<Booking> => {
-    const response = await axios.get<CreateBookingResponse>(
-      `/bookings/${id}`,
-    );
+    const response = await axios.get<CreateBookingResponse>(`/bookings/${id}`);
 
     return response.data.booking;
   },
