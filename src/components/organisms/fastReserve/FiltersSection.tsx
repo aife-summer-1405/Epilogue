@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { getLocations } from "@/services/fastReserve/locations.service";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
 import { useHouses } from "@/hooks/queries/fastReserve/useHouses";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallBack";
 
 interface ILocations {
   id: string;
@@ -167,6 +168,10 @@ const FiltersSection = () => {
     }
     return router.push(`?${params.toString()}`);
   };
+
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setSearchParams("search", value === "" ? null : value);
+  }, 1000);
   return (
     <div className="flex flex-wrap items-end gap-x-5 gap-y-6.25">
       <div className="flex flex-col gap-3">
@@ -182,10 +187,7 @@ const FiltersSection = () => {
           value={searchValue}
           onChange={(event) => {
             setSearchValue(event.target.value);
-            if (event.target.value === "") {
-              return setSearchParams("search", null);
-            }
-            setSearchParams("search", event.target.value);
+            debouncedSearch(event.target.value);
           }}
         />
       </div>

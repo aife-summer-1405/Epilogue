@@ -12,6 +12,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { FC, ReactNode, Suspense } from "react";
+import HousesMapLoader from "@/components/organisms/fastReserve/HousesMapLoader";
 
 type Filters = { [key: string]: string | string[] | undefined };
 
@@ -73,13 +74,19 @@ const page: FC<IProps> = ({ searchParams }) => {
       >
         <HousesHydration searchParams={searchParams}>
           <FiltersSection />
-          <div className="flex items-center gap-3 w-full">
+          <div className="flex items-stretch gap-3 w-full">
             <div
               id="houses-scroll"
               dir="ltr"
               className="w-6/10 grid justify-center gap-3 max-h-270 overflow-y-auto pr-4 scrollbar-brand"
             >
               <HousesListClient />
+            </div>
+
+            <div className="relative w-4/10 min-h-135">
+              <div className="absolute inset-0">
+                <HousesMapLoader />
+              </div>
             </div>
           </div>
         </HousesHydration>

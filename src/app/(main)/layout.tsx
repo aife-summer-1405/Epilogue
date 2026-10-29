@@ -8,15 +8,11 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col gap-12">
       <Suspense fallback={null}>
         <Header isLoggedIn={false} />
       </Suspense>
-      <main className="flex-1">
-        {children}
-      </main>
-
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );
