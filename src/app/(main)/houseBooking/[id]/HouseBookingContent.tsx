@@ -82,6 +82,7 @@ export default function HouseBookingContent() {
       gender: "",
       birthDate: "",
       nationalId: "",
+      additionalTravelers: [],
       sharedEmail: "",
       sharedMobile: "",
     },
@@ -163,6 +164,13 @@ export default function HouseBookingContent() {
           birthDate: values.birthDate,
           nationalId: values.nationalId,
         },
+        ...values.additionalTravelers.map((traveler) => ({
+          firstName: traveler.firstName,
+          lastName: traveler.lastName,
+          gender: traveler.gender,
+          birthDate: traveler.birthDate,
+          nationalId: traveler.nationalId,
+        })),
       ],
       sharedEmail: values.sharedEmail,
       sharedMobile: values.sharedMobile,
@@ -186,7 +194,7 @@ export default function HouseBookingContent() {
 
         alert(
           error.response?.data?.message ||
-            "ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.",
+          "ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.",
         );
       } else {
         console.error("[Booking] Unexpected error:", error);
@@ -200,20 +208,20 @@ export default function HouseBookingContent() {
   const footer =
     step === 1
       ? {
-          label: "تأیید و ادامه فرایند",
-          onClick: handleTravelerSubmit,
-        }
+        label: "تأیید و ادامه فرایند",
+        onClick: handleTravelerSubmit,
+      }
       : step === 2
         ? {
-            label: "تأیید و ادامه فرایند",
-            onClick: handleConfirmDetails,
-          }
+          label: "تأیید و ادامه فرایند",
+          onClick: handleConfirmDetails,
+        }
         : {
-            label: submitting
-              ? "در حال ثبت رزرو..."
-              : "تأیید اطلاعات و صدور بلیط",
-            onClick: handleFinalConfirmation,
-          };
+          label: submitting
+            ? "در حال ثبت رزرو..."
+            : "تأیید اطلاعات و صدور بلیط",
+          onClick: handleFinalConfirmation,
+        };
 
   const isLoading = houseLoading;
 
@@ -312,7 +320,7 @@ export default function HouseBookingContent() {
           </section>
 
           {/* ستون کناری: کارت خانه و کد تخفیف */}
-          <aside className="order-1 flex min-w-0 flex-col gap-5 lg:order-2 lg:sticky lg:top-6">
+          <aside className="order-1 flex min-w-0 flex-col gap-5 lg:order-2 ">
             {isLoading ? (
               <div className="h-[380px] w-full animate-pulse rounded-[24px] bg-gray-100 dark:bg-[#353535]" />
             ) : houseError ? (

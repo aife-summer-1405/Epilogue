@@ -115,12 +115,12 @@ export default function BookingHouseCard({
 
       {/* عنوان */}
       <div className="flex flex-col gap-3 p-2">
-        <h3 className="line-clamp-2 text-base font-bold">
+        <h3 className="line-clamp-2 text-[24px] font-bold">
           {house.title}
         </h3>
 
         {/* تاریخ ورود و خروج */}
-        <div className="flex flex-col gap-2 text-[11px] text-[#8B8D98]">
+        <div className="flex flex-col gap-2 text-[16px] text-[#8B8D98]">
           <div className="flex items-center justify-between gap-2">
             <span>تاریخ ورود به هتل</span>
 

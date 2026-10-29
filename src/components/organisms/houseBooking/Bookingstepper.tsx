@@ -41,9 +41,9 @@ export default function BookingStepper({ current }: Props) {
     <nav
       dir="rtl"
       aria-label="مراحل رزرو"
-      className="w-full overflow-x-auto rounded-full bg-[#F0F0F3] p-2 dark:bg-[#272727]"
+      className="w-full rounded-full bg-[#F0F0F3] p-2 dark:bg-[#272727]"
     >
-      <ol className="flex min-w-max items-center gap-2 sm:gap-3">
+      <ol className="flex w-full items-center justify-between gap-1 sm:gap-3">
         {BOOKING_STEPS.map((step, index) => {
           const isDone = index < current;
           const isCurrent = index === current;
@@ -52,14 +52,16 @@ export default function BookingStepper({ current }: Props) {
           return (
             <li
               key={step.label}
-              className="flex items-center gap-2 sm:gap-3"
+              className="flex min-w-0 flex-1 items-center gap-1 sm:gap-3"
             >
               <div
                 aria-current={isCurrent ? "step" : undefined}
+                aria-label={step.label}
+                title={step.label}
                 className={[
-                  "flex h-[38px] items-center justify-center gap-2",
-                  "whitespace-nowrap rounded-full px-3 text-xs",
-                  "transition-colors duration-200 sm:text-sm",
+                  "flex h-9 min-w-0 flex-1 items-center justify-center gap-2",
+                  "rounded-full px-2 sm:px-3",
+                  "transition-colors duration-200",
                   isActive
                     ? "bg-[#2446B5] text-white"
                     : "bg-transparent text-[#91A5E8]",
@@ -69,16 +71,19 @@ export default function BookingStepper({ current }: Props) {
                   icon={step.icon}
                   size={20}
                   strokeWidth={1.7}
+                  className="shrink-0"
                 />
 
-                <span>{step.label}</span>
+                <span className="hidden whitespace-nowrap text-xs sm:inline sm:text-sm">
+                  {step.label}
+                </span>
               </div>
 
               {index < BOOKING_STEPS.length - 1 && (
                 <span
                   aria-hidden="true"
                   className={[
-                    "h-px w-5 shrink-0 sm:w-7",
+                    "hidden h-px w-3 shrink-0 sm:block sm:w-5",
                     isDone
                       ? "bg-[#2446B5]"
                       : "bg-[#C8C9D1]",
