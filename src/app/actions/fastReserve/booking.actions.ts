@@ -19,9 +19,7 @@ export interface CreateBookingPayload {
   sharedMobile: string;
 }
 
-export async function createBookingAction(
-  payload: CreateBookingPayload,
-) {
+export async function createBookingAction(payload: CreateBookingPayload) {
   try {
     if (
       !Number.isInteger(payload.houseId) ||
