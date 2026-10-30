@@ -10,6 +10,7 @@ import { useGeoHouses } from "@/hooks/queries/fastReserve/useGeoHouses";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, Location01Icon } from "@hugeicons/core-free-icons";
 import Button from "@/components/atoms/button/Button";
+import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
 
 const DEFAULT_CENTER: [number, number] = [32.4, 53.7];
 const DEFAULT_ZOOM = 5;
@@ -71,11 +72,9 @@ export default function HousesMap() {
               >
                 <div className="2xl:w-99 w-88 rounded-[16px] 2xl:px-7 2xl:py-8 px-5 py-6 bg-secondary-500 text-white flex flex-col 2xl:gap-5 gap-3">
                   <div className="flex items-start gap-3">
-                    <Image
+                    <ImageFallback
                       src={h.photos[0]}
                       alt={h.title}
-                      width={48}
-                      height={48}
                       className="size-12 shrink-0 rounded-full object-cover"
                     />
                     <div className="flex flex-col text-right gap-1">

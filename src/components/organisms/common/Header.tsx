@@ -205,7 +205,7 @@ export default function Header({
     z-50 w-full transition-all duration-300
     ${
       isScrolled
-        ? "fixed inset-x-0 top-0 bg-white px-10 md:px-20 pt-6 pb-10 shadow-sm dark:bg-neutral-950"
+        ? "fixed inset-x-0 top-0 bg-white px-4 md:px-20 pt-6 pb-10 shadow-sm dark:bg-neutral-950"
         : `
           px-4 py-6 sm:px-6 sm:py-8 lg:px-20
           ${pathname === "/" ? "absolute inset-x-0 top-0" : "relative"}

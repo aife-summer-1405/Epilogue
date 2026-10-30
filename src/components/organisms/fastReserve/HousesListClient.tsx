@@ -5,6 +5,9 @@ import ViewProductCard from "@/components/molecules/product-card/ViewProductCard
 import { useHouses } from "@/hooks/queries/fastReserve/useHouses";
 import { useRouter } from "next/navigation";
 import ViewProductCardSkeleton from "@/components/molecules/product-card/ViewProductCardSkeleton";
+import { cn } from "@/lib/utils";
+import ProductCard from "@/components/molecules/product-card/ProductCard";
+import ProductCardSkeleton from "@/components/molecules/product-card/ProductCardSkeleton";
 
 interface IHouse {
   id: string;
@@ -68,11 +71,10 @@ const HousesListClient = () => {
   return (
     <>
       <div
-        className={
-          isFetching && !isFetchingNextPage
-            ? "grid gap-3 opacity-60"
-            : "grid gap-3"
-        }
+        className={cn(
+          "hidden lg:grid gap-3",
+          isFetching && !isFetchingNextPage ? "opacity-60" : null,
+        )}
       >
         {houses.map((house) => (
           <ViewProductCard
@@ -91,13 +93,41 @@ const HousesListClient = () => {
           />
         ))}
         {isFetchingNextPage && (
-          <div className="grid gap-3">
+          <>
             <ViewProductCardSkeleton />
             <ViewProductCardSkeleton />
-          </div>
+          </>
         )}
       </div>
-
+      <div
+        className={cn(
+          "grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden",
+          isFetching && !isFetchingNextPage ? "opacity-60" : null,
+        )}
+      >
+        {houses.map((house) => (
+          <ProductCard
+            key={house.id}
+            slides={house.photos.map((src) => ({ src, alt: house.title }))}
+            title={house.title}
+            address={house.address}
+            bathrooms={house.bathrooms}
+            bedrooms={house.rooms}
+            guests={house.capacity}
+            rating={Number(house.rate)}
+            parking={house.parking}
+            pricePerNight={house.discounted_price ?? house.price}
+            monthlyRent={house.price}
+            onDetailsClick={() => router.push(`/fastReserve/${house.id}`)}
+          />
+        ))}
+        {isFetchingNextPage && (
+          <>
+            <ProductCardSkeleton />
+            <ProductCardSkeleton />
+          </>
+        )}
+      </div>
       <div ref={loadMoreRef} className="h-1" />
     </>
   );

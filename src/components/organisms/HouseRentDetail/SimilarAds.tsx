@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -9,7 +8,6 @@ import { useHouses } from "@/hooks/queries/houses/useHouses";
 import { SliderDots } from "@/components/molecules";
 import Button from "@/components/atoms/button/Button";
 import { formatPrice } from "@/utils/formatters";
-
 
 export default function SimilarAds() {
   const router = useRouter();
@@ -24,24 +22,17 @@ export default function SimilarAds() {
     slides.push(houses.slice(i, i + 3));
   }
 
-
-
   const openDetails = (id: string) => {
     router.push(`/mortgage-rent/${id}`);
   };
 
   return (
-    <section
-      dir="rtl"
-      className="w-full px-4 py-12  sm:px-6 lg:px-10.5"
-    >
+    <section dir="rtl" className="w-full px-4 py-12  sm:px-6 lg:px-10.5">
       <div className="mb-7 flex items-center justify-between gap-4">
-        <h2 className="text-lg font-bold sm:text-xl">
-          آگهی‌های مشابه
-        </h2>
+        <h2 className="text-lg font-bold sm:text-xl">آگهی‌های مشابه</h2>
 
         <Button
-        variant="outline"
+          variant="outline"
           type="button"
           onClick={() => router.push("/mortgage-rent")}
         >
@@ -97,7 +88,7 @@ export default function SimilarAds() {
                             (1 -
                               Number(house.discounted_price) /
                                 Number(house.price)) *
-                              100
+                              100,
                           )
                         : undefined;
 
@@ -108,7 +99,13 @@ export default function SimilarAds() {
                       return (
                         <div key={house.id} className="min-w-0">
                           <ProductCard
-                            image={house.photos?.[0] ?? "/images/placeholder.png"}
+                            image={
+                              house.photos?.[0] ?? "/images/placeholder.png"
+                            }
+                            slides={house.photos.map((src) => ({
+                              src,
+                              alt: house.title,
+                            }))}
                             title={house.title}
                             address={house.address}
                             rating={Number(house.rate) || 0}
@@ -116,19 +113,15 @@ export default function SimilarAds() {
                             bathrooms={house.bathrooms ?? 0}
                             guests={house.capacity ?? 0}
                             parking={house.parking ?? 0}
-                            monthlyRent={
-                              formatPrice(
-                                isReservation ? undefined : displayedPrice
-                              )
-                            }
+                            monthlyRent={formatPrice(
+                              isReservation ? undefined : displayedPrice,
+                            )}
                             pricePerNight={formatPrice(
-                              isReservation ? displayedPrice : undefined
+                              isReservation ? displayedPrice : undefined,
                             )}
                             off={discount}
                             originalPrice={
-                              hasDiscount
-                                ? formatPrice(house.price)
-                                : undefined
+                              hasDiscount ? formatPrice(house.price) : undefined
                             }
                             onClick={() => openDetails(house.id)}
                             onDetailsClick={() => openDetails(house.id)}

@@ -61,7 +61,7 @@ async function HousesHydration({
 
 const page: FC<IProps> = ({ searchParams }) => {
   return (
-    <div className="mx-auto flex flex-col items-center gap-12 2xl:max-w-10/12 xl:max-w-11/12 max-w-10/12">
+    <div className="mx-auto flex flex-col items-center gap-12 2xl:max-w-10/12 xl:max-w-11/12 lg:max-w-10/12 max-w-11/12">
       <BreadCrumb list={list} />
       <Suspense
         fallback={
@@ -74,10 +74,10 @@ const page: FC<IProps> = ({ searchParams }) => {
       >
         <HousesHydration searchParams={searchParams}>
           <FiltersSection />
-          <div className="flex flex-col xl:flex-row xl:items-stretch gap-3 w-full">
+          <div className="flex flex-col-reverse lg:flex-col xl:flex-row xl:items-stretch gap-3 w-full">
             <div
               dir="ltr"
-              className="xl:w-6/10 w-full grid justify-center gap-3 max-h-270 overflow-y-auto pr-4 scrollbar-brand"
+              className="xl:w-6/10 w-full gap-3 lg:max-h-270 overflow-y-auto lg:pr-4 scrollbar-brand"
             >
               <HousesListClient />
             </div>
