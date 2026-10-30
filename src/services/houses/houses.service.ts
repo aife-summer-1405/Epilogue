@@ -23,7 +23,7 @@ export interface HouseItem {
   address: string;
   rate?: number;
   rating?: number;
-  photos?: string[];
+  photos: string[];
   image?: string;
   rooms?: number;
   bedrooms?: number;

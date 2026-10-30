@@ -1,3 +1,4 @@
+import { IBreadCrumbsList } from "@/core/types/BreadCrumb/breadCrumb.types";
 import { cn } from "@/lib/utils";
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -5,14 +6,10 @@ import Link from "next/link";
 import { FC } from "react";
 import { Fragment } from "react/jsx-runtime";
 
-interface IList {
-  label: string;
-  href: string;
-}
 interface IProps {
-  list?: IList[];
+  list?: IBreadCrumbsList[];
 }
-const defaultValue = [
+const defaultValue: IBreadCrumbsList[] = [
   {
     label: "خانه",
     href: "/",

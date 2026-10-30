@@ -10,7 +10,7 @@ import { loginSchema } from "@/lib/validations/authentication/auth";
 import SignButton from "@/components/atoms/Sign-button/signButton";
 import GithubIcon from "@/app/assets/icons/GithubIcon";
 import GoogleIcon from "@/app/assets/icons/GoogleIcon";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { loginAction } from "@/app/actions/auth/auth.actions";
 import { useRouter } from "next/navigation";
@@ -20,6 +20,7 @@ import { oauthSignInAction } from "@/app/actions/auth/oauth.actions";
 
 const LoginForm = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [isOauthPending, startOauth] = useTransition();
   const handleOauth = (provider: "google" | "github") =>
@@ -33,9 +34,10 @@ const LoginForm = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["LoginUser"],
     mutationFn: loginAction,
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       if (result.success) {
         toast.success("ورود به حساب کاربری با موفقیت انجام شد.");
+        await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
         router.replace("/");
         router.refresh();
       } else {

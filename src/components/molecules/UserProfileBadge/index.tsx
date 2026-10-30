@@ -19,7 +19,7 @@ const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
       type="button"
       onClick={onClick}
       dir="ltr"
-      className="flex items-center justify-between gap-6 rounded-full bg-white p-1 pr-4 shadow-sm transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+      className="flex items-center justify-between gap-6 rounded-full bg-default-white p-1 pr-4 shadow-sm transition-all hover:bg-default-white-bg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
     >
       <div className="flex items-center gap-3">
         <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-yellow-100">
@@ -43,7 +43,7 @@ const UserProfileBadge: React.FC<UserProfileBadgeProps> = ({
         </div>
 
         <div className="flex flex-col items-start">
-          <span className="text-sm font-bold text-gray-900">{name}</span>
+          <span className="text-sm font-bold text-default-text">{name}</span>
           <span className="text-xs font-medium text-gray-400">
             {phoneNumber}
           </span>

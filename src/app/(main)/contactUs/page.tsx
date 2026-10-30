@@ -1,15 +1,24 @@
 import { SectionHeading } from "@/components/molecules";
+import BreadCrumb from "@/components/molecules/breadcrumb/BreadCrumb";
 import ContactForm from "@/components/organisms/contactUs/ContactForm";
+import { IBreadCrumbsList } from "@/core/types/BreadCrumb/breadCrumb.types";
+
+const list: IBreadCrumbsList[] = [
+  {
+    href: "/",
+    label: "خانه",
+  },
+  {
+    href: "/contactUs",
+    label: "ارتباط با ما",
+  },
+];
 
 export default function ContactPage() {
   return (
     <main className="flex w-full flex-col items-center font-sans">
       <section className="w-full max-w-6xl px-4 py-12 md:px-8">
-        <div className="mb-12 flex justify-center text-sm font-semibold text-gray-500">
-          <span className="text-default-black">خانه</span>
-          <span className="mx-2">&lt;</span>
-          <span className="text-primary-500">ارتباط با ما</span>
-        </div>
+        <BreadCrumb list={list} />
 
         <div className="flex flex-col justify-between gap-12 md:flex-row md:items-center">
           <div className="flex w-full flex-col items-start gap-6 text-right md:w-1/2 lg:w-7/12">
@@ -58,7 +67,6 @@ export default function ContactPage() {
             </ContactInfoCard>
 
             <ContactInfoCard text="09229167194 - 098541612310" dir="ltr">
-              {/* SVG تلفن */}
               <svg
                 width="28"
                 height="28"
@@ -121,7 +129,6 @@ export default function ContactPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {/* نقشه */}
           <div className="relative min-h-100 w-full overflow-hidden rounded-[2rem] bg-default-white shadow-sm">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d193595.2528000654!2d-74.14448744400494!3d40.69763123331089!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c24fa5d33f083b%3A0xc80b8f06e177fe62!2sNew%20York%2C%20NY%2C%20USA!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"

@@ -5,22 +5,26 @@ import { useEffect, useMemo, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import Link from "next/link";
-import Image from "next/image";
 import { useGeoHouses } from "@/hooks/queries/fastReserve/useGeoHouses";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, Location01Icon } from "@hugeicons/core-free-icons";
 import Button from "@/components/atoms/button/Button";
 import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
+import fallBack from "@/app/assets/Image/Slider1.webp";
 
 const DEFAULT_CENTER: [number, number] = [32.4, 53.7];
 const DEFAULT_ZOOM = 5;
 
-const makeIcon = (src: string) =>
-  L.divIcon({
+const makeIcon = (src: string) => {
+  const fallbackUrl = fallBack.src;
+  const safeSrc = src || fallbackUrl;
+  return L.divIcon({
     className: "",
     html: `
       <div style="display:flex;flex-direction:column;align-items:center">
-        <img src="${src}" style="width:48px;height:48px;border-radius:9999px;
+        <img src="${safeSrc}"
+          onerror="this.onerror=null;this.src='${fallbackUrl}'"
+          style="width:48px;height:48px;border-radius:9999px;
           border:3px solid #0f766e;background:#fff;object-fit:cover;
           box-shadow:0 4px 10px rgba(0,0,0,.3)" />
         <div style="width:12px;height:12px;background:#0f766e;
@@ -29,6 +33,7 @@ const makeIcon = (src: string) =>
     iconSize: [48, 60],
     iconAnchor: [24, 60],
   });
+};
 
 export default function HousesMap() {
   const [ready, setReady] = useState(false);
@@ -75,18 +80,20 @@ export default function HousesMap() {
                     <ImageFallback
                       src={h.photos[0]}
                       alt={h.title}
+                      width={48}
+                      height={48}
                       className="size-12 shrink-0 rounded-full object-cover"
                     />
                     <div className="flex flex-col text-right gap-1">
-                      <h4 className="line-clamp-1 2xl:text-[18px] text-base font-semibold text-default-white">
+                      <h4 className="line-clamp-1 2xl:text-[18px] text-base font-semibold text-white">
                         {h.title}
                       </h4>
                       <div className="flex items-center gap-2">
                         <HugeiconsIcon
                           icon={Location01Icon}
-                          className="text-default-white size-6"
+                          className="text-white size-6"
                         />
-                        <p className="line-clamp-1 2xl:text-base text-[14px] font-medium m-0! text-default-white">
+                        <p className="line-clamp-1 2xl:text-base text-[14px] font-medium m-0! text-white">
                           {h.address}
                         </p>
                       </div>
@@ -97,7 +104,7 @@ export default function HousesMap() {
                       endIcon={
                         <HugeiconsIcon
                           icon={ArrowLeft01Icon}
-                          className="text-default-white size-6"
+                          className="text-white size-6"
                         />
                       }
                     >

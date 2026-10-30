@@ -18,15 +18,17 @@ import Button from "@/components/atoms/button/Button";
 import { UserProfileBadge } from "@/components/molecules";
 import HomeLogo from "@/components/atoms/Logo/home-logo";
 import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
+import { useCurrentUser } from "@/core/hooks/use-current-user";
+import { getCurrentUserAction } from "@/app/actions/user.actions";
+import { useQuery } from "@tanstack/react-query";
 
 export interface HeaderUser {
   name: string;
   phoneNumber: string;
-  avatarUrl?: string;
+  profilePicture?: string;
 }
 
 interface HeaderProps {
-  isLoggedIn: boolean;
   user?: HeaderUser;
   onLoginClick?: () => void;
   onProfileClick?: () => void;
@@ -41,13 +43,42 @@ const navItems = [
 ];
 
 export default function Header({
-  isLoggedIn,
-  user,
+  user: userProp,
   onLoginClick,
   onProfileClick,
   onSellerClick,
 }: HeaderProps) {
+  const { data: currentUser, isPending } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await getCurrentUserAction();
+      return result.success ? result.user : null;
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const user: HeaderUser | undefined =
+    userProp ??
+    (currentUser
+      ? {
+          name: currentUser.fullName,
+          phoneNumber: currentUser.phoneNumber,
+          profilePicture: currentUser.profilePicture,
+        }
+      : undefined);
+
+  const isLoggedIn = !!user;
+  const isAuthLoading = isPending && !userProp;
+
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,14 +89,12 @@ export default function Header({
         scrollableHeight > 0 ? (window.scrollY / scrollableHeight) * 100 : 0;
 
       setScrollProgress(progress);
+      setIsScrolled(window.scrollY > 0);
     };
 
     handleScroll();
 
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
 
     return () => {
@@ -73,27 +102,6 @@ export default function Header({
       window.removeEventListener("resize", handleScroll);
     };
   }, []);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
-
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -122,19 +130,25 @@ export default function Header({
   const closeMenu = () => setIsMenuOpen(false);
 
   const renderAuthAction = () => {
+    if (isAuthLoading) {
+      return (
+        <div className="h-10 w-32 animate-pulse rounded-full bg-neutral-200 dark:bg-neutral-800" />
+      );
+    }
+
     if (isLoggedIn && user) {
       return (
         <UserProfileBadge
           name={user.name}
           phoneNumber={user.phoneNumber}
-          avatarUrl={user.avatarUrl}
+          avatarUrl={user.profilePicture}
           onClick={onProfileClick}
         />
       );
     }
 
     return (
-      <Link href={"/auth/login"}>
+      <Link href="/auth/login">
         <Button variant="primary" size="sm" onClick={onLoginClick}>
           <span className="flex items-center gap-2 whitespace-nowrap">
             <HugeiconsIcon icon={User02Icon} size={20} />
@@ -251,6 +265,7 @@ export default function Header({
             </ButtonOnlyIcon>
           </div>
         </div>
+
         {isScrolled && (
           <div className="absolute inset-x-0 bottom-0 h-3.5 bg-[#D9D9D9]">
             <div
@@ -267,7 +282,6 @@ export default function Header({
           dir="rtl"
           className="fixed inset-0 z-50 flex h-dvh w-full flex-col overflow-y-auto bg-primary-50 px-5 pt-8 pb-5 text-neutral-950 min-[1071px]:hidden"
         >
-          {/* Menu Header */}
           <div className="flex shrink-0 items-center justify-between border-b border-[#8B8D98] bg-primary-50 pb-5">
             <Link
               href="/"

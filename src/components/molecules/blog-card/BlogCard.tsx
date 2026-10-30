@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Calendar03Icon, Clock01Icon } from "@hugeicons/core-free-icons";
 import Button from "@/components/atoms/button/Button";
 import { cn } from "@/lib/utils";
+import ImageFallback from "../ImageFallBack/ImageFallBack";
 
 export interface BlogCardProps {
   id: number | string;
@@ -19,9 +20,6 @@ export interface BlogCardProps {
   className?: string;
 }
 
-const DEFAULT_BLOG_IMAGE =
-  "https://images.unsplash.com/photo-1560518883-ce09059eeffa?q=80&w=800&auto=format&fit=crop";
-
 const BlogCard: React.FC<BlogCardProps> = ({
   id,
   image,
@@ -32,8 +30,6 @@ const BlogCard: React.FC<BlogCardProps> = ({
   categoryName,
   className,
 }) => {
-  const finalImage = image && image.trim() !== "" ? image : DEFAULT_BLOG_IMAGE;
-
   return (
     <article
       className={cn(
@@ -43,8 +39,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
       dir="rtl"
     >
       <div className="relative aspect-340/230 w-full overflow-hidden bg-gray-200 dark:bg-zinc-800">
-        <Image
-          src={finalImage}
+        <ImageFallback
+          src={image}
           alt={title}
           fill
           loading="eager"

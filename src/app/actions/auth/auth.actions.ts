@@ -19,11 +19,12 @@ import type {
   SignUpVerifyEmailPayload,
   SignUpVerifyEmailResponse,
 } from "@/core/types/auth.types";
+import { CurrentUser } from "../user.actions";
 
 const GENERIC_ERROR = "مشکلی در فرایند ورود پیش آمد لطفا مجدد تلاش کنید.";
 
 export type LoginActionResult =
-  | { success: true }
+  | { success: true; user?: CurrentUser }
   | { success: false; message: string };
 
 export async function loginAction(
@@ -47,7 +48,12 @@ export async function loginAction(
     cookieStore.set("accessToken", data.accessToken, {
       ...base,
     });
-
+    if (data.user) {
+      cookieStore.set("userId", data.user.id, {
+        ...base,
+        httpOnly: false,
+      });
+    }
     if (data.refreshToken) {
       cookieStore.set("refreshToken", data.refreshToken, {
         ...base,
