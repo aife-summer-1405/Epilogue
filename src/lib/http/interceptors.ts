@@ -17,11 +17,10 @@ const onError = (error: AxiosError) => {
 
 instance.interceptors.request.use(
   async (config) => {
-    if (!config.headers?.Authorization && config.headers.tokenNeeded === true) {
+    if (config.headers?.tokenNeeded === "true") {
       const token = (await cookies()).get("accessToken")?.value;
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      if (token) config.headers.set("Authorization", `Bearer ${token}`);
+      config.headers.delete("tokenNeeded");
     }
     return config;
   },

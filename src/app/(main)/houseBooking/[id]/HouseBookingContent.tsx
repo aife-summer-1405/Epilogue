@@ -21,9 +21,7 @@ import TravelerForm, {
 import BookingFooter from "@/components/organisms/houseBooking/Bookingfooter";
 
 import { formatPrice } from "@/utils/formatters";
-import { bookingService } from "@/features/example/services/api/houses/booking.service";
-
-import axios from "axios";
+import { createBookingAction } from "@/app/actions/fastReserve/booking.actions";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -37,12 +35,6 @@ export default function HouseBookingContent() {
   const startDate = searchParams.get("startDate") ?? "";
   const endDate = searchParams.get("endDate") ?? "";
 
-  const travelerCount = Math.max(
-    1,
-    Math.min(20, Number(searchParams.get("travelers") || 1) || 1),
-  );
-
-  const reservedDates = [startDate, endDate];
 
   const {
     data: house,
@@ -116,80 +108,76 @@ export default function HouseBookingContent() {
     setStep(3);
   };
 
-  const handleFinalConfirmation = async () => {
-    if (submitting) return;
+const handleFinalConfirmation = async () => {
+  if (submitting) return;
 
-    const isValid = await trigger();
+  const isValid = await trigger();
 
-    if (!isValid) {
-      setStep(1);
-      return;
-    }
+  if (!isValid) {
+    setStep(1);
+    return;
+  }
 
-    if (
-      !Number.isInteger(houseId) ||
-      houseId <= 0 ||
-      !startDate ||
-      !endDate ||
-      nights <= 0
-    ) {
-      alert("اطلاعات خانه یا تاریخ‌های رزرو معتبر نیست.");
-      return;
-    }
+  if (
+    !Number.isInteger(houseId) ||
+    houseId <= 0 ||
+    !startDate ||
+    !endDate ||
+    nights <= 0
+  ) {
+    alert("اطلاعات خانه یا تاریخ‌های رزرو معتبر نیست.");
+    return;
+  }
 
-    const values = getValues();
+  const values = getValues();
 
-    const payload = {
-      houseId,
-      reservedDates,
-      traveler_details: [
-        {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          gender: values.gender,
-          birthDate: values.birthDate,
-          nationalId: values.nationalId,
-        },
-        ...values.additionalTravelers.map((traveler) => ({
-          firstName: traveler.firstName,
-          lastName: traveler.lastName,
-          gender: traveler.gender,
-          birthDate: traveler.birthDate,
-          nationalId: traveler.nationalId,
-        })),
-      ],
-      sharedEmail: values.sharedEmail,
-      sharedMobile: values.sharedMobile,
-    };
+  const payload = {
+    houseId,
+    reservedDates: [startDate, endDate] as [string, string],
 
-    setSubmitting(true);
+    traveler_details: [
+      {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        gender: values.gender,
+        birthDate: values.birthDate,
+        nationalId: values.nationalId,
+      },
 
-    try {
-      const response = await bookingService.create(payload);
+      ...values.additionalTravelers.map((traveler) => ({
+        firstName: traveler.firstName,
+        lastName: traveler.lastName,
+        gender: traveler.gender,
+        birthDate: traveler.birthDate,
+        nationalId: traveler.nationalId,
+      })),
+    ],
 
-      console.log("[Booking] Created booking:", response.booking);
-
-      setSuccess(true);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("[Booking] API failed:", {
-          status: error.response?.status,
-          data: error.response?.data,
-          message: error.message,
-        });
-
-        alert(
-          error.response?.data?.message ||
-            "ثبت رزرو ناموفق بود. لطفاً دوباره تلاش کنید.",
-        );
-      } else {
-        console.error("[Booking] Unexpected error:", error);
-        alert("خطای غیرمنتظره‌ای هنگام ثبت رزرو رخ داد.");
-      }
-    } finally {
-      setSubmitting(false);
-    }
+    sharedEmail: values.sharedEmail,
+    sharedMobile: values.sharedMobile,
   };
+
+  setSubmitting(true);
+
+  try {
+    const result = await createBookingAction(payload);
+
+    if (!result.success) {
+      alert(result.message);
+      return;
+    }
+
+    console.log("[Booking] Created:", result.booking);
+
+    setSuccess(true);
+  } catch (error) {
+    console.error("[Booking] Unexpected error:", error);
+
+    alert("خطای غیرمنتظره‌ای هنگام ثبت رزرو رخ داد.");
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   const footer =
     step === 1
@@ -217,22 +205,20 @@ export default function HouseBookingContent() {
       return;
     }
 
-    // اتصال به API اعتبارسنجی کد تخفیف باید اینجا انجام شود.
     alert("سرویس اعتبارسنجی کد تخفیف هنوز به این بخش متصل نشده است.");
   };
 
   return (
     <main
       dir="rtl"
-      className="min-h-screen bg-white px-4 py-6 text-[#191919] dark:bg-[#1B1B1B] dark:text-white sm:px-6 sm:py-8 lg:px-8"
+      className="min-h-screen  px-4 py-6 text-[#191919]  dark:text-white sm:px-6 sm:py-8 lg:px-8"
     >
-      <div className="mx-auto w-full max-w-[1440px]">
+      <div className="mx-auto w-full max-w-360">
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px] xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-8">
-          {/* ستون اصلی: استپر و فرم */}
           <section className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
             <BookingStepper current={step} />
 
-            <div className="flex min-w-0 flex-col gap-8 rounded-[24px] border border-[#CDCED6] p-4 sm:gap-10 sm:p-6">
+            <div className="flex min-w-0 flex-col gap-8 rounded-[24px] dark:bg-[#272727] border border-[#CDCED6] dark:border-[#272727] p-4 sm:gap-10 sm:p-6">
               {step === 1 && (
                 <TravelerForm
                   control={control}
@@ -300,10 +286,9 @@ export default function HouseBookingContent() {
             </div>
           </section>
 
-          {/* ستون کناری: کارت خانه و کد تخفیف */}
           <aside className="order-1 flex min-w-0 flex-col gap-5 lg:order-2 ">
             {isLoading ? (
-              <div className="h-[380px] w-full animate-pulse rounded-[24px] bg-gray-100 dark:bg-[#353535]" />
+              <div className="h-95 w-full animate-pulse rounded-[24px] bg-gray-100 dark:bg-[#353535]" />
             ) : houseError ? (
               <div
                 role="alert"
@@ -331,9 +316,8 @@ export default function HouseBookingContent() {
                   onChangeHouse={() => router.push(`/houses/${houseId}`)}
                 />
 
-                {/* کد تخفیف بدون بوردر */}
                 <div dir="rtl" className="w-full pt-1">
-                  <h3 className="mb-3 text-right text-xl font-bold text-primary-500">
+                  <h3 className="mb-3 text-right text-xl font-semibold dark:text-white text-[#1E40AF]">
                     کد تخفیف
                   </h3>
 
@@ -343,14 +327,14 @@ export default function HouseBookingContent() {
                     onChange={(event) => setDiscountCode(event.target.value)}
                     placeholder="کد تخفیف"
                     aria-label="کد تخفیف"
-                    className="h-[46px] w-full rounded-full border-0 bg-[#F0F0F3] px-5 text-sm outline-none placeholder:text-[#8B8D98] focus:ring-2 focus:ring-primary-500/20 dark:bg-[#353535] dark:text-white"
+                    className="h-11.5 w-full rounded-full border-0 bg-[#F0F0F3] px-5 text-sm outline-none placeholder:text-[#8B8D98] focus:ring-2 focus:ring-primary-500/20 dark:bg-[#353535] dark:text-white"
                   />
 
                   <Button
                     type="button"
                     variant="primary"
                     size="md"
-                    className="mt-3 h-[52px] w-full rounded-full text-sm font-semibold"
+                    className="mt-3 h-13 w-full rounded-full text-sm font-semibold"
                     onClick={handleApplyDiscount}
                   >
                     اعمال کد تخفیف
