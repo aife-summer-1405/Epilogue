@@ -15,6 +15,7 @@ const QueryProvider: FC<IProps> = ({ children }) => {
           queries: {
             retry: 1,
             refetchOnWindowFocus: false,
+            staleTime: 60 * 1000,
           },
         },
       }),

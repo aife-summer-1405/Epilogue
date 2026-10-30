@@ -10,6 +10,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { getLocations } from "@/services/fastReserve/locations.service";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
+import { useHouses } from "@/hooks/queries/fastReserve/useHouses";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallBack";
 
 interface ILocations {
   id: string;
@@ -89,6 +91,9 @@ const FiltersSection = () => {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
 
+  const { data: housesData } = useHouses();
+  const totalCount = housesData?.pages[0]?.totalCount ?? 0;
+
   const { data, isLoading } = useQuery({
     queryKey: ["Locations"],
     queryFn: getLocations,
@@ -145,6 +150,9 @@ const FiltersSection = () => {
       return null;
     }
   });
+  const [searchValue, setSearchValue] = useState(
+    () => searchParams.get("search") ?? "",
+  );
   const [minPriceValue, setMinPriceValue] = useState(
     () => searchParams.get("minPrice") ?? "",
   );
@@ -160,20 +168,29 @@ const FiltersSection = () => {
     }
     return router.push(`?${params.toString()}`);
   };
+
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setSearchParams("search", value === "" ? null : value);
+  }, 1000);
   return (
     <div className="flex flex-wrap items-end gap-x-5 gap-y-6.25">
-      <FilterInput
-        isTitle="جستوجو"
-        size="default"
-        onValueChange={(event) => {
-          if (event === null) {
-            return setSearchParams("search", event);
-          }
-          setSearchParams("search", event.value);
-        }}
-        placeHolder="نام هتل مورد نظر ..."
-        items={[{ label: "awdkalwdkm", value: "string" }]}
-      />
+      <div className="flex flex-col gap-3">
+        <p className={`leading-5.5 text-base text-default-black font-semibold`}>
+          جستوجو
+        </p>
+        <input
+          type={"text"}
+          placeholder="جستوجو ..."
+          className={cn(
+            "w-94.5 text-neutral-800 placeholder:text-neutral-800 sm:text-base text-[14px] outline-none h-12 bg-neutral-200 px-5 rounded-[40px]",
+          )}
+          value={searchValue}
+          onChange={(event) => {
+            setSearchValue(event.target.value);
+            debouncedSearch(event.target.value);
+          }}
+        />
+      </div>
       <FilterInput
         size="mini"
         isTitle="مقصد یا  هتل شما"
@@ -269,7 +286,7 @@ const FiltersSection = () => {
           }}
         />
       </div>
-      <Button>آگهی پیدا شد</Button>
+      <Button>{totalCount} آگهی پیدا شد</Button>
       <Button
         variant="danger"
         startIcon={
@@ -284,6 +301,7 @@ const FiltersSection = () => {
             params.delete(value);
           });
           setMinPriceValue("");
+          setSearchValue("");
           setMaxPriceValue("");
           setLocationsValue(null);
           setPropertyTypesValue(null);

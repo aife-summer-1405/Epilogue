@@ -5,6 +5,7 @@ import gsap from "gsap";
 
 import BackgroundImage from "@/app/assets/Image/Comment.jpg";
 import { CommentCard } from "@/components/molecules";
+import { useComments } from "@/hooks/queries/landing/useComments";
 // import { useComments } from "@/hooks/queries/landing/useComments";
 
 interface Comment {
@@ -34,60 +35,60 @@ interface CommentsResponse {
 }
 
 export default function TestimonialsSection() {
-  // const { data, isPending, isError } = useComments();
+  const { data, isPending, isError } = useComments();
 
-  // const viewportRef = useRef<HTMLDivElement>(null);
-  // const trackRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
 
-  // const response = data as CommentsResponse | undefined;
-  // const comments = response?.comments ?? [];
+  const response = data as CommentsResponse | undefined;
+  const comments = response?.comments ?? [];
 
-  // useEffect(() => {
-  //   const track = trackRef.current;
-  //   const viewport = viewportRef.current;
+  useEffect(() => {
+    const track = trackRef.current;
+    const viewport = viewportRef.current;
 
-  //   if (!track || !viewport || comments.length === 0) return;
+    if (!track || !viewport || comments.length === 0) return;
 
-  //   const ctx = gsap.context(() => {
-  //     const getMaxScroll = () =>
-  //       Math.max(0, track.scrollHeight - viewport.clientHeight);
+    const ctx = gsap.context(() => {
+      const getMaxScroll = () =>
+        Math.max(0, track.scrollHeight - viewport.clientHeight);
 
-  //     const animation = gsap.to(track, {
-  //       y: () => -getMaxScroll(),
-  //       duration: 20,
-  //       ease: "none",
-  //       repeat: -1,
-  //       yoyo: true,
-  //       paused: true,
-  //     });
+      const animation = gsap.to(track, {
+        y: () => -getMaxScroll(),
+        duration: 20,
+        ease: "none",
+        repeat: -1,
+        yoyo: true,
+        paused: true,
+      });
 
-  //     const updateAnimation = () => {
-  //       animation.invalidate();
-  //       animation.progress(0);
-  //       animation.play();
-  //     };
+      const updateAnimation = () => {
+        animation.invalidate();
+        animation.progress(0);
+        animation.play();
+      };
 
-  //     updateAnimation();
+      updateAnimation();
 
-  //     const observer = new ResizeObserver(updateAnimation);
-  //     observer.observe(track);
-  //     observer.observe(viewport);
+      const observer = new ResizeObserver(updateAnimation);
+      observer.observe(track);
+      observer.observe(viewport);
 
-  //     return () => {
-  //       observer.disconnect();
-  //       animation.kill();
-  //     };
-  //   }, viewport);
+      return () => {
+        observer.disconnect();
+        animation.kill();
+      };
+    }, viewport);
 
-  //   return () => ctx.revert();
-  // }, [comments.length]);
+    return () => ctx.revert();
+  }, [comments.length]);
 
-  // const formatDate = (date: string) =>
-  //   new Intl.DateTimeFormat("fa-IR", {
-  //     day: "numeric",
-  //     month: "long",
-  //     year: "numeric",
-  //   }).format(new Date(date));
+  const formatDate = (date: string) =>
+    new Intl.DateTimeFormat("fa-IR", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(new Date(date));
 
   return (
     <section
@@ -116,7 +117,7 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {/* <div
+        <div
           ref={viewportRef}
           className="relative h-[560px] min-w-0 overflow-hidden md:h-[650px]"
         >
@@ -152,7 +153,7 @@ export default function TestimonialsSection() {
               })}
             </div>
           )}
-        </div> */}
+        </div>
       </div>
     </section>
   );
