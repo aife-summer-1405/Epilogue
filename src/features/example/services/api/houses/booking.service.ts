@@ -1,3 +1,4 @@
+import "server-only";
 import axios from "@/lib/http/interceptorsClient";
 import {
   Booking,
