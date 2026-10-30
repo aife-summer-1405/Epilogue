@@ -1,33 +1,17 @@
 "use client";
 
 import "leaflet/dist/leaflet.css";
-import { useMemo, useState } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import Link from "next/link";
-import { useGeoHouses } from "@/hooks/queries/fastReserve/useGeoHouses";
 import Image from "next/image";
+import { useGeoHouses } from "@/hooks/queries/fastReserve/useGeoHouses";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowLeft01Icon, Location01Icon } from "@hugeicons/core-free-icons";
+import Button from "@/components/atoms/button/Button";
 
-interface IGeoHouse {
-  id: string;
-  title: string;
-  address: string;
-  photos: string[];
-  rate: string;
-  price: string;
-  discounted_price: string | null;
-  tags: string[];
-  capacity: number;
-  location: { lat: number; lng: number };
-  categories: { name: string };
-  bathrooms: number;
-  parking: number;
-  rooms: number;
-  transaction_type: string;
-  caption: string | null;
-}
-
-const DEFAULT_CENTER: [number, number] = [32.4, 53.7]; // مرکز ایران
+const DEFAULT_CENTER: [number, number] = [32.4, 53.7];
 const DEFAULT_ZOOM = 5;
 
 const makeIcon = (src: string) =>
@@ -45,13 +29,12 @@ const makeIcon = (src: string) =>
     iconAnchor: [24, 60],
   });
 
-function MapClick({ onBackgroundClick }: { onBackgroundClick: () => void }) {
-  useMapEvents({ click: onBackgroundClick });
-  return null;
-}
-
 export default function HousesMap() {
-  const [selected, setSelected] = useState<IGeoHouse | null>(null);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    setReady(true);
+    return () => setReady(false);
+  }, []);
   const { data: houses = [], isFetching } = useGeoHouses();
 
   const icons = useMemo(
@@ -61,67 +44,72 @@ export default function HousesMap() {
 
   return (
     <div className="relative isolate z-0 h-full w-full overflow-hidden rounded-3xl">
-      <MapContainer
-        center={DEFAULT_CENTER}
-        zoom={DEFAULT_ZOOM}
-        className="h-full w-full"
-        zoomControl={false}
-      >
-        <TileLayer
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        />
-        <MapClick onBackgroundClick={() => setSelected(null)} />
-
-        {houses.map((h) => (
-          <Marker
-            key={h.id}
-            position={[h.location.lat, h.location.lng]}
-            icon={icons.get(h.id)!}
-            eventHandlers={{
-              click: (e) => {
-                L.DomEvent.stopPropagation(e);
-                setSelected(h);
-              },
-            }}
-          />
-        ))}
-      </MapContainer>
-
-      {selected && (
-        <div
-          dir="rtl"
-          className="absolute inset-x-4 top-4 z-1000 rounded-2xl bg-teal-700 p-3 text-white shadow-xl"
+      {ready && (
+        <MapContainer
+          center={DEFAULT_CENTER}
+          zoom={DEFAULT_ZOOM}
+          className="h-full w-full font-sans!"
+          zoomControl={false}
         >
-          <div className="flex items-start gap-3">
-            <Image
-              src={selected.photos[0]}
-              alt=""
-              className="size-12 shrink-0 rounded-full object-cover"
-            />
-            <div className="min-w-0 flex-1">
-              <h4 className="line-clamp-1 text-sm font-bold">
-                {selected.title}
-              </h4>
-              <p className="line-clamp-1 text-xs opacity-90">
-                {selected.address}
-              </p>
-            </div>
-            <button
-              onClick={() => setSelected(null)}
-              className="text-lg leading-none opacity-80 hover:opacity-100"
-              aria-label="بستن"
+          <TileLayer
+            url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+          />
+
+          {houses.map((h) => (
+            <Marker
+              key={h.id}
+              position={[h.location.lat, h.location.lng]}
+              icon={icons.get(h.id)!}
             >
-              ×
-            </button>
-          </div>
-          <Link
-            href={`/houseReserve/${selected.id}`}
-            className="mt-3 inline-flex w-full items-center justify-center rounded-full bg-teal-900 px-4 py-2 text-xs font-medium hover:bg-teal-950"
-          >
-            جزئیات بیشتر و رزرو
-          </Link>
-        </div>
+              <Popup
+                className="[&_.leaflet-popup-content-wrapper]:bg-transparent! [&_.leaflet-popup-content-wrapper]:shadow-none! [&_.leaflet-popup-content-wrapper]:p-0! [&_.leaflet-popup-content]:m-0! [&_.leaflet-popup-tip]:bg-secondary-500!"
+                closeButton={false}
+                maxWidth={396}
+                offset={[0, 7]}
+                autoPanPadding={[20, 80]}
+              >
+                <div className="2xl:w-99 w-88 rounded-[16px] 2xl:px-7 2xl:py-8 px-5 py-6 bg-secondary-500 text-white flex flex-col 2xl:gap-5 gap-3">
+                  <div className="flex items-start gap-3">
+                    <Image
+                      src={h.photos[0]}
+                      alt={h.title}
+                      width={48}
+                      height={48}
+                      className="size-12 shrink-0 rounded-full object-cover"
+                    />
+                    <div className="flex flex-col text-right gap-1">
+                      <h4 className="line-clamp-1 2xl:text-[18px] text-base font-semibold text-default-white">
+                        {h.title}
+                      </h4>
+                      <div className="flex items-center gap-2">
+                        <HugeiconsIcon
+                          icon={Location01Icon}
+                          className="text-default-white size-6"
+                        />
+                        <p className="line-clamp-1 2xl:text-base text-[14px] font-medium m-0! text-default-white">
+                          {h.address}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <Link href={`/fastReserve/${h.id}`}>
+                    <Button
+                      endIcon={
+                        <HugeiconsIcon
+                          icon={ArrowLeft01Icon}
+                          className="text-default-white size-6"
+                        />
+                      }
+                    >
+                      <p className="text-[14px]">جزئیات بیشتر و رزرو</p>
+                    </Button>
+                  </Link>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       )}
 
       {isFetching && (

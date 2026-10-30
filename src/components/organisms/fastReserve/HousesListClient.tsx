@@ -40,17 +40,11 @@ const HousesListClient = () => {
     const el = loadMoreRef.current;
     if (!el) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      {
-        root: document.getElementById("houses-scroll"),
-        rootMargin: "100px",
-      },
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    });
 
     observer.observe(el);
     return () => observer.disconnect();

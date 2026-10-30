@@ -10,9 +10,5 @@ const HousesMap = dynamic(() => import("./HousesMap"), {
 });
 
 export default function HousesMapLoader() {
-  return (
-    <div className="h-full w-full">
-      <HousesMap />
-    </div>
-  );
+  return <HousesMap />;
 }
