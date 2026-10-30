@@ -1,7 +1,16 @@
 "use client";
 
-import { CreateCommentPayload, getHouseComments, postComment } from "@/features/example/services/api/houses/house.service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createCommentAction } from "@/app/actions/comment/comment.actions";
+import {
+  getHouseComments,
+  CreateCommentPayload,
+} from "@/features/example/services/api/houses/house.service";
+
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 export function useHouseComments(id: string, page: number) {
   return useQuery({
@@ -15,12 +24,20 @@ export function usePostComment(houseId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (payload: CreateCommentPayload) =>
-      postComment(payload),
+    mutationFn: async (payload: CreateCommentPayload) => {
+      const result = await createCommentAction(payload);
+
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
+      return result.data;
+    },
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
         queryKey: ["house-comments", houseId],
+        refetchType: "all",
       });
     },
   });

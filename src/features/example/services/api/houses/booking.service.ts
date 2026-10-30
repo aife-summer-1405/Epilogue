@@ -1,4 +1,5 @@
-import axios from "@/lib/http/interceptorsClient";
+import "server-only";
+import axios from "@/lib/http/interceptors";
 import {
   Booking,
   CreateBookingPayload,
@@ -18,6 +19,7 @@ export const bookingService = {
     const response = await axios.post<CreateBookingResponse>(
       "/bookings",
       payload,
+      { headers: { tokenNeeded: true } },
     );
 
     return response.data;

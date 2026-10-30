@@ -36,32 +36,32 @@ export default function HouseRentComments({ houseId }: Props) {
 
     const comments = data?.comments ?? [];
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-        const trimmedTitle = title.trim();
-        const trimmedCaption = caption.trim();
+    const trimmedTitle = title.trim();
+    const trimmedCaption = caption.trim();
 
-        if (!trimmedTitle || !trimmedCaption || isSubmitting) return;
+    if (!trimmedTitle || !trimmedCaption || isSubmitting) return;
 
-        submitComment(
-            {
-                house_id: Number(houseId),
-                title: trimmedTitle,
-                caption: trimmedCaption,
-                rating,
-                parent_comment_id: null,
+    submitComment(
+        {
+            house_id: Number(houseId),
+            title: trimmedTitle,
+            caption: trimmedCaption,
+            rating,
+            parent_comment_id: null,
+        },
+        {
+            onSuccess: () => {
+                setTitle("");
+                setCaption("");
+                setRating(5);
+                setPage(1);
             },
-            {
-                onSuccess: () => {
-                    setTitle("");
-                    setCaption("");
-                    setRating(5);
-                    setPage(1);
-                },
-            }
-        );
-    };
+        }
+    );
+};
 
     return (
         <section
@@ -155,7 +155,6 @@ export default function HouseRentComments({ houseId }: Props) {
 
                     <button
                         type="submit"
-                        disabled={isSubmitting || !title.trim() || !caption.trim()}
                         className="rounded-xl bg-blue-700 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                         {isSubmitting ? "در حال ثبت نظر..." : "ثبت نظر"}

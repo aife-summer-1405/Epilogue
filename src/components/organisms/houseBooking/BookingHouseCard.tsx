@@ -50,17 +50,12 @@ export default function BookingHouseCard({
   const rating = Number(house.rate ?? house.rate ?? 0);
   const discount = Number(house.discounted_price ?? 0);
 
-  const pricePerNight =
-    Number(
-      String(house.price ?? 0).replace(/[٬,،]/g, ""),
-    ) || 0;
 
   return (
     <article
-      className="w-full overflow-hidden rounded-[24px] border border-gray-200 bg-white p-2 text-[#191919] dark:border-[#353535] dark:bg-[#272727] dark:text-white"
+      className="w-full overflow-hidden rounded-[24px] border border-gray-200 bg-white p-2 text-[#191919] dark:border-[#272727] dark:bg-[#272727] dark:text-white"
     >
-      {/* تصویر خانه */}
-      <div className="relative aspect-[340/230] w-full overflow-hidden rounded-[18px] bg-gray-100 dark:bg-[#353535]">
+      <div className="relative aspect-340/230 w-full overflow-hidden rounded-[18px] bg-gray-100 dark:bg-[#353535]">
         {image ? (
           <Image
             src={image}
@@ -113,13 +108,11 @@ export default function BookingHouseCard({
         )}
       </div>
 
-      {/* عنوان */}
       <div className="flex flex-col gap-3 p-2">
         <h3 className="line-clamp-2 text-[24px] font-bold">
           {house.title}
         </h3>
 
-        {/* تاریخ ورود و خروج */}
         <div className="flex flex-col gap-2 text-[16px] text-[#8B8D98]">
           <div className="flex items-center justify-between gap-2">
             <span>تاریخ ورود به هتل</span>
@@ -138,7 +131,6 @@ export default function BookingHouseCard({
           </div>
         </div>
 
-        {/* قیمت نهایی */}
         <div className="flex items-center justify-between gap-2 rounded-2xl bg-gray-100 px-3 py-3 dark:bg-[#353535]">
           <div className="min-w-0">
             <p className="text-[10px] text-[#8B8D98]">

@@ -101,7 +101,6 @@ export default function TravelerForm({
 
   return (
     <div className="flex flex-col gap-8">
-      {/* مشخصات مسافر اول */}
       <section className="flex flex-col gap-6">
         <h2 className="text-lg font-bold">مشخصات مسافران</h2>
 
@@ -171,7 +170,7 @@ export default function TravelerForm({
                     maxDate={new DateObject({ calendar: persian })}
                     calendarPosition="bottom-right"
                     placeholder="تاریخ تولد"
-                    inputClass="!h-10 !w-full !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !text-sm !outline-none dark:!bg-[#353535]"
+                    inputClass="!h-[51px] !w-full !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !text-sm !outline-none dark:!bg-[#353535]"
                     containerClassName="!w-full"
                   />
 
@@ -193,30 +192,29 @@ export default function TravelerForm({
             placeholder="کد ملی"
             inputMode="numeric"
           />
-                  {/* دکمه‌های مدیریت مسافران */}
-        <div className="flex flex-wrap items-center pt-8 gap-2">
-          <Button
-            type="button"
-            variant="primary"
-            size="md"
-            onClick={() => append({ ...emptyTraveler })}
-            className="flex items-center gap-2 rounded-full"
-          >
-            <HugeiconsIcon icon={UserAdd01Icon} size={19} />
-            افزودن مسافر جدید
-          </Button>
+          <div className="flex flex-wrap items-center pt-8 gap-2">
+            <Button
+              type="button"
+              variant="primary"
+              size="md"
+              onClick={() => append({ ...emptyTraveler })}
+              className="flex items-center gap-2 rounded-full"
+            >
+              <HugeiconsIcon icon={UserAdd01Icon} size={19} />
+              افزودن مسافر جدید
+            </Button>
 
-          <Button
-            type="button"
-            variant="outline"
-            size="md"
-            onClick={handlePreviousTravelers}
-            className="flex items-center gap-2 rounded-full"
-          >
-            <HugeiconsIcon icon={UserGroupIcon} size={19} />
-            انتخاب مسافران سابق
-          </Button>
-        </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              onClick={handlePreviousTravelers}
+              className="flex items-center gap-2 rounded-full"
+            >
+              <HugeiconsIcon icon={UserGroupIcon} size={19} />
+              انتخاب مسافران سابق
+            </Button>
+          </div>
         </div>
 
 
@@ -227,7 +225,6 @@ export default function TravelerForm({
           </p>
         )}
 
-        {/* فرم مسافران اضافه‌شده */}
         {fields.map((field, index) => (
           <section
             key={field.id}
@@ -367,7 +364,6 @@ export default function TravelerForm({
         ))}
       </section>
 
-      {/* اطلاعات ارسال بلیط */}
       <section className="flex flex-col gap-6 border-t border-[#CDCED6] pt-6">
         <h2 className="text-lg font-bold">ارسال بلیط به دیگران</h2>
 
