@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   StarIcon,
@@ -13,9 +12,9 @@ import {
 
 import { cn } from "@/lib/utils";
 import type { ProductCardProps } from "./product-card.types";
+import ImageFallback from "../ImageFallBack/ImageFallBack";
 
 export default function ProductCard({
-  image,
   title,
   address,
   rating,
@@ -30,28 +29,34 @@ export default function ProductCard({
   className,
   onClick,
   onDetailsClick,
+  slides,
 }: ProductCardProps) {
   const isOff = typeof off === "number" && off > 0;
 
   return (
     <article
+      dir="rtl"
       className={cn(
-        "w-full  overflow-hidden rounded-[28px]",
+        "w-full overflow-hidden rounded-[28px]",
         " bg-white border border-gray-200 dark:border-none",
         "dark:bg-[#272727] dark:text-white",
         className,
       )}
       onClick={onClick}
     >
-      <div className="relative aspect-340/230 w-full overflow-hidden bg-natural-200">
-        <Image
-          src={image}
-          alt={title}
-          fill
-          sizes="(max-width: 640px) 100vw, 350px"
-          className="object-cover"
-          onClick={onDetailsClick}
-        />
+      <div
+        onClick={onDetailsClick}
+        className="relative aspect-340/230 w-full overflow-hidden bg-natural-200"
+      >
+        <div className="relative size-full">
+          <ImageFallback
+            src={slides[0].src}
+            alt={slides[0].alt}
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 55vw, 100vw"
+          />
+        </div>
         <div className="absolute right-3 top-3 flex items-center gap-2">
           <span className="inline-flex items-center justify-center gap-1 rounded-full bg-primary-500 px-2 py-1 text-xs text-white">
             <span className="text-[14px]  text-white relative top-0.5">

@@ -24,6 +24,22 @@ export type LoginResponse = {
   message?: string;
   accessToken?: string;
   refreshToken?: string;
+  user?: {
+    id: string;
+    role: string;
+    membershipDate: null | string;
+    email: string;
+    phoneNumber: string;
+    emailVerified: boolean;
+    fullName: string;
+    firstName: string;
+    lastName: string;
+    profilePicture: null | string;
+    createdAt: string;
+    updatedAt: string;
+    created_at: string;
+    updated_at: string;
+  };
 };
 
 export type SignUpEmailPayload = { email: string };

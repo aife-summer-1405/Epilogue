@@ -1,11 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  useParams,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,10 +40,7 @@ export default function HouseBookingContent() {
     data: house,
     isLoading: houseLoading,
     isError: houseError,
-  } = useHouse(
-    houseId,
-    Number.isInteger(houseId) && houseId > 0,
-  );
+  } = useHouse(houseId, Number.isInteger(houseId) && houseId > 0);
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [success, setSuccess] = useState(false);
@@ -78,11 +71,7 @@ export default function HouseBookingContent() {
   });
 
   const pricePerNight = useMemo(() => {
-    return (
-      Number(
-        String(house?.price ?? 0).replace(/[٬,،]/g, ""),
-      ) || 0
-    );
+    return Number(String(house?.price ?? 0).replace(/[٬,،]/g, "")) || 0;
   }, [house?.price]);
 
   const nights = useMemo(() => {
@@ -193,20 +182,20 @@ const handleFinalConfirmation = async () => {
   const footer =
     step === 1
       ? {
-        label: "تأیید و ادامه فرایند",
-        onClick: handleTravelerSubmit,
-      }
+          label: "تأیید و ادامه فرایند",
+          onClick: handleTravelerSubmit,
+        }
       : step === 2
         ? {
-          label: "تأیید و ادامه فرایند",
-          onClick: handleConfirmDetails,
-        }
+            label: "تأیید و ادامه فرایند",
+            onClick: handleConfirmDetails,
+          }
         : {
-          label: submitting
-            ? "در حال ثبت رزرو..."
-            : "تأیید اطلاعات و صدور بلیط",
-          onClick: handleFinalConfirmation,
-        };
+            label: submitting
+              ? "در حال ثبت رزرو..."
+              : "تأیید اطلاعات و صدور بلیط",
+            onClick: handleFinalConfirmation,
+          };
 
   const isLoading = houseLoading;
 
@@ -260,13 +249,11 @@ const handleFinalConfirmation = async () => {
                   />
 
                   <div className="rounded-2xl bg-[#F0F0F3] p-4 text-sm leading-7 dark:bg-[#353535]">
-                    <h3 className="mb-2 font-bold">
-                      تأیید نهایی رزرو
-                    </h3>
+                    <h3 className="mb-2 font-bold">تأیید نهایی رزرو</h3>
 
                     <p className="text-[#777985] dark:text-[#C5C5C5]">
-                      اطلاعات مسافر، تاریخ‌های رزرو و مبلغ نهایی را
-                      بررسی کنید. رزرو پس از تأیید موفق سرور ثبت می‌شود.
+                      اطلاعات مسافر، تاریخ‌های رزرو و مبلغ نهایی را بررسی کنید.
+                      رزرو پس از تأیید موفق سرور ثبت می‌شود.
                     </p>
 
                     <div className="mt-4 space-y-2">
@@ -295,10 +282,7 @@ const handleFinalConfirmation = async () => {
                 </div>
               )}
 
-              <BookingFooter
-                total={total}
-                {...footer}
-              />
+              <BookingFooter total={total} {...footer} />
             </div>
           </section>
 
@@ -311,7 +295,6 @@ const handleFinalConfirmation = async () => {
                 className="rounded-2xl p-4 text-sm text-red-600"
               >
                 دریافت اطلاعات خانه ناموفق بود.
-
                 <Button
                   type="button"
                   variant="outline"
@@ -330,9 +313,7 @@ const handleFinalConfirmation = async () => {
                   endDate={endDate}
                   nights={nights}
                   total={total}
-                  onChangeHouse={() =>
-                    router.push(`/houses/${houseId}`)
-                  }
+                  onChangeHouse={() => router.push(`/houses/${houseId}`)}
                 />
 
                 <div dir="rtl" className="w-full pt-1">
@@ -343,9 +324,7 @@ const handleFinalConfirmation = async () => {
                   <input
                     type="text"
                     value={discountCode}
-                    onChange={(event) =>
-                      setDiscountCode(event.target.value)
-                    }
+                    onChange={(event) => setDiscountCode(event.target.value)}
                     placeholder="کد تخفیف"
                     aria-label="کد تخفیف"
                     className="h-11.5 w-full rounded-full border-0 bg-[#F0F0F3] px-5 text-sm outline-none placeholder:text-[#8B8D98] focus:ring-2 focus:ring-primary-500/20 dark:bg-[#353535] dark:text-white"

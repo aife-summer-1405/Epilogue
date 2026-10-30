@@ -66,7 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={cn("h-full", "antialiased", vazirmatn.variable)}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col relative bg-default-white-bg">
         <ThemeProvider>
           <QueryProvider>
             <TooltipProvider>{children}</TooltipProvider>
