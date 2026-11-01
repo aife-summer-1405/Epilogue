@@ -18,6 +18,8 @@ import type {
   SignUpEmailResponse,
   SignUpVerifyEmailPayload,
   SignUpVerifyEmailResponse,
+  SignUpVerifyPhonePayload,
+  SignUpVerifyPhoneResponse,
 } from "@/core/types/auth.types";
 import { CurrentUser } from "../user.actions";
 
@@ -148,7 +150,81 @@ export async function signUpVerifyEmailAction(
     }
   }
 }
+export type SignUpPhoneActionResult =
+  | { success: true; tempUserId?: string }
+  | { success: false; message: string };
 
+export async function signUpPhoneAction(
+  raw: SignUpPhonePayload,
+): Promise<SignUpPhoneActionResult> {
+  try {
+    const { data } = await api.post<SignUpPhoneResponse>(
+      "/auth/register-phone",
+      raw,
+    );
+
+    return { success: true, tempUserId: data.tempUserId };
+  } catch (error) {
+    if (isAxiosError(error)) {
+      if (error.response?.status === 400) {
+        return {
+          success: false,
+          message: "شما قبلا با این شماره ثبت نام کرده اید.",
+        };
+      } else {
+        return {
+          success: false,
+          message: "مشکلی در ارسال کد تایید پیش آمد مجدد تلاش کنید.",
+        };
+      }
+    } else {
+      return {
+        success: false,
+        message: "مشکلی در ارسال کد تایید پیش آمد مجدد تلاش کنید.",
+      };
+    }
+  }
+}
+
+export type SignUpVerifyPhoneActionResult =
+  | { success: true }
+  | { success: false; message: string };
+
+export async function signUpVerifyPhoneAction(
+  raw: SignUpVerifyPhonePayload,
+): Promise<SignUpVerifyPhoneActionResult> {
+  try {
+    await api.post<SignUpVerifyPhoneResponse>("/auth/verify-phone", raw);
+
+    return { success: true };
+  } catch (error) {
+    if (isAxiosError(error)) {
+      const status = error.response?.status;
+
+      if (status === 400) {
+        return {
+          success: false,
+          message:
+            error.response?.data?.message === "Invalid verification code"
+              ? "کد وارد شده صحیح نمی باشد."
+              : "کد تایید شما منقضی شده است لطفا مجدد تلاش کنید.",
+        };
+      } else if (status === 404) {
+        return { success: false, message: "کاربر یافت نشد." };
+      } else {
+        return {
+          success: false,
+          message: "مشکلی در تایید کد پیش آمد، لطفا مجدد تلاش کنید.",
+        };
+      }
+    } else {
+      return {
+        success: false,
+        message: "مشکلی در تایید کد پیش آمد، لطفا مجدد تلاش کنید.",
+      };
+    }
+  }
+}
 export type CompleteRegistrationActionResult =
   | { success: true }
   | { success: false; message: string; resetFlow?: boolean };

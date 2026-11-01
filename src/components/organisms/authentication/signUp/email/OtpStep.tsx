@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import Button from "@/components/atoms/button/Button";
 import OtpInput from "@/components/molecules/inputs/OtpInput";
-import BackButton from "../shared/BackButton";
+import BackButton from "../../shared/BackButton";
 import { useCountdown } from "@/hooks/useCountDown";
 import { useSignUpStore } from "@/store/auth.store";
 import { useSignUpEmail } from "@/hooks/mutations/useSignUpEmail";

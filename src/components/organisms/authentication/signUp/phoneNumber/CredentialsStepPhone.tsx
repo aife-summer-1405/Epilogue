@@ -3,27 +3,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { LockKeyIcon, SmartPhone01Icon } from "@hugeicons/core-free-icons";
+import { LockKeyIcon, Mail01Icon } from "@hugeicons/core-free-icons";
 import Button from "@/components/atoms/button/Button";
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
-import BackButton from "../shared/BackButton";
-import { signUpCredentialsSchema } from "@/lib/validations/authentication/auth";
+import BackButton from "../../shared/BackButton";
+import { signUpCredentialsSchemaPhone } from "@/lib/validations/authentication/auth";
 import { useSignUpStore } from "@/store/auth.store";
 import { completeRegistrationAction } from "@/app/actions/auth/auth.actions";
-import { SignUpCredentialsValues } from "@/core/types/auth.types";
+import { SignUpCredentialsValuesPhone } from "@/core/types/auth.types";
 
-const CredentialsStep = () => {
+const CredentialsStepPhone = () => {
   const router = useRouter();
   const userId = useSignUpStore((s) => s.signUpValues.tempId);
   const { addInfo, resetValues } = useSignUpStore((s) => s.actions);
 
-  const { control, handleSubmit } = useForm<SignUpCredentialsValues>({
-    resolver: zodResolver(signUpCredentialsSchema),
-    defaultValues: { phone: "", password: "", confirmPassword: "" },
+  const { control, handleSubmit } = useForm<SignUpCredentialsValuesPhone>({
+    resolver: zodResolver(signUpCredentialsSchemaPhone),
+    defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
   const { mutate, isPending } = useMutation({
-    mutationKey: ["CompleteRegistration"],
+    mutationKey: ["CompleteRegistrationPhone"],
     mutationFn: completeRegistrationAction,
     onSuccess: (result) => {
       if (!result.success) {
@@ -40,12 +40,16 @@ const CredentialsStep = () => {
     },
   });
 
-  const onSubmit = (values: SignUpCredentialsValues) => {
+  const onSubmit = (values: SignUpCredentialsValuesPhone) => {
     if (!userId) {
       toast.error("لطفا مراحل ثبت نام را از ابتدا طی کنید.");
       return;
     }
-    mutate({ userId, password: values.password, phoneNumber: values.phone });
+    mutate({
+      userId,
+      password: values.password,
+      email: values.email,
+    });
   };
 
   return (
@@ -53,16 +57,15 @@ const CredentialsStep = () => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-6 w-full"
     >
-      <TextInput<SignUpCredentialsValues>
+      <TextInput<SignUpCredentialsValuesPhone>
         control={control}
-        name="phone"
+        name="email"
         type="text"
-        inputMode="numeric"
         variableName="fullSm"
-        icons={SmartPhone01Icon}
-        placeholder="شماره تماس خود را وارد کنید"
+        icons={Mail01Icon}
+        placeholder="ایمیل خود را وارد کنید"
       />
-      <TextInput<SignUpCredentialsValues>
+      <TextInput<SignUpCredentialsValuesPhone>
         control={control}
         name="password"
         type="password"
@@ -70,7 +73,7 @@ const CredentialsStep = () => {
         icons={LockKeyIcon}
         placeholder="رمز عبور خود را وارد کنید"
       />
-      <TextInput<SignUpCredentialsValues>
+      <TextInput<SignUpCredentialsValuesPhone>
         control={control}
         name="confirmPassword"
         type="password"
@@ -88,4 +91,4 @@ const CredentialsStep = () => {
   );
 };
 
-export default CredentialsStep;
+export default CredentialsStepPhone;

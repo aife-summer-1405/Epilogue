@@ -5,6 +5,8 @@ type Step = 1 | 2 | 3;
 interface ISignUpValues {
   tempId: string;
   email: string;
+  phoneNumber: string;
+  type: "email" | "phoneNumber";
   step: Step;
 }
 
@@ -19,6 +21,8 @@ interface ISignUpStore {
 const initialValues: ISignUpValues = {
   tempId: "",
   email: "",
+  phoneNumber: "",
+  type: "email",
   step: 1,
 };
 

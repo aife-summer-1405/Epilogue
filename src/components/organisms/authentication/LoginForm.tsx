@@ -61,14 +61,14 @@ const LoginForm = () => {
         <SignButton
           text="Github"
           icon={<GithubIcon />}
-          disabled={isOauthPending}
-          onClick={() => handleOauth("github")}
+          // disabled={isOauthPending}
+          // onClick={() => handleOauth("github")}
         />
         <SignButton
           text="Google"
           icon={<GoogleIcon />}
-          disabled={isOauthPending}
-          onClick={() => handleOauth("google")}
+          // disabled={isOauthPending}
+          // onClick={() => handleOauth("google")}
         />
       </div>
       <div className="flex items-center justify-center gap-3.5 w-full">

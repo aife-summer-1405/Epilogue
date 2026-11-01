@@ -20,7 +20,7 @@ const AuthLayout: FC<IProps> = ({ children }) => {
   return (
     <main className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full sm:max-w-9/10 flex justify-center gap-8">
-        <div className="flex min-w-0 xl:h-auto sm:h-187.5 min-h-165 h-[calc(100vh-32px)] max-h-195 xl:w-4/10 lg:w-6/10 md:w-8/10 w-full lg:max-w-none">
+        <div className="flex min-w-0 xl:h-auto sm:h-187.5 sm:min-h-auto min-h-[calc(100vh-32px)] max-h-195 xl:w-4/10 lg:w-6/10 md:w-8/10 w-full lg:max-w-none">
           <div className="w-full sm:px-5 sm:py-8 px-3 py-6 rounded-[24px] bg-default-white flex flex-col items-center justify-center sm:gap-8 gap-4 shadow-[0px_50px_100px_0px_#484848]/16">
             <Link href={"/"}>
               <HomeLogo className="w-fit" />
