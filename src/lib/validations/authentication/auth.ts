@@ -6,6 +6,11 @@ const emailField = z
   .min(1, "ایمیل خود را وارد کنید")
   .email("فرمت ایمیل وارد شده صحیح نیست");
 
+const phoneField = z
+  .string()
+  .trim()
+  .regex(/^09\d{9}$/, "شماره موبایل معتبر نیست (مثال: 09123456789)");
+
 const passwordField = z
   .string()
   .min(1, "رمز عبور خود را وارد کنید")
@@ -17,6 +22,7 @@ export const loginSchema = z.object({
 });
 
 export const signUpEmailSchema = z.object({ email: emailField });
+export const signUpPhoneSchema = z.object({ phoneNumber: phoneField });
 
 export const signUpOtpSchema = z.object({
   otp: z
@@ -27,10 +33,20 @@ export const signUpOtpSchema = z.object({
 
 export const signUpCredentialsSchema = z
   .object({
-    phone: z
+    phoneNumber: z
       .string()
       .trim()
       .regex(/^09\d{9}$/, "شماره موبایل معتبر نیست (مثال: 09123456789)"),
+    password: passwordField,
+    confirmPassword: z.string().min(1, "تکرار رمز عبور را وارد کنید"),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "رمز عبور و تکرار آن یکسان نیستند",
+  });
+export const signUpCredentialsSchemaPhone = z
+  .object({
+    email: emailField,
     password: passwordField,
     confirmPassword: z.string().min(1, "تکرار رمز عبور را وارد کنید"),
   })
