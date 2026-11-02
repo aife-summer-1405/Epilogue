@@ -157,7 +157,7 @@ const FiltersSection = () => {
           </Button>
         }
       >
-        <div className="flex flex-col gap-2 lg:hidden px-4 py-10">
+        <div className="flex flex-col gap-2 lg:hidden px-4 py-10 overflow-y-auto">
           <FiltersInputs
             debouncedSearch={debouncedSearch}
             isLoading={isLoading}
