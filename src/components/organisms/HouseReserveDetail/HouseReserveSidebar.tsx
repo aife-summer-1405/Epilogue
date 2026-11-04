@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemo, useState } from "react";
@@ -22,20 +21,11 @@ import { formatPrice } from "@/utils/formatters";
 import { getUtcTimestamp } from "@/utils/date";
 import gregorian from "react-date-object/calendars/gregorian";
 import gregorian_en from "react-date-object/locales/gregorian_en";
+import { getToday, getTomorrow } from "@/utils/getToday";
 
 interface Props {
   house: HouseRent;
 }
-
-const getToday = () =>
-  new DateObject({ calendar: persian }).set({
-    hour: 0,
-    minute: 0,
-    second: 0,
-    millisecond: 0,
-  });
-
-const getTomorrow = () => getToday().add(1, "day");
 
 export default function HouseReserveSidebar({ house }: Props) {
   const router = useRouter();
@@ -47,8 +37,7 @@ export default function HouseReserveSidebar({ house }: Props) {
   const nights = useMemo(() => {
     if (!startDate || !endDate) return 0;
 
-    const difference =
-      getUtcTimestamp(endDate) - getUtcTimestamp(startDate);
+    const difference = getUtcTimestamp(endDate) - getUtcTimestamp(startDate);
 
     if (difference <= 0) return 0;
 
@@ -72,10 +61,7 @@ export default function HouseReserveSidebar({ house }: Props) {
 
     setStartDate(selectedDate);
 
-    if (
-      !endDate ||
-      getUtcTimestamp(endDate) <= getUtcTimestamp(selectedDate)
-    ) {
+    if (!endDate || getUtcTimestamp(endDate) <= getUtcTimestamp(selectedDate)) {
       setEndDate(new DateObject(selectedDate).add(1, "day"));
     }
   };
@@ -144,9 +130,7 @@ export default function HouseReserveSidebar({ house }: Props) {
       <div className="space-y-4">
         {/* تاریخ رفت */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium">
-            تاریخ رفت
-          </label>
+          <label className="block text-sm font-medium">تاریخ رفت</label>
 
           <div className="relative">
             <DatePicker
@@ -171,9 +155,7 @@ export default function HouseReserveSidebar({ house }: Props) {
 
         {/* تاریخ برگشت */}
         <div className="space-y-2">
-          <label className="block text-sm font-medium">
-            تاریخ برگشت
-          </label>
+          <label className="block text-sm font-medium">تاریخ برگشت</label>
 
           <div className="relative">
             <DatePicker
@@ -202,17 +184,12 @@ export default function HouseReserveSidebar({ house }: Props) {
 
         {/* تعداد مسافران */}
         <div className="space-y-2">
-          <label
-            htmlFor="travelerCount"
-            className="block text-sm font-medium"
-          >
+          <label htmlFor="travelerCount" className="block text-sm font-medium">
             تعداد مسافران
           </label>
 
           <div className="flex items-center rounded-full bg-[#F0F0F3] px-4 dark:bg-[#353535]">
-            <span className="shrink-0 text-xs text-[#8B8D98]">
-              نفر
-            </span>
+            <span className="shrink-0 text-xs text-[#8B8D98]">نفر</span>
 
             <input
               id="travelerCount"
@@ -222,9 +199,7 @@ export default function HouseReserveSidebar({ house }: Props) {
               value={travelerCount}
               onChange={(event) => {
                 const value = Number(event.target.value);
-                setTravelerCount(
-                  Math.max(1, Math.min(20, value || 1))
-                );
+                setTravelerCount(Math.max(1, Math.min(20, value || 1)));
               }}
               className="w-full bg-transparent px-3 py-3 text-sm text-[#8B8D98] outline-none"
             />
@@ -239,9 +214,7 @@ export default function HouseReserveSidebar({ house }: Props) {
           </p>
 
           <div className="flex items-center justify-between gap-2 text-sm">
-            <span className="text-[#8B8D98]">
-              {formatPrice(nights)} شب
-            </span>
+            <span className="text-[#8B8D98]">{formatPrice(nights)} شب</span>
 
             <span className="text-black dark:text-white">
               {formatPrice(pricePerNight)} تومان

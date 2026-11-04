@@ -42,10 +42,14 @@ export default function BestPlaceSection() {
               <Link key={house.id} href={`/mortgage-rent/${house.id}`}>
                 <div key={house.id} className="w-full min-w-0">
                   <ProductCard
-                    slides={house.photos.map((src) => ({
-                      src,
-                      alt: house.title,
-                    }))}
+                    slides={
+                      house.photos
+                        ? house.photos.map((src) => ({
+                            src,
+                            alt: house.title,
+                          }))
+                        : [{ src: "", alt: house.title }]
+                    }
                     title={house.title}
                     address={house.address}
                     rating={Number(house.rate ?? house.rate ?? 0)}
