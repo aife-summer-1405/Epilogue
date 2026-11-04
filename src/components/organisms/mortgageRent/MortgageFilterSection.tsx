@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import Button from "@/components/atoms/button/Button";
 import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
-import { GetHousesParams } from "@/services/houses/houses.service";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
+import { IHouseParams } from "@/core/types/houses/houseParams.types";
 
 interface MortgageFilterSectionProps {
-  initialFilters: GetHousesParams;
+  initialFilters: IHouseParams;
   locationOptions: IFilterInputs[];
-  onApplyFilter: (filters: Partial<GetHousesParams>) => void;
+  onApplyFilter: (filters: Partial<IHouseParams>) => void;
 }
 
 const SORT_OPTIONS: IFilterInputs[] = [
@@ -68,7 +68,7 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
   onApplyFilter,
 }) => {
   const [localFilters, setLocalFilters] =
-    useState<Partial<GetHousesParams>>(initialFilters);
+    useState<Partial<IHouseParams>>(initialFilters);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [isMobileSortOpen, setIsMobileSortOpen] = useState(false);
 
@@ -82,7 +82,7 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
   };
 
   const handleFieldChange = (
-    field: keyof GetHousesParams,
+    field: keyof IHouseParams,
     rawValue: unknown,
     isNumeric = false,
   ) => {
@@ -185,9 +185,9 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
                   <button
                     key={opt.value}
                     onClick={() => {
-                      const updated: Partial<GetHousesParams> = {
+                      const updated: Partial<IHouseParams> = {
                         ...localFilters,
-                        sort: opt.value as GetHousesParams["sort"],
+                        sort: opt.value as IHouseParams["sort"],
                       };
                       setLocalFilters(updated);
                       onApplyFilter(updated);

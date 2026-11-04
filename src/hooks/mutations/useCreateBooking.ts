@@ -1,8 +1,6 @@
-
 import { CreateBookingPayload } from "@/core/types/BookingFilter/booking";
-import { bookingService } from "@/features/example/services/api/houses/booking.service";
+import { bookingService } from "@/services/houses/booking.service";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 
 export const useCreateBooking = () => {
   const queryClient = useQueryClient();
@@ -18,7 +16,7 @@ export const useCreateBooking = () => {
 
       queryClient.setQueryData(
         ["booking", response.booking.id],
-        response.booking
+        response.booking,
       );
     },
   });
