@@ -1,24 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Button from "@/components/atoms/button/Button";
 import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon } from "@hugeicons/core-free-icons";
+import { useGetLocations } from "@/hooks/queries/useGetLocations";
+import { ILocations } from "@/core/types/locations/locations.types";
 
-type SearchMode = "reserve" | "rent" | "buy";
+type SearchMode = "reservation" | "rental" | "mortgage";
 
 const searchModes: { label: string; value: SearchMode }[] = [
-  { label: "رزرو ملک", value: "reserve" },
-  { label: "رهن و اجاره", value: "rent" },
-  { label: "خرید و فروش", value: "buy" },
-];
-
-const destinationItems = [
-  { label: "ساری", value: "sari" },
-  { label: "تهران", value: "tehran" },
-  { label: "رامسر", value: "ramsar" },
-  { label: "چالوس", value: "chalous" },
+  { label: "رزرو ملک", value: "reservation" },
+  { label: "اجاره ملک", value: "rental" },
+  { label: "رهن ملک", value: "mortgage" },
 ];
 
 const dateItems = [
@@ -36,12 +31,23 @@ const guestItems = [
 ];
 
 export default function HeroFilter() {
-  const [mode, setMode] = useState<SearchMode>("reserve");
+  const { data, isLoading } = useGetLocations();
+
+  const locations = useMemo(
+    () =>
+      (data?.data ?? []).map((loc: ILocations) => ({
+        ...loc,
+        label: loc.areaName,
+        value: loc.areaName,
+      })),
+    [data],
+  );
+
+  const [mode, setMode] = useState<SearchMode>("reservation");
   const [destination, setDestination] = useState<string | null>(null);
   const [checkIn, setCheckIn] = useState<string | null>(null);
   const [checkOut, setCheckOut] = useState<string | null>(null);
   const [guests, setGuests] = useState<string | null>(null);
-
 
   return (
     <div className="w-full">
@@ -74,7 +80,7 @@ export default function HeroFilter() {
         >
           <div className="min-w-0">
             <FilterInput
-              items={destinationItems}
+              items={!isLoading && locations}
               isTitle="انتخاب مقصد"
               placeHolder="استان، شهر، اقامتگاه ..."
               onValueChange={(value) =>
@@ -115,7 +121,7 @@ export default function HeroFilter() {
           </div>
         </div>
         <Button
-          size="sm"
+          size="md"
           variant="primary"
           className="w-full shrink-0 md:w-auto"
           onClick={() => {

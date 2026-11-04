@@ -1,7 +1,8 @@
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { getHouses, GetHousesParams } from "@/services/houses/houses.service";
+import { getHouses } from "@/services/houses/houses.service";
+import type { IHouseParams } from "@/core/types/houses/houseParams.types";
 
-export const useGetHouses = (params: GetHousesParams) => {
+export const useGetHouses = (params: IHouseParams) => {
   return useQuery({
     queryKey: ["houses-list", params],
     queryFn: () => getHouses(params),

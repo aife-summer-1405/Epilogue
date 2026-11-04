@@ -3,23 +3,16 @@
 import Button from "@/components/atoms/button/Button";
 import { FilterIcon, FilterRemoveIcon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { getLocations } from "@/services/fastReserve/locations.service";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
 import { useHouses } from "@/hooks/queries/fastReserve/useHouses";
 import { useDebouncedCallback } from "@/hooks/useDebouncedCallBack";
 import FiltersInputs from "./FiltersInputs";
 import { FilterKeys } from "@/core/types/houses/housesFilter.types";
 import DrawerComponent from "@/components/molecules/drawer/Drawer";
-
-interface ILocations {
-  id: string;
-  areaName: string;
-  lat: string;
-  lng: string;
-}
+import { useGetLocations } from "@/hooks/queries/useGetLocations";
+import { ILocations } from "@/core/types/locations/locations.types";
 
 const filterKeys = [
   "page",
@@ -59,10 +52,7 @@ const FiltersSection = () => {
   const { data: housesData } = useHouses();
   const totalCount = housesData?.pages[0]?.totalCount ?? 0;
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["Locations"],
-    queryFn: getLocations,
-  });
+  const { data, isLoading } = useGetLocations();
 
   const locations = useMemo(
     () =>

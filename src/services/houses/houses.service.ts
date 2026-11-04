@@ -1,50 +1,14 @@
-export interface GetHousesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  order?: "ASC" | "DESC";
-  sort?: "last_updated" | "price" | "area" | "created_at";
-  propertyType?: string;
-  transactionType?: string;
-  location?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  minRent?: number;
-  maxRent?: number;
-  minMortgage?: number;
-  maxMortgage?: number;
-  minArea?: number;
-  maxArea?: number;
-}
-
-export interface HouseItem {
-  id: string | number;
-  title: string;
-  address: string;
-  rate?: number;
-  rating?: number;
-  photos: string[];
-  image?: string;
-  rooms?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  capacity?: number;
-  guests?: number;
-  parking?: number;
-  price?: number | string;
-  rent?: number | string;
-  discounted_price?: number | string;
-  discount?: number;
-}
+import { IHouseItem } from "@/core/types/houses/houseItems.types";
+import { IHouseParams } from "@/core/types/houses/houseParams.types";
 
 export interface GetHousesResponse {
-  data: HouseItem[];
+  data: IHouseItem[];
   totalCount: number;
   totalPages: number;
 }
 
 export const getHouses = async (
-  params: GetHousesParams,
+  params: IHouseParams,
 ): Promise<GetHousesResponse> => {
   const searchParams = new URLSearchParams();
 
@@ -77,7 +41,8 @@ export const getHouses = async (
     };
   }
 
-  const items: HouseItem[] = result.data || result.houses || result.items || [];
+  const items: IHouseItem[] =
+    result.data || result.houses || result.items || [];
   const totalCount = Number(result.totalCount ?? result.total ?? items.length);
   const limit = params.limit || 9;
   const totalPages = Number(

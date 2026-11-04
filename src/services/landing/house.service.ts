@@ -1,6 +1,26 @@
 import clientApi from "@/lib/http/interceptorsClient";
 
-export const getHouses = async () => {
+import { HouseRent, HousesResponse } from "@/core/types/RentHouse/house";
+
+import { HouseCommentsResponse } from "@/core/types/RentHouse/Comments/HouseRentComments.types";
+
+export const getHouses = async (): Promise<HousesResponse> => {
   const { data } = await clientApi.get("/houses");
+  return data;
+};
+
+export const getHouseById = async (id: string): Promise<HouseRent> => {
+  const { data } = await clientApi.get(`/houses/${id}`);
+  return data;
+};
+
+export const getHouseComments = async (
+  id: string,
+  page: number,
+): Promise<HouseCommentsResponse> => {
+  const { data } = await clientApi.get(`/houses/${id}/comments`, {
+    params: { page },
+  });
+
   return data;
 };

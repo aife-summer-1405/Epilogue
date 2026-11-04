@@ -1,11 +1,8 @@
-import { bookingService } from "@/features/example/services/api/houses/booking.service";
+import { bookingService } from "@/services/houses/booking.service";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-export const useBooking = (
-  id: number | string,
-  enabled = true,
-) => {
+export const useBooking = (id: number | string, enabled = true) => {
   return useQuery({
     queryKey: ["booking", id],
     queryFn: async () => {

@@ -1,14 +1,10 @@
 "use server";
 
 import axios from "axios";
+import serverApi from "@/lib/http/interceptors";
+import { ICreateCommentPayload } from "@/core/types/comments/comments.types";
 
-import { commentService } from "@/features/example/services/api/houses/comment.service";
-
-import type { CreateCommentPayload } from "@/features/example/services/api/houses/house.service";
-
-export async function createCommentAction(
-  payload: CreateCommentPayload,
-) {
+export async function createCommentAction(payload: ICreateCommentPayload) {
   try {
     if (
       !payload.house_id ||
@@ -24,31 +20,34 @@ export async function createCommentAction(
       };
     }
 
-    const data = await commentService.create(payload);
+    const response = await serverApi.post("/comments", payload, {
+      headers: {
+        tokenNeeded: true,
+      },
+    });
+    const data = response.data;
 
     return {
       success: true,
       message: "نظر شما با موفقیت ثبت شد.",
       data,
     };
-  }catch (error) {
-  console.error("[Comment Action]", {
-    message: error instanceof Error ? error.message : error,
-    isAxiosError: axios.isAxiosError(error),
-    status: axios.isAxiosError(error) ? error.response?.status : undefined,
-    responseData: axios.isAxiosError(error)
-      ? error.response?.data
-      : undefined,
-    requestUrl: axios.isAxiosError(error)
-      ? error.config?.url
-      : undefined,
-  });
+  } catch (error) {
+    console.error("[Comment Action]", {
+      message: error instanceof Error ? error.message : error,
+      isAxiosError: axios.isAxiosError(error),
+      status: axios.isAxiosError(error) ? error.response?.status : undefined,
+      responseData: axios.isAxiosError(error)
+        ? error.response?.data
+        : undefined,
+      requestUrl: axios.isAxiosError(error) ? error.config?.url : undefined,
+    });
 
-  return {
-    success: false,
-    message: axios.isAxiosError(error)
-      ? error.response?.data?.message || error.message
-      : "خطای غیرمنتظره‌ای رخ داد.",
-  };
-}
+    return {
+      success: false,
+      message: axios.isAxiosError(error)
+        ? error.response?.data?.message || error.message
+        : "خطای غیرمنتظره‌ای رخ داد.",
+    };
+  }
 }

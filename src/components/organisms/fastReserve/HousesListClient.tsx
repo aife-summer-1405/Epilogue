@@ -65,8 +65,9 @@ const HousesListClient = () => {
       </div>
     );
   }
-  if (isError) return <p>خطا در دریافت اطلاعات</p>;
-  if (houses.length === 0) return <p>چیزی یافت نشد !</p>;
+  if (isError) return <p className="text-center">خطا در دریافت اطلاعات</p>;
+  if (houses.length === 0)
+    return <p className="text-center">چیزی یافت نشد !</p>;
 
   return (
     <>

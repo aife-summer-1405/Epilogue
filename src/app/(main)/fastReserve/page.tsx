@@ -77,7 +77,7 @@ const page: FC<IProps> = ({ searchParams }) => {
           <div className="flex flex-col-reverse lg:flex-col xl:flex-row xl:items-stretch gap-3 w-full">
             <div
               dir="ltr"
-              className="xl:w-6/10 w-full gap-3 lg:max-h-270 overflow-y-auto lg:pr-4 scrollbar-brand"
+              className="xl:w-6/10 w-full lg:max-h-270 overflow-y-auto lg:pr-4 scrollbar-brand"
             >
               <HousesListClient />
             </div>

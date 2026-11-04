@@ -1,7 +1,7 @@
 "use server";
 
 import axios from "axios";
-import { bookingService } from "@/features/example/services/api/houses/booking.service";
+import { bookingService } from "@/services/houses/booking.service";
 
 interface Traveler {
   firstName: string;
