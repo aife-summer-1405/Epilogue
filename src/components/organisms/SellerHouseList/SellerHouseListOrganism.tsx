@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -45,8 +45,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    const menuRef = useRef<HTMLDivElement>(null);
-
     const updateQueryParams = (newParams: Record<string, string | number | undefined>) => {
         const params = new URLSearchParams(searchParams.toString());
         Object.entries(newParams).forEach(([key, value]) => {
@@ -60,16 +58,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
             router.push(`${pathname}?${params.toString()}`);
         });
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setActiveMenuId(null);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
 
     const totalPages = Math.ceil(initialData.totalCount / currentLimit);
 
@@ -87,7 +75,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
 
     return (
         <div dir="rtl" className={`w-full space-y-6 ${isPending ? "opacity-60 transition-opacity" : ""}`}>
-            {/* هدر صفحه: ریسپانسیو شده برای موبایل و تبلت */}
+            {/* هدر صفحه */}
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -96,7 +84,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    {/* سرچ باکس */}
                     <div className="relative w-full sm:w-72">
                         <span className="absolute inset-y-0 right-3 flex items-center text-zinc-400">
                             <HugeiconsIcon icon={Search01Icon} size={20} strokeWidth={1.5} />
@@ -112,6 +99,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
 
                     <div className="flex items-center gap-2">
                         <button
+                            type="button"
                             onClick={() => setIsFilterModalOpen(true)}
                             className="flex flex-1 sm:flex-initial items-center justify-center gap-2 rounded-2xl sm:rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2.5 text-sm font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition"
                         >
@@ -131,10 +119,10 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                 </div>
             </div>
 
-            {/* کانتینر اصلی لیست املاک */}
+            {/* کانتینر جدول */}
             <div className="overflow-hidden rounded-3xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
                 
-                {/* نمای جدول برای دسکتاپ */}
+                {/* نمای دسکتاپ */}
                 <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-right text-sm">
                         <thead>
@@ -182,38 +170,53 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                                         <td className="py-4 px-6 text-center relative">
                                             <div className="flex items-center justify-center">
                                                 <button
-                                                    onClick={() => setActiveMenuId(activeMenuId === house.id ? null : house.id)}
-                                                    className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setActiveMenuId(activeMenuId === house.id ? null : house.id);
+                                                    }}
+                                                    className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
                                                 >
                                                     <HugeiconsIcon icon={MoreVerticalIcon} size={20} strokeWidth={2} />
                                                 </button>
                                             </div>
 
                                             {activeMenuId === house.id && (
-                                                <div
-                                                    ref={menuRef}
-                                                    className="absolute right-1/2 translate-x-1/2 top-14 z-20 w-36 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-xl"
-                                                >
-                                                    <button
-                                                        onClick={() =>
-                                                            router.push(`/seller/dashboard/places-management/edit-house/${house.id}`)
-                                                        }
-                                                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-                                                    >
-                                                        <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
-                                                        <span>ویرایش</span>
-                                                    </button>
-                                                    <button
-                                                        onClick={() => {
-                                                            setDeleteTargetId(house.id);
+                                                <>
+                                                    <div 
+                                                        className="fixed inset-0 z-20" 
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
                                                             setActiveMenuId(null);
-                                                        }}
-                                                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
-                                                    >
-                                                        <HugeiconsIcon icon={Delete02Icon} size={16} strokeWidth={1.5} />
-                                                        <span>حذف</span>
-                                                    </button>
-                                                </div>
+                                                        }} 
+                                                    />
+                                                    <div className="absolute left-1/2 -translate-x-1/2 top-14 z-30 w-36 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-2 shadow-2xl">
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setActiveMenuId(null);
+                                                                router.push(`/seller/dashboard/places-management/edit-house/${house.id}`);
+                                                            }}
+                                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-right cursor-pointer"
+                                                        >
+                                                            <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
+                                                            <span>ویرایش</span>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setActiveMenuId(null);
+                                                                setDeleteTargetId(house.id);
+                                                            }}
+                                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition text-right cursor-pointer"
+                                                        >
+                                                            <HugeiconsIcon icon={Delete02Icon} size={16} strokeWidth={1.5} />
+                                                            <span>حذف</span>
+                                                        </button>
+                                                    </div>
+                                                </>
                                             )}
                                         </td>
                                     </tr>
@@ -223,7 +226,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                     </table>
                 </div>
 
-                {/* نمای کارت‌محور (Card View) برای موبایل و تبلت */}
+                {/* نمای موبایل و تبلت */}
                 <div className="block md:hidden divide-y divide-zinc-100 dark:divide-zinc-800">
                     {!initialData.houses.length ? (
                         <div className="py-12 text-center text-zinc-400 text-sm">
@@ -253,10 +256,13 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                                         </div>
                                     </div>
 
-                                    {/* دکمه منوی موبایل */}
                                     <button
-                                        onClick={() => setActiveMenuId(activeMenuId === house.id ? null : house.id)}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setActiveMenuId(activeMenuId === house.id ? null : house.id);
+                                        }}
+                                        className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
                                     >
                                         <HugeiconsIcon icon={MoreVerticalIcon} size={20} strokeWidth={2} />
                                     </button>
@@ -270,39 +276,49 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                                     </span>
                                 </div>
 
-                                {/* منوی شناور در موبایل */}
                                 {activeMenuId === house.id && (
-                                    <div
-                                        ref={menuRef}
-                                        className="absolute left-4 top-12 z-25 w-36 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-2xl"
-                                    >
-                                        <button
-                                            onClick={() =>
-                                                router.push(`/seller/dashboard/places-management/edit-house/${house.id}`)
-                                            }
-                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-                                        >
-                                            <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
-                                            <span>ویرایش</span>
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setDeleteTargetId(house.id);
+                                    <>
+                                        <div 
+                                            className="fixed inset-0 z-20" 
+                                            onClick={(e) => {
+                                                e.stopPropagation();
                                                 setActiveMenuId(null);
-                                            }}
-                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
-                                        >
-                                            <HugeiconsIcon icon={Delete02Icon} size={16} strokeWidth={1.5} />
-                                            <span>حذف</span>
-                                        </button>
-                                    </div>
+                                            }} 
+                                        />
+                                        <div className="absolute left-4 top-12 z-30 w-36 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-2 shadow-2xl">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveMenuId(null);
+                                                    router.push(`/seller/dashboard/places-management/edit-house/${house.id}`);
+                                                }}
+                                                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-right cursor-pointer"
+                                            >
+                                                <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
+                                                <span>ویرایش</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveMenuId(null);
+                                                    setDeleteTargetId(house.id);
+                                                }}
+                                                className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition text-right cursor-pointer"
+                                            >
+                                                <HugeiconsIcon icon={Delete02Icon} size={16} strokeWidth={1.5} />
+                                                <span>حذف</span>
+                                            </button>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         ))
                     )}
                 </div>
 
-                {/* پجینیشن و کنترل تعداد نمایش */}
+                {/* پجینیشن */}
                 <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-t border-zinc-100 dark:border-zinc-800">
                     <div className="flex items-center justify-center sm:justify-start gap-2">
                         <span className="text-xs text-zinc-500">تعداد نمایش</span>
@@ -317,12 +333,12 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                         </select>
                     </div>
 
-                    {/* دکمه‌های صفحه‌بندی راست‌به‌چپ */}
                     <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-xs overflow-x-auto py-1">
                         <button
+                            type="button"
                             onClick={() => updateQueryParams({ page: Math.max(1, currentPage - 1) })}
                             disabled={currentPage === 1}
-                            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 transition whitespace-nowrap"
+                            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 transition whitespace-nowrap cursor-pointer"
                         >
                             <HugeiconsIcon icon={ArrowRight01Icon} size={14} strokeWidth={1.5} />
                             <span>قبلی</span>
@@ -331,8 +347,9 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                             <button
                                 key={p}
+                                type="button"
                                 onClick={() => updateQueryParams({ page: p })}
-                                className={`h-7 w-7 rounded-full font-medium transition shrink-0 ${
+                                className={`h-7 w-7 rounded-full font-medium transition shrink-0 cursor-pointer ${
                                     currentPage === p
                                         ? "bg-[#0f3d61] text-white dark:bg-[#1a507a]"
                                         : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -343,9 +360,10 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                         ))}
 
                         <button
+                            type="button"
                             onClick={() => updateQueryParams({ page: Math.min(totalPages, currentPage + 1) })}
                             disabled={currentPage >= totalPages}
-                            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 transition whitespace-nowrap"
+                            className="flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 transition whitespace-nowrap cursor-pointer"
                         >
                             <span>بعدی</span>
                             <HugeiconsIcon icon={ArrowLeft01Icon} size={14} strokeWidth={1.5} />
