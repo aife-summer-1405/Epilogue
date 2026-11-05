@@ -1,9 +1,10 @@
-export interface HouseRent  {
+export interface HouseRent {
   id: string;
   title: string;
   address: string;
   photos: string[];
   rate: string;
+  rating?: string;
   discounted_price: string | null;
   price: string;
   tags: string[];
@@ -32,6 +33,6 @@ export interface HouseRent  {
 }
 
 export interface HousesResponse {
-  houses: HouseRent [];
+  houses: HouseRent[];
   totalCount: number;
 }

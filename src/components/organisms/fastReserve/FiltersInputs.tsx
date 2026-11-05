@@ -72,7 +72,7 @@ const FiltersInputs: FC<IProps> = ({
           type={"text"}
           placeholder="جستوجو ..."
           className={cn(
-            "lg:w-94.5 w-full text-neutral-800 placeholder:text-neutral-800 sm:text-base text-[14px] outline-none h-12 bg-neutral-200 px-5 rounded-[40px]",
+            "lg:w-94.5 w-full text-neutral-800 placeholder:text-neutral-800 sm:text-base text-[14px] outline-none h-12 bg-neutral-200 dark:bg-[#353535] px-5 rounded-[40px]",
           )}
           value={searchValue}
           onChange={(event) => {
@@ -135,7 +135,7 @@ const FiltersInputs: FC<IProps> = ({
           type={"text"}
           placeholder="حداقل قیمت ..."
           className={cn(
-            "lg:w-52 w-full text-base font-normal text-default-black placeholder:text-neutral-800 outline-none h-12 bg-neutral-200 px-5 rounded-[40px]",
+            "lg:w-52 w-full text-base font-normal text-default-black placeholder:text-neutral-800 outline-none h-12 bg-neutral-200 dark:bg-[#353535] px-5 rounded-[40px]",
           )}
           onBeforeInput={(e) => {
             const data = (e as unknown as InputEvent).data;
@@ -161,7 +161,7 @@ const FiltersInputs: FC<IProps> = ({
           type={"text"}
           placeholder="حداکثر قیمت ..."
           className={cn(
-            "lg:w-52 w-full text-neutral-800 placeholder:text-neutral-800 sm:text-base text-[14px] outline-none h-12 bg-neutral-200 px-5 rounded-[40px]",
+            "lg:w-52 w-full text-neutral-800 placeholder:text-neutral-800 sm:text-base text-[14px] outline-none h-12 bg-neutral-200 dark:bg-[#353535] px-5 rounded-[40px]",
           )}
           onBeforeInput={(e) => {
             const data = (e as unknown as InputEvent).data;
