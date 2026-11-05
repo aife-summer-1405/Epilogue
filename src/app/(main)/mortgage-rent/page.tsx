@@ -23,7 +23,7 @@ const list: IBreadCrumbsList[] = [
 export default function MortgageAndRentPage() {
   return (
     <main
-      className="mx-auto flex w-full max-w-7xl flex-col gap-12 items-center px-4 py-6 md:px-8 md:py-8"
+      className="mx-auto flex w-full xl:max-w-11/12 lg:max-w-10/12 max-w-11/12 flex-col gap-12 items-center"
       dir="rtl"
     >
       <BreadCrumb list={list} />
