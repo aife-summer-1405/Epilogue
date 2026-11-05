@@ -2,9 +2,13 @@
 
 import React, { useState } from "react";
 import Button from "@/components/atoms/button/Button";
+import DrawerComponent from "@/components/molecules/drawer/Drawer";
+import { DrawerClose } from "@/components/ui/drawer";
 import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
 import { IHouseParams } from "@/core/types/houses/houseParams.types";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { FilterIcon } from "@hugeicons/core-free-icons";
 
 interface MortgageFilterSectionProps {
   initialFilters: IHouseParams;
@@ -32,35 +36,184 @@ const TRANSACTION_TYPE_OPTIONS: IFilterInputs[] = [
   { label: "رزرو", value: "reservation" },
 ];
 
-const MAX_PRICE_OPTIONS = [
-  { label: "تا ۵۰۰ میلیون تومان", value: "500000000" },
-  { label: "تا ۱ میلیارد تومان", value: "1000000000" },
-  { label: "تا ۳ میلیارد تومان", value: "3000000000" },
-];
+const GRID_CLASS =
+  "grid w-full grid-cols-1 items-end gap-4 sm:grid-cols-2 lg:grid-cols-6 xl:grid-cols-12";
 
-const MIN_RENT_OPTIONS = [
-  { label: "از ۲ میلیون تومان", value: "2000000" },
-  { label: "از ۵ میلیون تومان", value: "5000000" },
-  { label: "از ۱۰ میلیون تومان", value: "10000000" },
-];
+const SEARCH_CELL =
+  "flex min-w-0 2xl:max-w-124 flex-col gap-3 sm:col-span-2 lg:col-span-6 xl:col-span-4";
 
-const MAX_RENT_OPTIONS = [
-  { label: "تا ۱۰ میلیون تومان", value: "10000000" },
-  { label: "تا ۲۰ میلیون تومان", value: "20000000" },
-  { label: "تا ۵۰ میلیون تومان", value: "50000000" },
-];
+const FIELD_CELL = "min-w-0 lg:col-span-2 xl:col-span-2 w-full xl:w-52";
 
-const MIN_AREA_OPTIONS = [
-  { label: "۵۰ متر", value: "50" },
-  { label: "۸۰ متر", value: "80" },
-  { label: "۱۲۰ متر", value: "120" },
-];
+const SELECT_STYLE =
+  "[&_p]:!text-gray-900 dark:[&_p]:!text-white [&_div[data-slot=combobox-input]]:!rounded-full [&_div[data-slot=combobox-input]]:!bg-gray-100 dark:[&_div[data-slot=combobox-input]]:!bg-[#1e1e1e] [&_input]:!text-gray-800 dark:[&_input]:!text-gray-100";
 
-const MAX_AREA_OPTIONS = [
-  { label: "۱۰۰ متر", value: "100" },
-  { label: "۱۵۰ متر", value: "150" },
-  { label: "۳۰۰ متر", value: "300" },
-];
+const SUBMIT_CELL = "flex min-w-0 sm:col-span-2 lg:col-span-6 xl:col-span-2";
+
+const mobileTriggerClass =
+  "flex items-center justify-center gap-1.5 rounded-full border border-[#1e3a8a] bg-white px-5 py-2 text-xs font-bold text-[#1e3a8a] transition-colors dark:border-blue-400 dark:bg-[#1e1e1e] dark:text-blue-400";
+
+const SortIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.8}
+    stroke="currentColor"
+    className="h-4 w-4"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
+    />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={2.5}
+    stroke="currentColor"
+    className="h-5 w-5"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4.5 12.75l6 6 9-13.5"
+    />
+  </svg>
+);
+interface NumberFieldProps {
+  label: string;
+  value: number | undefined;
+  onChange: (value: string) => void;
+}
+
+const NumberField: React.FC<NumberFieldProps> = ({
+  label,
+  value,
+  onChange,
+}) => (
+  <div className={`${FIELD_CELL} flex flex-col gap-3`}>
+    <label className="text-base text-default-black font-semibold">
+      {label}
+    </label>
+    <div className="flex h-12 items-center rounded-full bg-neutral-200 px-4 dark:bg-[#353535]">
+      <input
+        type="number"
+        placeholder="وارد کنید"
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full min-w-0 bg-transparent text-base! leading-5.5! font-normal text-default-black! placeholder:text-neutral-800! focus:outline-none"
+      />
+    </div>
+  </div>
+);
+
+interface FilterFieldsProps {
+  showSort: boolean;
+  localFilters: Partial<IHouseParams>;
+  locationOptions: IFilterInputs[];
+  onSearchChange: (value: string) => void;
+  onFieldChange: (
+    field: keyof IHouseParams,
+    rawValue: unknown,
+    isNumeric?: boolean,
+  ) => void;
+  children?: React.ReactNode;
+}
+
+const FilterFields: React.FC<FilterFieldsProps> = ({
+  showSort,
+  localFilters,
+  locationOptions,
+  onSearchChange,
+  onFieldChange,
+  children,
+}) => (
+  <div className={GRID_CLASS}>
+    <div className={SEARCH_CELL}>
+      <label className="text-base text-default-black font-semibold">
+        جستجو
+      </label>
+      <div className="flex h-12 items-center rounded-full bg-neutral-200 px-4 dark:bg-[#353535]">
+        <input
+          type="text"
+          placeholder="نام هتل یا منطقه مورد نظر..."
+          value={localFilters.search || ""}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full min-w-0 bg-transparent text-base! leading-5.5! font-normal text-default-black! placeholder:text-neutral-800! focus:outline-none"
+        />
+      </div>
+    </div>
+    {showSort && (
+      <div className={`${FIELD_CELL} ${SELECT_STYLE}`}>
+        <FilterInput
+          isTitle="مرتب سازی بر اساس"
+          placeHolder="انتخاب کنید"
+          items={SORT_OPTIONS}
+          onValueChange={(val) => onFieldChange("sort", val)}
+          className="w-full xl:w-52"
+        />
+      </div>
+    )}
+    <div className={`${FIELD_CELL} ${SELECT_STYLE}`}>
+      <FilterInput
+        isTitle="محل مورد نظر"
+        placeHolder="انتخاب کنید"
+        items={locationOptions}
+        onValueChange={(val) => onFieldChange("location", val)}
+        className="w-full xl:w-52"
+      />
+    </div>
+    <div className={`${FIELD_CELL} ${SELECT_STYLE}`}>
+      <FilterInput
+        isTitle="نوع ملک"
+        placeHolder="انتخاب کنید"
+        items={PROPERTY_TYPE_OPTIONS}
+        onValueChange={(val) => onFieldChange("propertyType", val)}
+        className="w-full xl:w-52"
+      />
+    </div>
+    <div className={`${FIELD_CELL} ${SELECT_STYLE}`}>
+      <FilterInput
+        isTitle="نوع معامله"
+        placeHolder="انتخاب کنید"
+        items={TRANSACTION_TYPE_OPTIONS}
+        onValueChange={(val) => onFieldChange("transactionType", val)}
+        className="w-full xl:w-52"
+      />
+    </div>
+    <NumberField
+      label="حداکثر قیمت"
+      value={localFilters.maxPrice}
+      onChange={(v) => onFieldChange("maxPrice", v, true)}
+    />
+    <NumberField
+      label="حداقل اجاره"
+      value={localFilters.minRent}
+      onChange={(v) => onFieldChange("minRent", v, true)}
+    />
+    <NumberField
+      label="حداکثر اجاره"
+      value={localFilters.maxRent}
+      onChange={(v) => onFieldChange("maxRent", v, true)}
+    />
+    <NumberField
+      label="حداقل متراژ"
+      value={localFilters.minArea}
+      onChange={(v) => onFieldChange("minArea", v, true)}
+    />
+    <NumberField
+      label="حداکثر متراژ"
+      value={localFilters.maxArea}
+      onChange={(v) => onFieldChange("maxArea", v, true)}
+    />
+    {children}
+  </div>
+);
 
 const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
   initialFilters,
@@ -69,8 +222,6 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
 }) => {
   const [localFilters, setLocalFilters] =
     useState<Partial<IHouseParams>>(initialFilters);
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-  const [isMobileSortOpen, setIsMobileSortOpen] = useState(false);
 
   const extractValue = (val: unknown): string | undefined => {
     if (!val) return undefined;
@@ -93,328 +244,124 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
     }));
   };
 
+  const handleSearchChange = (value: string) =>
+    setLocalFilters((prev) => ({ ...prev, search: value }));
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onApplyFilter(localFilters);
-    setIsMobileFilterOpen(false);
   };
 
-  const filterWrapperClass =
-    "[&_p]:!text-gray-900 dark:[&_p]:!text-white [&_div[data-slot=combobox-input]]:!rounded-full [&_div[data-slot=combobox-input]]:!bg-gray-100 dark:[&_div[data-slot=combobox-input]]:!bg-[#1e1e1e] [&_input]:!text-gray-800 dark:[&_input]:!text-gray-100";
+  const handleSortSelect = (value: string) => {
+    const updated: Partial<IHouseParams> = {
+      ...localFilters,
+      sort: value as IHouseParams["sort"],
+    };
+    setLocalFilters(updated);
+    onApplyFilter(updated);
+  };
 
   return (
     <div className="w-full" dir="rtl">
       <div className="mb-4 flex w-full items-center justify-center gap-3 rounded-full bg-gray-100 p-2 dark:bg-[#272727] lg:hidden">
-        <button
-          type="button"
-          onClick={() => setIsMobileSortOpen(true)}
-          className="flex items-center justify-center gap-1.5 rounded-full border border-[#1e3a8a] bg-white px-5 py-2 text-xs font-bold text-[#1e3a8a] transition-colors dark:border-blue-400 dark:bg-[#1e1e1e] dark:text-blue-400"
+        <DrawerComponent
+          title="مرتب‌سازی بر اساس"
+          trigger={
+            <Button
+              type="button"
+              startIcon={<SortIcon />}
+              variant="outline"
+              size="sm"
+              state={"default"}
+            >
+              مرتب سازی
+            </Button>
+          }
+          className="rounded-t-[2rem] bg-white dark:bg-[#272727]"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.8}
-            stroke="currentColor"
-            className="h-4 w-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 4.5h14.25M3 9h9.75M3 13.5h9.75m4.5-4.5v12m0 0l-3.75-3.75M17.25 21L21 17.25"
-            />
-          </svg>
-          <span>مرتب سازی</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setIsMobileFilterOpen((prev) => !prev)}
-          className="flex items-center justify-center gap-1.5 rounded-full border border-[#1e3a8a] bg-white px-5 py-2 text-xs font-bold text-[#1e3a8a] transition-colors dark:border-blue-400 dark:bg-[#1e1e1e] dark:text-blue-400"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.8}
-            stroke="currentColor"
-            className="h-4 w-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
-            />
-          </svg>
-          <span>فیلتر</span>
-        </button>
-      </div>
-
-      {isMobileSortOpen && (
-        <div className="fixed inset-0 z-100 flex items-end justify-center bg-black/60 backdrop-blur-sm transition-all sm:items-center">
-          <div className="w-full animate-in slide-in-from-bottom-10 rounded-t-[2rem] bg-white p-6 shadow-xl dark:bg-[#272727] sm:max-w-sm sm:rounded-3xl sm:slide-in-from-bottom-0 sm:fade-in">
-            <div className="mb-4 flex items-center justify-between border-b border-gray-100 pb-4 dark:border-zinc-700">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                مرتب‌سازی بر اساس
-              </h3>
-              <button
-                onClick={() => setIsMobileSortOpen(false)}
-                className="rounded-full bg-gray-100 p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:bg-zinc-800 dark:text-gray-300 dark:hover:bg-zinc-600"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="h-4 w-4"
+          <div dir="rtl" className="flex flex-col gap-2 px-4 pb-6 pt-4">
+            {SORT_OPTIONS.map((opt) => {
+              const isSelected = localFilters.sort === opt.value;
+              return (
+                <DrawerClose
+                  key={opt.value}
+                  onClick={() => handleSortSelect(String(opt.value))}
+                  render={
+                    <button
+                      type="button"
+                      className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-right text-sm font-semibold transition-colors ${
+                        isSelected
+                          ? "bg-blue-50 text-[#1e3a8a] dark:bg-[#1e1e1e] dark:text-blue-400"
+                          : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-zinc-800"
+                      }`}
+                    />
+                  }
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              {SORT_OPTIONS.map((opt) => {
-                const isSelected = localFilters.sort === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => {
-                      const updated: Partial<IHouseParams> = {
-                        ...localFilters,
-                        sort: opt.value as IHouseParams["sort"],
-                      };
-                      setLocalFilters(updated);
-                      onApplyFilter(updated);
-                      setIsMobileSortOpen(false);
-                    }}
-                    className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-right text-sm font-semibold transition-colors ${
-                      isSelected
-                        ? "bg-blue-50 text-[#1e3a8a] dark:bg-[#1e1e1e] dark:text-blue-400"
-                        : "text-gray-700 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-zinc-800"
-                    }`}
-                  >
-                    <span>{opt.label}</span>
-                    {isSelected && (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2.5}
-                        stroke="currentColor"
-                        className="h-5 w-5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M4.5 12.75l6 6 9-13.5"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+                  <span>{opt.label}</span>
+                  {isSelected && <CheckIcon />}
+                </DrawerClose>
+              );
+            })}
           </div>
-        </div>
-      )}
-
+        </DrawerComponent>
+        <DrawerComponent
+          title="فیلتر"
+          trigger={
+            <Button
+              startIcon={<HugeiconsIcon icon={FilterIcon} />}
+              variant="outline"
+              size="sm"
+              state={"default"}
+            >
+              فیلتر
+            </Button>
+          }
+          className="max-h-[90dvh] rounded-t-[2rem] bg-white dark:bg-[#272727]"
+          close={
+            <Button
+              type="button"
+              onClick={() => onApplyFilter(localFilters)}
+              startIcon={<HugeiconsIcon icon={FilterIcon} />}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full  text-sm font-bold text-white"
+            >
+              اعمال فیلتر
+            </Button>
+          }
+        >
+          <div dir="rtl" className="overflow-y-auto px-4 pb-4">
+            <FilterFields
+              showSort={false}
+              localFilters={localFilters}
+              locationOptions={locationOptions}
+              onSearchChange={handleSearchChange}
+              onFieldChange={handleFieldChange}
+            />
+          </div>
+        </DrawerComponent>
+      </div>
       <form
         onSubmit={handleSubmit}
-        className={`${
-          isMobileFilterOpen ? "flex" : "hidden lg:flex"
-        } w-full flex-col gap-6 rounded-3xl bg-white p-6 shadow-sm dark:bg-[#272727]`}
+        className="hidden w-full rounded-3xl bg-white p-6 shadow-sm dark:bg-[#272727] lg:block"
       >
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
-          <div className="flex flex-col gap-3 lg:col-span-4">
-            <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
-              جستجو
-            </label>
-            <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
-              <input
-                type="text"
-                placeholder="نام هتل یا منطقه مورد نظر..."
-                value={localFilters.search || ""}
-                onChange={(e) =>
-                  setLocalFilters((prev) => ({
-                    ...prev,
-                    search: e.target.value,
-                  }))
-                }
-                className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
-              />
-            </div>
-          </div>
-
-          <div
-            className={`lg:col-span-2 ${filterWrapperClass} hidden lg:block`}
-          >
-            <FilterInput
-              isTitle="مرتب سازی بر اساس"
-              placeHolder="انتخاب کنید"
-              items={SORT_OPTIONS}
-              onValueChange={(val) => handleFieldChange("sort", val)}
-            />
-          </div>
-
-          <div className={`lg:col-span-2 ${filterWrapperClass}`}>
-            <FilterInput
-              isTitle="محل مورد نظر"
-              placeHolder="انتخاب کنید"
-              items={locationOptions}
-              onValueChange={(val) => handleFieldChange("location", val)}
-            />
-          </div>
-
-          <div className={`lg:col-span-2 ${filterWrapperClass}`}>
-            <FilterInput
-              isTitle="نوع ملک"
-              placeHolder="انتخاب کنید"
-              items={PROPERTY_TYPE_OPTIONS}
-              onValueChange={(val) => handleFieldChange("propertyType", val)}
-            />
-          </div>
-
-          <div className={`lg:col-span-2 ${filterWrapperClass}`}>
-            <FilterInput
-              isTitle="نوع معامله"
-              placeHolder="انتخاب کنید"
-              items={TRANSACTION_TYPE_OPTIONS}
-              onValueChange={(val) => handleFieldChange("transactionType", val)}
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 items-end gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-12">
-          <div className="flex items-end gap-3 lg:col-span-2">
-            <div className="flex w-full flex-col gap-3">
-              <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
-                حداکثر قیمت
-              </label>
-              <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
-                <input
-                  type="number"
-                  placeholder="وارد کنید"
-                  value={localFilters.maxPrice ?? ""}
-                  onChange={(e) =>
-                    handleFieldChange("maxPrice", e.target.value, true)
-                  }
-                  className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
-                />
-              </div>
-            </div>
-            <div className="mb-3 hidden h-6 w-px bg-gray-200 dark:bg-zinc-700 lg:block" />
-          </div>
-
-          <div className="flex items-end gap-3 lg:col-span-2">
-            <div className="flex w-full flex-col gap-3">
-              <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
-                حداقل اجاره
-              </label>
-              <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
-                <input
-                  type="number"
-                  placeholder="وارد کنید"
-                  value={localFilters.minRent ?? ""}
-                  onChange={(e) =>
-                    handleFieldChange("minRent", e.target.value, true)
-                  }
-                  className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
-                />
-              </div>
-            </div>
-            <div className="mb-3 hidden h-6 w-px bg-gray-200 dark:bg-zinc-700 lg:block" />
-          </div>
-
-          <div className="flex items-end gap-3 lg:col-span-2">
-            <div className="flex w-full flex-col gap-3">
-              <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
-                حداکثر اجاره
-              </label>
-              <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
-                <input
-                  type="number"
-                  placeholder="وارد کنید"
-                  value={localFilters.maxRent ?? ""}
-                  onChange={(e) =>
-                    handleFieldChange("maxRent", e.target.value, true)
-                  }
-                  className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
-                />
-              </div>
-            </div>
-            <div className="mb-3 hidden h-6 w-px bg-gray-200 dark:bg-zinc-700 lg:block" />
-          </div>
-
-          <div className="flex items-end gap-3 lg:col-span-2">
-            <div className="flex w-full flex-col gap-3">
-              <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
-                حداقل متراژ
-              </label>
-              <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
-                <input
-                  type="number"
-                  placeholder="وارد کنید"
-                  value={localFilters.minArea ?? ""}
-                  onChange={(e) =>
-                    handleFieldChange("minArea", e.target.value, true)
-                  }
-                  className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
-                />
-              </div>
-            </div>
-            <div className="mb-3 hidden h-6 w-px bg-gray-200 dark:bg-zinc-700 lg:block" />
-          </div>
-
-          <div className="flex flex-col gap-3 lg:col-span-2">
-            <label className="text-base leading-5.5 font-semibold text-gray-900 dark:text-white">
-              حداکثر متراژ
-            </label>
-            <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
-              <input
-                type="number"
-                placeholder="وارد کنید"
-                value={localFilters.maxArea ?? ""}
-                onChange={(e) =>
-                  handleFieldChange("maxArea", e.target.value, true)
-                }
-                className="w-full bg-transparent text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end lg:col-span-2">
+        <FilterFields
+          showSort
+          localFilters={localFilters}
+          locationOptions={locationOptions}
+          onSearchChange={handleSearchChange}
+          onFieldChange={handleFieldChange}
+        >
+          <div className={SUBMIT_CELL}>
             <Button
               type="submit"
               variant="primary"
               size="md"
-              className="h-12 w-full bg-[#1e3a8a] text-sm text-white hover:bg-blue-900"
-              startIcon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.8}
-                  stroke="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z"
-                  />
-                </svg>
-              }
+              className="h-12 w-full xl:w-52 bg-[#1e3a8a] text-sm text-white hover:bg-blue-900"
+              startIcon={<HugeiconsIcon icon={FilterIcon} />}
             >
               اعمال فیلتر
             </Button>
           </div>
-        </div>
+        </FilterFields>
       </form>
     </div>
   );
