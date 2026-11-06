@@ -45,7 +45,11 @@ export default function Header({
   onProfileClick,
   onSellerClick,
 }: HeaderProps) {
-  const { data: currentUser, isPending } = useQuery({
+  const {
+    data: currentUser,
+    isPending,
+    isLoading,
+  } = useQuery({
     queryKey: ["currentUser"],
     queryFn: async () => {
       const result = await getCurrentUserAction();
@@ -67,7 +71,7 @@ export default function Header({
       : undefined);
 
   const isLoggedIn = !!user;
-  const isAuthLoading = isPending && !userProp;
+  const isAuthLoading = (isPending || isLoading) && !userProp;
 
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
