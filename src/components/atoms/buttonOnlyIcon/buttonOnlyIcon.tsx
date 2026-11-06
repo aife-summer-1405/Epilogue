@@ -15,12 +15,13 @@ import type {
   ButtonOnlyIconVariant,
   ButtonOnlyIconState,
 } from "./buttonOnlyIcon.type";
+import { MouseEvent } from "react";
 
 type Props = {
   size?: ButtonOnlyIconSize;
   variant?: ButtonOnlyIconVariant;
   state?: ButtonOnlyIconState;
-  onClick?: () => void;
+  onClick?: (e: MouseEvent<HTMLElement>) => void | Promise<void>;
   children?: React.ReactNode;
   hasIcon?: boolean;
   className?: string;

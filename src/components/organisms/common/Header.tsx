@@ -3,24 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Megaphone01Icon,
   Menu01Icon,
   Cancel01Icon,
   User02Icon,
-  Sun01Icon,
-  Moon02Icon,
 } from "@hugeicons/core-free-icons";
 
 import Button from "@/components/atoms/button/Button";
 import { UserProfileBadge } from "@/components/molecules";
 import HomeLogo from "@/components/atoms/Logo/home-logo";
 import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
-import { useCurrentUser } from "@/core/hooks/use-current-user";
 import { getCurrentUserAction } from "@/app/actions/user.actions";
 import { useQuery } from "@tanstack/react-query";
+import ThemeToggle from "@/components/molecules/toggleTheme/toggleTheme";
 
 export interface HeaderUser {
   name: string;
@@ -48,7 +45,11 @@ export default function Header({
   onProfileClick,
   onSellerClick,
 }: HeaderProps) {
-  const { data: currentUser, isPending } = useQuery({
+  const {
+    data: currentUser,
+    isPending,
+    isLoading,
+  } = useQuery({
     queryKey: ["currentUser"],
     queryFn: async () => {
       const result = await getCurrentUserAction();
@@ -70,15 +71,13 @@ export default function Header({
       : undefined);
 
   const isLoggedIn = !!user;
-  const isAuthLoading = isPending && !userProp;
+  const isAuthLoading = (isPending || isLoading) && !userProp;
 
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -101,10 +100,6 @@ export default function Header({
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
     };
-  }, []);
-
-  useEffect(() => {
-    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -170,22 +165,7 @@ export default function Header({
     </Link>
   );
 
-  const renderThemeButton = () => (
-    <ButtonOnlyIcon
-      hasIcon={false}
-      size="sm"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      aria-label={theme === "dark" ? "فعال کردن تم روشن" : "فعال کردن تم تاریک"}
-    >
-      {mounted && (
-        <HugeiconsIcon
-          icon={theme === "dark" ? Sun01Icon : Moon02Icon}
-          size={20}
-          strokeWidth={1.8}
-        />
-      )}
-    </ButtonOnlyIcon>
-  );
+  const renderThemeButton = () => <ThemeToggle />;
 
   const renderNavItems = (mobile = false) =>
     navItems.map((item) => {
@@ -246,7 +226,7 @@ export default function Header({
           </nav>
 
           <div className="hidden shrink-0 items-center gap-2 min-[1071px]:flex">
-            {mounted && renderThemeButton()}
+            {renderThemeButton()}
             {renderAuthAction()}
           </div>
 
