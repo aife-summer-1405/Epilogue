@@ -29,6 +29,8 @@ interface IProps {
     | ((state: DrawerTriggerState) => string | undefined)
     | undefined;
   swipeDirection?: "right" | "left" | "up" | "down";
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const DrawerComponent: FC<IProps> = ({
@@ -40,9 +42,16 @@ const DrawerComponent: FC<IProps> = ({
   className,
   triggerClassName,
   swipeDirection = "down",
+  open,
+  onOpenChange,
 }) => {
   return (
-    <Drawer swipeDirection={swipeDirection} showSwipeHandle>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      swipeDirection={swipeDirection}
+      showSwipeHandle
+    >
       <DrawerTrigger className={triggerClassName} render={trigger} />
       <DrawerContent className={className}>
         {title || description ? (

@@ -2,7 +2,7 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @utility scrollbar-brand {
   &::-webkit-scrollbar {
@@ -21,6 +21,54 @@
   @supports not selector(::-webkit-scrollbar) {
     scrollbar-color: var(--color-primary-500) #ededed;
     scrollbar-width: auto;
+  }
+}
+
+::view-transition-group(root) {
+  animation-duration: 800ms;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html.dark::view-transition-old(root) {
+  z-index: 1;
+}
+
+html.dark::view-transition-new(root) {
+  z-index: 2;
+  clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
+  animation: theme-reveal 800ms ease-in-out forwards;
+}
+
+html:not(.dark)::view-transition-new(root) {
+  z-index: 1;
+}
+
+html:not(.dark)::view-transition-old(root) {
+  z-index: 2;
+  clip-path: circle(150vmax at var(--theme-x, 50%) var(--theme-y, 50%));
+  animation: theme-hide 800ms ease-in-out forwards;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+  to {
+    clip-path: circle(150vmax at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
+@keyframes theme-hide {
+  from {
+    clip-path: circle(150vmax at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+  to {
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
   }
 }
 

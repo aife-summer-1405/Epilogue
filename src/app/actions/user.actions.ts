@@ -5,17 +5,25 @@ import { cookies } from "next/headers";
 import api from "@/lib/http/interceptors";
 import type { GetUserResponse } from "@/core/types/user.types";
 
+export type UserRole = "buyer" | "seller" | "admin";
+
 export type CurrentUser = {
   id: string;
-  fullName: string;
+  role: UserRole;
+  membershipDate: string | null;
   email: string;
-  phoneNumber: string;
-  role: string;
-  profilePicture?: string;
+  phoneNumber: string | null;
+  emailVerified: boolean;
+  fullName: string;
+  firstName: string;
+  lastName: string;
+  profilePicture: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type GetCurrentUserActionResult =
-  | { success: true; user: CurrentUser }
+  | { success: true; user: CurrentUser; additionalPercentage: number }
   | { success: false; message: string; unauthenticated?: boolean };
 
 export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
@@ -32,18 +40,15 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    const u = data.user;
+    const userData = data.user;
 
     return {
       success: true,
       user: {
-        id: u.id,
-        fullName: u.fullName,
-        email: u.email,
-        phoneNumber: u.phoneNumber,
-        role: u.role,
-        profilePicture: u.profilePicture ?? undefined,
+        ...userData,
+        role: userData.role as UserRole,
       },
+      additionalPercentage: data.additionalPercentage ?? 0,
     };
   } catch (error) {
     if (isAxiosError(error) && error.response?.status === 401) {

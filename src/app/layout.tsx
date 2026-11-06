@@ -67,7 +67,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full", "antialiased", vazirMatn.variable)}
     >
       <body className="min-h-full flex flex-col relative bg-default-white-bg">
-        <ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <QueryProvider>
             <TooltipProvider>{children}</TooltipProvider>
             <ToastContainer

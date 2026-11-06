@@ -15,7 +15,7 @@ import fallBack from "@/app/assets/Image/Slider1.webp";
 const DEFAULT_CENTER: [number, number] = [32.4, 53.7];
 const DEFAULT_ZOOM = 5;
 
-const makeIcon = (src: string) => {
+const makeIcon = (src?: string | null) => {
   const fallbackUrl = fallBack.src;
   const safeSrc = src || fallbackUrl;
   return L.divIcon({
@@ -44,7 +44,7 @@ export default function HousesMap() {
   const { data: houses = [], isFetching } = useGeoHouses();
 
   const icons = useMemo(
-    () => new Map(houses.map((h) => [h.id, makeIcon(h.photos[0])])),
+    () => new Map(houses.map((h) => [h.id, makeIcon(h.photos?.[0] ?? null)])),
     [houses],
   );
 
@@ -78,7 +78,7 @@ export default function HousesMap() {
                 <div className="2xl:w-99 w-88 rounded-[16px] 2xl:px-7 2xl:py-8 px-5 py-6 bg-secondary-500 text-white flex flex-col 2xl:gap-5 gap-3">
                   <div className="flex items-start gap-3">
                     <ImageFallback
-                      src={h.photos[0]}
+                      src={h.photos?.[0] ?? ""}
                       alt={h.title}
                       width={48}
                       height={48}
