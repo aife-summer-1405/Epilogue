@@ -1,6 +1,7 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Location01Icon, BathIcon, Car01Icon, UserMultiple02Icon, Home01Icon, Bed } from "@hugeicons/core-free-icons";
 import { AddHouseFormData } from "@/core/types/addHouse";
+import { formatPrice } from "@/utils/formatters";
 
 interface Step5Props {
   houseData: Partial<AddHouseFormData>;
@@ -27,7 +28,7 @@ export const Step5Review = ({ houseData, selectedImages, mainImageIndex }: Step5
         </p>
         <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">{houseData.caption}</p>
         <div className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-          {Number(houseData.price || 0).toLocaleString()} تومان
+          {formatPrice(Number(houseData.price || 0).toLocaleString())} تومان
         </div>
       </div>
 

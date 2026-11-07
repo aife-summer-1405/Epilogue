@@ -72,7 +72,10 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
             router.refresh();
         }
     };
-
+console.log("House Photos:", initialData.houses.map((house) => ({
+  title: house.title,
+  photos: house.photos,
+})));
     return (
         <div dir="rtl" className={`w-full space-y-6 ${isPending ? "opacity-60 transition-opacity" : ""}`}>
             {/* هدر صفحه */}
@@ -190,32 +193,33 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                                                             setActiveMenuId(null);
                                                         }} 
                                                     />
-                                                    <div className="absolute left-1/2 -translate-x-1/2 top-14 z-30 w-36 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-2 shadow-2xl">
-                                                        <button
-                                                            type="button"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setActiveMenuId(null);
-                                                                router.push(`/seller/dashboard/places-management/edit-house/${house.id}`);
-                                                            }}
-                                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-right cursor-pointer"
-                                                        >
-                                                            <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
-                                                            <span>ویرایش</span>
-                                                        </button>
-                                                        <button
-                                                            type="button"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                setActiveMenuId(null);
-                                                                setDeleteTargetId(house.id);
-                                                            }}
-                                                            className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition text-right cursor-pointer"
-                                                        >
-                                                            <HugeiconsIcon icon={Delete02Icon} size={16} strokeWidth={1.5} />
-                                                            <span>حذف</span>
-                                                        </button>
-                                                    </div>
+                                               <div className="absolute left-1/2 -translate-x-1/2 top-14 z-30 w-36 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-2 shadow-2xl">
+    <button
+        type="button"
+        onClick={(e) => {
+            e.stopPropagation();
+            setActiveMenuId(null);
+            // اصلاح مسیر زیر (حذف edit-house)
+            router.push(`/seller/dashboard/places-management/${house.id}`);
+        }}
+        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-right cursor-pointer"
+    >
+        <HugeiconsIcon icon={PencilEdit02Icon} size={16} strokeWidth={1.5} />
+        <span>ویرایش</span>
+    </button>
+    <button
+        type="button"
+        onClick={(e) => {
+            e.stopPropagation();
+            setActiveMenuId(null);
+            setDeleteTargetId(house.id);
+        }}
+        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition text-right cursor-pointer"
+    >
+        <HugeiconsIcon icon={Delete02Icon} size={16} strokeWidth={1.5} />
+        <span>حذف</span>
+    </button>
+</div>
                                                 </>
                                             )}
                                         </td>

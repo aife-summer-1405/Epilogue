@@ -8,7 +8,7 @@ import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 import Button from "@/components/atoms/button/Button";
 import { AddHouseFormData } from "@/core/types/addHouse";
-import { createHouseAction } from "@/app/actions/addHouse.action";
+import { createHouseAction, uploadHousePhotosAction } from "@/app/actions/addHouse.action";
 
 import { Step1BasicInfo } from "./steps/Step1BasicInfo";
 import { Step2Location } from "./steps/Step2Location";
@@ -65,6 +65,7 @@ export const AddHouseFormOrganism = () => {
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
+  // ثبت نهایی اطلاعات و سپس آپلود عکس‌ها در صورت وجود شناسه ملک
   const onSubmitFinal = async (data: AddHouseFormData) => {
     const finalPayload: AddHouseFormData = {
       ...houseData,
@@ -77,12 +78,25 @@ export const AddHouseFormOrganism = () => {
     };
 
     setIsPending(true);
-    const result = await createHouseAction(finalPayload);
-    setIsPending(false);
 
-    if (result.success) {
+    // ۱. ارسال اطلاعات اصلی ملک به سرور
+    const result = await createHouseAction(finalPayload);
+
+    if (result.success && result.houseId) {
+      // ۲. اگر عکسی انتخاب شده بود، ارسال به ای‌پی‌آی آپلود عکس با پارامتر id[cite: 1]
+      if (selectedImages.length > 0) {
+        const uploadResult = await uploadHousePhotosAction(result.houseId, selectedImages);
+        if (!uploadResult.success) {
+          alert(uploadResult.message || "ملک ثبت شد اما در آپلود تصاویر خطایی رخ داد");
+          setIsPending(false);
+          return;
+        }
+      }
+
+      setIsPending(false);
       router.push("/seller/dashboard/places-management");
     } else {
+      setIsPending(false);
       alert(result.message || "خطا در ثبت اطلاعات");
     }
   };
