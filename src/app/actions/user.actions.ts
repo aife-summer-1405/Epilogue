@@ -4,6 +4,7 @@ import { isAxiosError } from "axios";
 import { cookies } from "next/headers";
 import api from "@/lib/http/interceptors";
 import type { GetUserResponse } from "@/core/types/user.types";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export type UserRole = "buyer" | "seller" | "admin";
 
@@ -29,15 +30,14 @@ export type GetCurrentUserActionResult =
 export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
-  const accessToken = cookieStore.get("accessToken")?.value;
 
-  if (!userId || !accessToken) {
+  if (!userId) {
     return { success: false, message: "وارد نشده اید.", unauthenticated: true };
   }
 
   try {
     const { data } = await api.get<GetUserResponse>(`/users/${userId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { tokenNeeded: "true" },
     });
 
     const userData = data.user;
@@ -51,6 +51,8 @@ export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult
       additionalPercentage: data.additionalPercentage ?? 0,
     };
   } catch (error) {
+    if (isRedirectError(error)) throw error;
+
     if (isAxiosError(error) && error.response?.status === 401) {
       return {
         success: false,

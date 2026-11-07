@@ -13,13 +13,14 @@ import GoogleIcon from "@/app/assets/icons/GoogleIcon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { loginAction } from "@/app/actions/auth/auth.actions";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoginValues } from "@/core/types/auth.types";
 import { useEffect, useTransition } from "react";
 import { oauthSignInAction } from "@/app/actions/auth/oauth.actions";
 
 const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
 
   const [isOauthPending, startOauth] = useTransition();
@@ -38,7 +39,14 @@ const LoginForm = () => {
       if (result.success) {
         toast.success("ورود به حساب کاربری با موفقیت انجام شد.");
         await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-        router.replace("/");
+
+        const redirect = searchParams.get("redirect");
+        const safeRedirect =
+          redirect?.startsWith("/") && !redirect.startsWith("//")
+            ? redirect
+            : "/";
+
+        router.replace(safeRedirect);
         router.refresh();
       } else {
         toast.error(result.message);
