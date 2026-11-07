@@ -22,13 +22,12 @@ import {
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import HomeLogo from "@/components/atoms/Logo/home-logo";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { IconSvgObject } from "@/core/types/icon.types";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserAction } from "../actions/user.actions";
-import { getCookie } from "@/utils/getCookie";
-import { toast } from "react-toastify";
+import { useLogout } from "@/hooks/mutations/useLogout";
 
 interface IProps {
   children: React.ReactNode;
@@ -118,7 +117,6 @@ const NavLink: FC<INavLinkProps> = ({ item, active, onClick }) => (
 );
 
 const PanelLayout: FC<IProps> = ({ children }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -133,19 +131,14 @@ const PanelLayout: FC<IProps> = ({ children }) => {
     refetchOnWindowFocus: false,
   });
 
+  const { mutate: logout, isPending } = useLogout();
+
   const userRole = !isLoading && currentUser?.role;
 
   const navigationItems =
     userRole === "seller"
       ? menuSellerNavigationItems
       : menuBuyerNavigationItems;
-
-  useEffect(() => {
-    if (getCookie("userId") === undefined) {
-      toast.error("لطفا ابتدا لاگین کنید", { toastId: "login-required" });
-      router.replace("/auth/login");
-    }
-  }, [router]);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -182,7 +175,9 @@ const PanelLayout: FC<IProps> = ({ children }) => {
           ))}
           <button
             type="button"
+            disabled={isPending}
             className="group flex w-fit cursor-pointer items-center gap-3 xl:gap-4"
+            onClick={() => logout()}
           >
             <HugeiconsIcon
               icon={Logout01Icon}
