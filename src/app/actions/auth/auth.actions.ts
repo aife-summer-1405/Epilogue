@@ -369,3 +369,34 @@ export async function resetPasswordAction(
     };
   }
 }
+
+export type LogoutActionResult = { success: true; revoked: boolean };
+export async function logoutAction(): Promise<LogoutActionResult> {
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("refreshToken")?.value;
+  let revoked = false;
+
+  try {
+    if (refreshToken) {
+      await api.post(
+        "/auth/logout",
+        { refreshToken },
+        { headers: { tokenNeeded: "true" } },
+      );
+      revoked = true;
+    }
+  } catch (error) {
+    if (isAxiosError(error)) {
+      console.error(
+        "[logout] API error:",
+        error.response?.status ?? error.code,
+      );
+    }
+  } finally {
+    cookieStore.delete("accessToken");
+    cookieStore.delete("refreshToken");
+    cookieStore.delete("userId");
+  }
+
+  return { success: true, revoked };
+}
