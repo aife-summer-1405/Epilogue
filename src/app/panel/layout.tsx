@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { IconSvgObject } from "@/core/types/icon.types";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserAction } from "../actions/user.actions";
+import { useLogout } from "@/hooks/mutations/useLogout";
 
 interface IProps {
   children: React.ReactNode;
@@ -130,6 +131,8 @@ const PanelLayout: FC<IProps> = ({ children }) => {
     refetchOnWindowFocus: false,
   });
 
+  const { mutate: logout, isPending } = useLogout();
+
   const userRole = !isLoading && currentUser?.role;
 
   const navigationItems =
@@ -172,7 +175,9 @@ const PanelLayout: FC<IProps> = ({ children }) => {
           ))}
           <button
             type="button"
+            disabled={isPending}
             className="group flex w-fit cursor-pointer items-center gap-3 xl:gap-4"
+            onClick={() => logout()}
           >
             <HugeiconsIcon
               icon={Logout01Icon}
