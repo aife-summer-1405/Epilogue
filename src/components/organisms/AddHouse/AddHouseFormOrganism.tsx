@@ -7,11 +7,14 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 import Button from "@/components/atoms/button/Button";
-
 import { AddHouseFormData } from "@/core/types/addHouse";
 import { createHouseAction } from "@/app/actions/addHouse.action";
-import TextInput from "@/components/molecules/inputs/textInput/TextInput";
-import TextareaInput from "@/components/molecules/inputs/TextareaInput";
+
+import { Step1BasicInfo } from "./steps/Step1BasicInfo";
+import { Step2Location } from "./steps/Step2Location";
+import { Step3Amenities } from "./steps/Step3Amenities";
+import { Step4Photos } from "./steps/Step4Photos";
+import { Step5Review } from "./steps/Step5Review";
 
 const steps = [
   { id: 1, label: "مشخصات اولیه" },
@@ -26,39 +29,42 @@ export const AddHouseFormOrganism = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isPending, setIsPending] = useState(false);
 
-  // نگهداری داده‌های مراحل مختلف به صورت تجمیع‌شده
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [mainImageIndex, setMainImageIndex] = useState<number>(0);
+
   const [houseData, setHouseData] = useState<Partial<AddHouseFormData>>({
     title: "",
     address: "",
-    rate: 0,
+    rate: 5,
     price: 0,
     tags: [],
     capacity: 1,
-    location: { lat: 0, lng: 0 },
+    location: { lat: 35.6892, lng: 51.3890 },
     categories: { name: "آپارتمانی" },
-    bathrooms: 0,
-    parking: 0,
-    rooms: 0,
-    yard_type: "",
+    bathrooms: 1,
+    parking: 1,
+    rooms: 1,
+    yard_type: "بالکن دار",
     transaction_type: "rental",
     caption: "",
   });
 
-  const { control, handleSubmit, getValues } = useForm<AddHouseFormData>({
+  const { control, handleSubmit, getValues, setValue } = useForm<AddHouseFormData>({
     defaultValues: houseData as AddHouseFormData,
   });
 
-  // مدیریت دکمه مرحله بعد یا ثبت نهایی (بدون ارسال درخواست در مراحل میانی)
   const handleNextStep = () => {
     const currentValues = getValues();
     setHouseData((prev) => ({ ...prev, ...currentValues }));
-
-    if (currentStep < steps.length) {
-      setCurrentStep((prev) => prev + 1);
-    }
+    if (currentStep < steps.length) setCurrentStep((prev) => prev + 1);
   };
 
-  // ثبت نهایی اطلاعات و ارسال به سرور اکشن در آخرین مرحله
+  const handlePrevStep = () => {
+    const currentValues = getValues();
+    setHouseData((prev) => ({ ...prev, ...currentValues }));
+    if (currentStep > 1) setCurrentStep((prev) => prev - 1);
+  };
+
   const onSubmitFinal = async (data: AddHouseFormData) => {
     const finalPayload: AddHouseFormData = {
       ...houseData,
@@ -75,7 +81,7 @@ export const AddHouseFormOrganism = () => {
     setIsPending(false);
 
     if (result.success) {
-      router.push("/seller/dashboard/places");
+      router.push("/seller/dashboard/places-management");
     } else {
       alert(result.message || "خطا در ثبت اطلاعات");
     }
@@ -83,12 +89,8 @@ export const AddHouseFormOrganism = () => {
 
   return (
     <div dir="rtl" className="w-full max-w-5xl mx-auto space-y-8 bg-white dark:bg-zinc-900 p-6 sm:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-      
-      {/* هدر صفحه */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-          مدیریت املاک
-        </h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">مدیریت املاک</h1>
         <button
           onClick={() => router.push("/seller/dashboard/places-management")}
           className="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-[#0f3d61] transition"
@@ -98,20 +100,20 @@ export const AddHouseFormOrganism = () => {
         </button>
       </div>
 
-      {/* نوار مراحل با واریانت outline و فاصله ۳۲ پیکسلی (gap-8) */}
-      <div className="flex items-center overflow-x-auto pb-2 gap-8">
+      <div className="flex items-center overflow-x-auto pb-2 gap-4">
         {steps.map((step) => {
           const isActive = currentStep === step.id;
           return (
             <Button
               key={step.id}
-              variant="outline"
               type="button"
-              onClick={() => setCurrentStep(step.id)}
+              variant="outline"
+              onClick={() => {
+                setHouseData((prev) => ({ ...prev, ...getValues() }));
+                setCurrentStep(step.id);
+              }}
               className={`flex-1 min-w-[130px] rounded-2xl py-3 text-sm font-medium transition ${
-                isActive
-                  ? "border-[#0f3d61] text-[#0f3d61] bg-[#0f3d61]/5 dark:border-primary-200 dark:text-primary-200"
-                  : "border-neutral-300 text-neutral-500 hover:border-neutral-400"
+                isActive ? "border-[#0f3d61] text-[#0f3d61] bg-[#0f3d61]/5" : "border-neutral-300 text-neutral-500"
               }`}
             >
               {step.label}
@@ -120,95 +122,49 @@ export const AddHouseFormOrganism = () => {
         })}
       </div>
 
-      {/* فرم اصلی */}
       <form onSubmit={handleSubmit(currentStep === steps.length ? onSubmitFinal : handleNextStep)} className="space-y-6">
-        
-        {currentStep === 1 && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              
-              <TextInput
-                name="title"
-                title="نام ملک"
-                control={control}
-                placeholder="آپارتمان لوکس"
-              />
+        {currentStep === 1 && <Step1BasicInfo control={control} />}
 
-              <TextInput
-                name="address"
-                title="آدرس"
-                control={control}
-                placeholder="آدرس دقیق ملک..."
-              />
-
-              <TextInput
-                name="capacity"
-                title="ظرفیت (نفر)"
-                type="number"
-                control={control}
-                placeholder="2"
-              />
-
-              <TextInput
-                name="price"
-                title="قیمت (تومان)"
-                type="number"
-                control={control}
-                placeholder="20000000"
-              />
-
-              <TextInput
-                name="rooms"
-                title="تعداد اتاق"
-                type="number"
-                control={control}
-                placeholder="2"
-              />
-
-              <TextInput
-                name="bathrooms"
-                title="تعداد حمام"
-                type="number"
-                control={control}
-                placeholder="1"
-              />
-
-              <TextInput
-                name="parking"
-                title="تعداد پارکینگ"
-                type="number"
-                control={control}
-                placeholder="1"
-              />
-
-            </div>
-
-            <TextareaInput
-              name="caption"
-              title="توضیحات"
-              control={control}
-              placeholder="درباره ملک خود بیشتر توضیح دهید..."
-              rows={5}
-            />
-          </div>
+        {currentStep === 2 && (
+          <Step2Location
+            control={control}
+            getValues={getValues}
+            setValue={setValue}
+            location={houseData.location || { lat: 35.6892, lng: 51.3890 }}
+            onChangeLocation={(lat, lng) => {
+              setValue("location", { lat, lng });
+              setHouseData((prev) => ({ ...prev, location: { lat, lng } }));
+            }}
+          />
         )}
 
-        {currentStep > 1 && (
-          <div className="py-16 text-center text-zinc-400">
-            محتوای مرحله {currentStep} در حال توسعه است...
-          </div>
+        {currentStep === 3 && <Step3Amenities control={control} setValue={setValue} getValues={getValues} />}
+
+        {currentStep === 4 && (
+          <Step4Photos
+            selectedImages={selectedImages}
+            mainImageIndex={mainImageIndex}
+            onImageChange={(e) => e.target.files && setSelectedImages((prev) => [...prev, ...Array.from(e.target.files!)])}
+            onRemoveImage={(idx) => {
+              setSelectedImages((prev) => prev.filter((_, i) => i !== idx));
+              if (mainImageIndex === idx) setMainImageIndex(0);
+            }}
+            onSetMainImage={(idx) => setMainImageIndex(idx)}
+          />
         )}
 
-        {/* دکمه‌های ناوبری پایین فرم */}
+        {currentStep === 5 && (
+          <Step5Review
+            houseData={{ ...houseData, ...getValues() }}
+            selectedImages={selectedImages}
+            mainImageIndex={mainImageIndex}
+          />
+        )}
+
         <div className="flex items-center justify-between pt-6 border-t border-zinc-100 dark:border-zinc-800">
           {currentStep > 1 ? (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setCurrentStep((prev) => prev - 1)}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-full"
-            >
-              <HugeiconsIcon icon={ArrowRight01Icon} size={16} strokeWidth={1.5} />
+            <Button type="button" variant="outline" onClick={handlePrevStep} className="flex items-center gap-5 px-6 py-2.5 rounded-full">
+              <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
               <span>مرحله قبل</span>
             </Button>
           ) : <div />}
@@ -217,10 +173,10 @@ export const AddHouseFormOrganism = () => {
             type="submit"
             variant="primary"
             isLoading={isPending && currentStep === steps.length}
-            className="bg-[#0f3d61] hover:bg-[#0b2f4c] dark:bg-[#1a507a] px-8 py-2.5 rounded-full text-white flex items-center gap-2"
+            className="bg-[#0f3d61] px-8 py-2.5 rounded-full text-white flex items-center gap-2"
           >
             <span>{currentStep === steps.length ? "ثبت نهایی" : "مرحله بعد"}</span>
-            <HugeiconsIcon icon={ArrowLeft01Icon} size={18} strokeWidth={2} />
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
           </Button>
         </div>
       </form>
