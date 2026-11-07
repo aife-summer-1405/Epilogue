@@ -16,6 +16,8 @@ import type {
   ResetPasswordResponse,
   SignUpEmailPayload,
   SignUpEmailResponse,
+  SignUpPhonePayload,
+  SignUpPhoneResponse,
   SignUpVerifyEmailPayload,
   SignUpVerifyEmailResponse,
   SignUpVerifyPhonePayload,
@@ -45,6 +47,7 @@ export async function loginAction(
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax" as const,
       path: "/",
+      maxAge: 60 * 60 * 24,
     };
 
     cookieStore.set("accessToken", data.accessToken, {
