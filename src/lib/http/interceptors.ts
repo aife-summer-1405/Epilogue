@@ -56,7 +56,6 @@ async function refreshAccessToken(): Promise<string | null> {
 
   try {
     const { data } = await instance.post("/auth/refresh", { refreshToken });
-    console.log("[auth] token refreshed", new Date().toISOString());
     cookieStore.set("accessToken", data.accessToken, cookieOptions);
     if (data.refreshToken) {
       cookieStore.set("refreshToken", data.refreshToken, cookieOptions);
