@@ -1,5 +1,7 @@
+import { ISlide } from "@/core/types/sliderSlides.types";
+
 export type ProductCardProps = {
-  image: string;
+  image?: string;
   title: string;
   address: string;
   rating: number;
@@ -14,4 +16,5 @@ export type ProductCardProps = {
   className?: string;
   onClick?: () => void;
   onDetailsClick?: () => void;
+  slides: ISlide[];
 };

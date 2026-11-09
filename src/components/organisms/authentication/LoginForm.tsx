@@ -10,16 +10,18 @@ import { loginSchema } from "@/lib/validations/authentication/auth";
 import SignButton from "@/components/atoms/Sign-button/signButton";
 import GithubIcon from "@/app/assets/icons/GithubIcon";
 import GoogleIcon from "@/app/assets/icons/GoogleIcon";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { loginAction } from "@/app/actions/auth/auth.actions";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { LoginValues } from "@/core/types/auth.types";
 import { useEffect, useTransition } from "react";
 import { oauthSignInAction } from "@/app/actions/auth/oauth.actions";
 
 const LoginForm = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
 
   const [isOauthPending, startOauth] = useTransition();
   const handleOauth = (provider: "google" | "github") =>
@@ -33,10 +35,18 @@ const LoginForm = () => {
   const { mutate, isPending } = useMutation({
     mutationKey: ["LoginUser"],
     mutationFn: loginAction,
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       if (result.success) {
         toast.success("ورود به حساب کاربری با موفقیت انجام شد.");
-        router.replace("/");
+        await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+
+        const redirect = searchParams.get("redirect");
+        const safeRedirect =
+          redirect?.startsWith("/") && !redirect.startsWith("//")
+            ? redirect
+            : "/";
+
+        router.replace(safeRedirect);
         router.refresh();
       } else {
         toast.error(result.message);
@@ -59,14 +69,14 @@ const LoginForm = () => {
         <SignButton
           text="Github"
           icon={<GithubIcon />}
-          disabled={isOauthPending}
-          onClick={() => handleOauth("github")}
+          // disabled={isOauthPending}
+          // onClick={() => handleOauth("github")}
         />
         <SignButton
           text="Google"
           icon={<GoogleIcon />}
-          disabled={isOauthPending}
-          onClick={() => handleOauth("google")}
+          // disabled={isOauthPending}
+          // onClick={() => handleOauth("google")}
         />
       </div>
       <div className="flex items-center justify-center gap-3.5 w-full">

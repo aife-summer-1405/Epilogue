@@ -1,0 +1,17 @@
+export type FilterKeys =
+  | "page"
+  | "limit"
+  | "transactionType"
+  | "search"
+  | "order"
+  | "sort"
+  | "propertyType"
+  | "location"
+  | "minPrice"
+  | "maxPrice"
+  | "minRent"
+  | "maxRent"
+  | "minMortgage"
+  | "maxMortgage"
+  | "minArea"
+  | "maxArea";

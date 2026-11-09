@@ -6,6 +6,7 @@ import ProductCard from "@/components/molecules/product-card/ProductCard";
 import MortgageFilterSection from "./MortgageFilterSection";
 import { useGetHouses } from "@/hooks/queries/useGetHouses";
 import { GetHousesParams, HouseItem } from "@/services/houses/houses.service";
+import Link from "next/link";
 
 const MortgageRentContent: React.FC = () => {
   const [queryParams, setQueryParams] = useState<GetHousesParams>({
@@ -23,8 +24,8 @@ const MortgageRentContent: React.FC = () => {
       new Set(
         data.data
           .map((item) => item.address?.split("،")?.[0]?.trim())
-          .filter(Boolean)
-      )
+          .filter(Boolean),
+      ),
     );
     return uniqueAddresses.map((loc) => ({
       label: String(loc),
@@ -95,23 +96,31 @@ const MortgageRentContent: React.FC = () => {
       {!isLoading && !isError && housesList.length > 0 && (
         <div className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:mt-8 lg:grid-cols-3">
           {housesList.map((house: HouseItem) => (
-            <ProductCard
+            <Link
               key={house.id}
-              image={house.photos?.[0] || house.image || ""}
-              title={house.title}
-              address={house.address}
-              rating={Number(house.rate ?? house.rating ?? 0)}
-              bedrooms={Number(house.rooms ?? house.bedrooms ?? 0)}
-              bathrooms={Number(house.bathrooms ?? 0)}
-              guests={Number(house.capacity ?? house.guests ?? 0)}
-              parking={Number(house.parking ?? 0)}
-              monthlyRent={formatPrice(house.rent ?? house.price)}
-              pricePerNight={formatPrice(house.discounted_price ?? house.price)}
-              off={house.discount ? Number(house.discount) : undefined}
-              originalPrice={
-                house.discount ? formatPrice(house.price) : undefined
-              }
-            />
+              // هدایت به صفحه دیتیل با آیدی واقعی هر خانه
+              href={`/mortgage-rent/${house.id}`}
+            >
+              <ProductCard
+                key={house.id}
+                slides={house.photos.map((src) => ({ src, alt: house.title }))}
+                title={house.title}
+                address={house.address}
+                rating={Number(house.rate ?? house.rating ?? 0)}
+                bedrooms={Number(house.rooms ?? house.bedrooms ?? 0)}
+                bathrooms={Number(house.bathrooms ?? 0)}
+                guests={Number(house.capacity ?? house.guests ?? 0)}
+                parking={Number(house.parking ?? 0)}
+                monthlyRent={formatPrice(house.rent ?? house.price)}
+                pricePerNight={formatPrice(
+                  house.discounted_price ?? house.price,
+                )}
+                off={house.discount ? Number(house.discount) : undefined}
+                originalPrice={
+                  house.discount ? formatPrice(house.price) : undefined
+                }
+              />
+            </Link>
           ))}
         </div>
       )}

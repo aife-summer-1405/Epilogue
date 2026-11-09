@@ -6,7 +6,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import localFont from "next/font/local";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const vazirmatn = localFont({
+const vazirMatn = localFont({
   src: [
     {
       path: "./assets/fonts/Vazirmatn-Thin.ttf",
@@ -64,10 +64,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="fa"
       dir="rtl"
       suppressHydrationWarning
-      className={cn("h-full", "antialiased", vazirmatn.variable)}
+      className={cn("h-full", "antialiased", vazirMatn.variable)}
     >
-      <body className="min-h-full flex flex-col">
-        <ThemeProvider>
+      <body className="min-h-full flex flex-col relative bg-default-white-bg">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           <QueryProvider>
             <TooltipProvider>{children}</TooltipProvider>
             <ToastContainer

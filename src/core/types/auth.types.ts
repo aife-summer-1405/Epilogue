@@ -9,11 +9,19 @@ export type LoginValues = {
 export type SignUpEmailValues = {
   email: string;
 };
+export type SignUpPhoneValues = {
+  phoneNumber: string;
+};
 export type SignUpOtpValues = {
   otp: string;
 };
 export type SignUpCredentialsValues = {
-  phone: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+};
+export type SignUpCredentialsValuesPhone = {
+  email: string;
   password: string;
   confirmPassword: string;
 };
@@ -24,6 +32,22 @@ export type LoginResponse = {
   message?: string;
   accessToken?: string;
   refreshToken?: string;
+  user?: {
+    id: string;
+    role: string;
+    membershipDate: null | string;
+    email: string;
+    phoneNumber: string;
+    emailVerified: boolean;
+    fullName: string;
+    firstName: string;
+    lastName: string;
+    profilePicture: null | string;
+    createdAt: string;
+    updatedAt: string;
+    created_at: string;
+    updated_at: string;
+  };
 };
 
 export type SignUpEmailPayload = { email: string };
@@ -46,7 +70,8 @@ export type SignUpVerifyEmailResponse = {
 export type CompleteRegistrationPayload = {
   userId: string;
   password: string;
-  phoneNumber: string;
+  phoneNumber?: string;
+  email?: string;
 };
 export type CompleteRegistrationResponse = {
   success: boolean;
@@ -73,3 +98,24 @@ export type ResetPasswordPayload = {
   newPassword: string;
 };
 export type ResetPasswordResponse = { success: boolean; message?: string };
+export type SignUpPhonePayload = {
+  phoneNumber: string;
+};
+
+export type SignUpPhoneResponse = {
+  success: boolean;
+  message?: string;
+  tempUserId?: string;
+};
+
+export type SignUpVerifyPhonePayload = {
+  tempUserId: string;
+  verificationCode: string;
+};
+
+export type SignUpVerifyPhoneResponse = {
+  success: boolean;
+  message?: string;
+  userId?: string;
+  tempUserId?: string;
+};

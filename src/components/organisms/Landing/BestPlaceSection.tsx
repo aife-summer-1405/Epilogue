@@ -1,52 +1,91 @@
+"use client";
 
 import ProductCard from "@/components/molecules/product-card/ProductCard";
 import Button from "@/components/atoms/button/Button";
-
-import bedroomImage from "@/app/assets/Image/BedRoom.png";
-
 import { SectionHeading } from "@/components/molecules";
-
-const products = [
-    { id: 1, image: bedroomImage },
-    { id: 2, image: bedroomImage },
-    { id: 3, image: bedroomImage },
-];
+import { useHouses } from "@/hooks/queries/houses/useHouses";
+import Link from "next/link";
 
 export default function BestPlaceSection() {
-    return (
-        <section className="w-full overflow-hidden  px-4 py-8 md:px-6 md:py-24">
-            <SectionHeading
-                title="همه جا با شما هستیم"
-                subtitle="بهترین اقامتگاه ها برای شما"
-                timeLabel="2:25:20"
-            />
+  const { data, isLoading, isError } = useHouses();
 
-            {/* Responsive product list */}
-            <div className="mt-4 flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
-                {products.map((product) => (
-                    <div key={product.id} className="w-full min-w-0">
-                        <ProductCard
-                            image={product.image.src}
-                            title="خانه ویلایی با پارکینگ اختصاصی"
-                            address="خیابان 404 بروکلین، کالیفرنیا"
-                            rating={4.5}
-                            bedrooms={3}
-                            bathrooms={3}
-                            guests={3}
-                            parking={1}
-                            monthlyRent="4.500.000"
-                            pricePerNight="3.825.000"
-                            originalPrice="4.500.000"
-                        />
-                    </div>
-                ))}
-            </div>
+  const houses = data?.houses ?? [];
 
-            <div className="mt-10 flex justify-center">
-                <Button size="lg" variant="outline">
-                    مشاهده بیشتر
-                </Button>
-            </div>
-        </section>
-    );
+  const bestHouses = houses
+    .filter((house) => Number(house.rating ?? house.rate ?? 0) >= 3.5)
+    .slice(0, 3);
+
+  return (
+    <section className="w-full overflow-hidden px-4 py-8 md:px-6 md:py-24">
+      <SectionHeading
+        title="همه جا با شما هستیم"
+        subtitle="بهترین اقامتگاه ها برای شما"
+        timeLabel="2:25:20"
+      />
+
+      {isLoading ? (
+        <p className="mt-8 py-12 text-center text-neutral-500">
+          در حال دریافت خانه‌ها...
+        </p>
+      ) : isError ? (
+        <p className="mt-8 py-12 text-center text-red-500">
+          دریافت اطلاعات با خطا مواجه شد.
+        </p>
+      ) : bestHouses.length === 0 ? (
+        <p className="mt-8 py-12 text-center text-neutral-500">
+          خانه‌ای با امتیاز ۳.۵ یا بالاتر پیدا نشد.
+        </p>
+      ) : (
+        <>
+          <div className="mt-4 flex flex-col gap-4 md:grid md:grid-cols-3 md:gap-4">
+            {bestHouses.map((house) => (
+              <Link key={house.id} href={`/mortgage-rent/${house.id}`}>
+                <div key={house.id} className="w-full min-w-0">
+                  <ProductCard
+                    slides={
+                      house.photos
+                        ? house.photos.map((src) => ({
+                            src,
+                            alt: house.title,
+                          }))
+                        : [{ src: "", alt: house.title }]
+                    }
+                    title={house.title}
+                    address={house.address}
+                    rating={Number(house.rate ?? house.rate ?? 0)}
+                    bedrooms={Number(house.rooms ?? house.rooms ?? 0)}
+                    bathrooms={Number(house.bathrooms ?? 0)}
+                    guests={Number(house.capacity ?? house.capacity ?? 0)}
+                    parking={Number(house.parking ?? 0)}
+                    monthlyRent={String(house.price ?? house.price ?? 0)}
+                    pricePerNight={String(
+                      house.discounted_price ?? house.price ?? 0,
+                    )}
+                    originalPrice={
+                      house.discounted_price
+                        ? String(house.price ?? "")
+                        : undefined
+                    }
+                    off={
+                      house.discounted_price
+                        ? Number(house.discounted_price)
+                        : undefined
+                    }
+                  />
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-10 flex justify-center">
+            <Link href={`/mortgage-rent/`}>
+              <Button size="lg" variant="outline">
+                مشاهده بیشتر
+              </Button>
+            </Link>
+          </div>
+        </>
+      )}
+    </section>
+  );
 }
