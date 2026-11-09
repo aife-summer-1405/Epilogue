@@ -28,6 +28,7 @@ import { IconSvgObject } from "@/core/types/icon.types";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserAction } from "../actions/user.actions";
 import { useLogout } from "@/hooks/mutations/useLogout";
+import { getCookie } from "@/utils/getCookie";
 
 interface IProps {
   children: React.ReactNode;
@@ -58,7 +59,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: CheckListIcon,
     text: "مدیریت رزرو ها",
-    path: "/panel/reserveManagement",
+    path: "/panel/reserveManagement/seller",
   },
   {
     icon: SaveMoneyDollarIcon,
@@ -76,7 +77,7 @@ const menuBuyerNavigationItems: INavigationItems[] = [
   {
     icon: CheckListIcon,
     text: "مدیریت رزرو ها",
-    path: "/panel/buyerReserveManagement",
+    path: "/panel/reserveManagement/buyer",
   },
   {
     icon: SaveMoneyDollarIcon,
@@ -119,6 +120,7 @@ const NavLink: FC<INavLinkProps> = ({ item, active, onClick }) => (
 const PanelLayout: FC<IProps> = ({ children }) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   const { data: currentUser, isLoading } = useQuery({
     queryKey: ["currentUser"],
@@ -133,14 +135,17 @@ const PanelLayout: FC<IProps> = ({ children }) => {
 
   const { mutate: logout, isPending } = useLogout();
 
-  const userRole = !isLoading && currentUser?.role;
-
   const navigationItems =
     userRole === "seller"
       ? menuSellerNavigationItems
       : menuBuyerNavigationItems;
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    const role = getCookie("userRole");
+    setUserRole(role);
+  }, []);
 
   const sidebarContent = (
     <>
@@ -154,7 +159,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
             <NavLink
               key={item.path}
               item={item}
-              active={pathname === item.path}
+              active={pathname.includes(item.path)}
               onClick={closeMenu}
             />
           ))}
@@ -165,14 +170,16 @@ const PanelLayout: FC<IProps> = ({ children }) => {
           مدیریت
         </p>
         <div className="flex flex-col gap-5 xl:gap-6">
-          {navigationItems.map((item) => (
-            <NavLink
-              key={item.path}
-              item={item}
-              active={pathname === item.path}
-              onClick={closeMenu}
-            />
-          ))}
+          {userRole
+            ? navigationItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  item={item}
+                  active={pathname.includes(item.path)}
+                  onClick={closeMenu}
+                />
+              ))
+            : null}
           <button
             type="button"
             disabled={isPending}
@@ -256,7 +263,9 @@ const PanelLayout: FC<IProps> = ({ children }) => {
             </Link>
           </div>
         </header>
-        <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 shrink-0 w-full overflow-y-auto rounded-[40px] border border-neutral-300 bg-neutral-200 p-6">
+          {children}
+        </main>
       </div>
     </div>
   );
