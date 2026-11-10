@@ -30,9 +30,31 @@ export function proxy(request: NextRequest) {
     }
   }
 
+  if (
+    pathname === "/panel/dashboard/buyer" ||
+    pathname === "/panel/dashboard/buyer/"
+  ) {
+    if (userRole === "seller") {
+      return NextResponse.redirect(
+        new URL("/panel/dashboard/seller", request.url),
+      );
+    }
+  }
+
+  if (
+    pathname === "/panel/dashboard/seller" ||
+    pathname === "/panel/dashboard/seller/"
+  ) {
+    if (userRole === "buyer") {
+      return NextResponse.redirect(
+        new URL("/panel/dashboard/buyer", request.url),
+      );
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/panel/:path*"],
+  matcher: ["/panel/:path*", "/panel/dashboard/:path*"],
 };
