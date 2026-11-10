@@ -65,22 +65,24 @@ const BlogDetailContent: React.FC<BlogDetailContentProps> = ({ blogId }) => {
     order: "DESC",
   });
 
+  const categoryId = blog?.category_id;
+
   const relatedBlogs = useMemo(() => {
     const all = relatedData?.data || [];
     const filtered = all.filter((item) => String(item.id) !== String(blogId));
 
-    if (blog?.category_id) {
+    if (categoryId) {
       const sameCategory = filtered.filter(
-        (item) => String(item.category_id) === String(blog.category_id),
+        (item) => String(item.category_id) === String(categoryId),
       );
       const others = filtered.filter(
-        (item) => String(item.category_id) !== String(blog.category_id),
+        (item) => String(item.category_id) !== String(categoryId),
       );
       return [...sameCategory, ...others];
     }
 
     return filtered;
-  }, [relatedData?.data, blogId, blog?.category_id]);
+  }, [relatedData?.data, blogId, categoryId]);
 
   const totalSlides = Math.max(1, Math.ceil(relatedBlogs.length / 3));
   const visibleRelatedBlogs = relatedBlogs.slice(
