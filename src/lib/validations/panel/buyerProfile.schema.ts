@@ -14,12 +14,8 @@ export type PersonalInfoFormValues = z.infer<typeof personalInfoSchema>;
 export const securityInfoSchema = z
   .object({
     currentPassword: z.string().min(1, "وارد کردن رمز عبور قبلی الزامی است"),
-    newPassword: z
-      .string()
-      .min(6, "رمز عبور جدید باید حداقل ۶ کاراکتر باشد"),
-    confirmNewPassword: z
-      .string()
-      .min(1, "تکرار رمز عبور جدید الزامی است"),
+    newPassword: z.string().min(8, "رمز عبور جدید باید حداقل 8 کاراکتر باشد"),
+    confirmNewPassword: z.string().min(1, "تکرار رمز عبور جدید الزامی است"),
   })
   .refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "تکرار رمز عبور با رمز عبور جدید مطابقت ندارد",

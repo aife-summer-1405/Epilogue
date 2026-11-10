@@ -25,11 +25,10 @@ import HomeLogo from "@/components/atoms/Logo/home-logo";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { IconSvgObject } from "@/core/types/icon.types";
-import { useQuery } from "@tanstack/react-query";
-import { getCurrentUserAction } from "../actions/user.actions";
 import { useLogout } from "@/hooks/mutations/useLogout";
 import { getCookie } from "@/utils/getCookie";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useGetUserProfile } from "@/hooks/queries/useGetUserProfile";
 
 interface IProps {
   children: React.ReactNode;
@@ -123,16 +122,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState<string | undefined>(undefined);
 
-  const { data: currentUser, isLoading } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: async () => {
-      const result = await getCurrentUserAction();
-      return result.success ? result.user : null;
-    },
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: currentUser, isLoading } = useGetUserProfile();
 
   const { mutate: logout, isPending } = useLogout();
 
@@ -239,6 +229,8 @@ const PanelLayout: FC<IProps> = ({ children }) => {
               src={currentUser?.profilePicture ?? profileFallBack}
               fallbackSrc={profileFallBack}
               alt="پروفایل"
+              width={40}
+              height={40}
               className="size-10 shrink-0 rounded-full object-cover"
             />
             <div className="flex min-w-0 flex-col">

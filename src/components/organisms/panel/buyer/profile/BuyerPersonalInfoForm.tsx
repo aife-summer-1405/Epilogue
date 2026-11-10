@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -14,20 +13,21 @@ import {
   personalInfoSchema,
   PersonalInfoFormValues,
 } from "@/lib/validations/panel/buyerProfile.schema";
-import { IBuyerUser } from "@/core/types/buyerProfile/buyerProfile.types";
 import {
   useUpdateBuyerProfile,
   useUploadBuyerPicture,
 } from "@/hooks/mutations/panel/buyer/useBuyerProfileMutations";
+import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
+import DEFAULT_AVATAR from "@/app/assets/Image/profileFallBack.jpg";
+import { UserDto } from "@/core/types/user.types";
 
 interface BuyerPersonalInfoFormProps {
-  user?: IBuyerUser;
+  user?: UserDto;
 }
 
-const DEFAULT_AVATAR =
-  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop";
-
-const BuyerPersonalInfoForm: React.FC<BuyerPersonalInfoFormProps> = ({ user }) => {
+const BuyerPersonalInfoForm: React.FC<BuyerPersonalInfoFormProps> = ({
+  user,
+}) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
 
@@ -116,8 +116,9 @@ const BuyerPersonalInfoForm: React.FC<BuyerPersonalInfoFormProps> = ({ user }) =
           onClick={() => fileInputRef.current?.click()}
           className="group relative h-36 w-36 cursor-pointer overflow-hidden rounded-full border-4 border-white shadow-md md:h-40 md:w-40 dark:border-zinc-700"
         >
-          <Image
-            src={previewAvatar || DEFAULT_AVATAR}
+          <ImageFallback
+            src={previewAvatar}
+            fallbackSrc={DEFAULT_AVATAR}
             alt={user?.fullName || "تصویر کاربر"}
             fill
             unoptimized
@@ -132,11 +133,19 @@ const BuyerPersonalInfoForm: React.FC<BuyerPersonalInfoFormProps> = ({ user }) =
                 title="حذف تصویر"
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-gray-900 shadow-md transition-transform hover:scale-110"
               >
-                <HugeiconsIcon icon={Delete02Icon} size={20} strokeWidth={1.8} />
+                <HugeiconsIcon
+                  icon={Delete02Icon}
+                  size={20}
+                  strokeWidth={1.8}
+                />
               </button>
             ) : (
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-gray-900 shadow-md">
-                <HugeiconsIcon icon={Camera01Icon} size={20} strokeWidth={1.8} />
+                <HugeiconsIcon
+                  icon={Camera01Icon}
+                  size={20}
+                  strokeWidth={1.8}
+                />
               </span>
             )}
           </div>
@@ -192,7 +201,9 @@ const BuyerPersonalInfoForm: React.FC<BuyerPersonalInfoFormProps> = ({ user }) =
             />
           </div>
 
-          <div className={`${panelInputOverride} [&_input]:text-left [&_input]:dir-ltr`}>
+          <div
+            className={`${panelInputOverride} [&_input]:text-left [&_input]:dir-ltr`}
+          >
             <TextInput
               name="email"
               title="ایمیل"
