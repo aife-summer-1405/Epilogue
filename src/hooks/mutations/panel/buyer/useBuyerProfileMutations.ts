@@ -18,6 +18,7 @@ export const useUpdateBuyerProfile = (userId?: string) => {
     onSuccess: (res) => {
       if (res.success) {
         queryClient.invalidateQueries({ queryKey: ["buyer-profile"] });
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       }
     },
   });
@@ -31,6 +32,7 @@ export const useUploadBuyerPicture = () => {
     onSuccess: (res) => {
       if (res.success) {
         queryClient.invalidateQueries({ queryKey: ["buyer-profile"] });
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       }
     },
   });

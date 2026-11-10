@@ -1,4 +1,3 @@
-import React from "react";
 import BuyerProfileContainer from "@/components/organisms/panel/buyer/profile/BuyerProfileContainer";
 
 export const metadata = {
@@ -7,9 +6,5 @@ export const metadata = {
 };
 
 export default function BuyerProfilePage() {
-  return (
-    <div className="w-full">
-      <BuyerProfileContainer />
-    </div>
-  );
+  return <BuyerProfileContainer />;
 }

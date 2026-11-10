@@ -265,7 +265,7 @@ const BuyerDashboard = () => {
             مشاهده همه
           </Link>
         </div>
-        <div className="max-h-66 overflow-x-auto overflow-y-auto scrollbar-hide [-ms-overflow-style:none] scrollbar-width:none [&::-webkit-scrollbar]:hidden">
+        <div className="max-h-65 overflow-x-auto overflow-y-auto scrollbar-hide [-ms-overflow-style:none] scrollbar-width:none [&::-webkit-scrollbar]:hidden">
           <table className="w-full min-w-160 text-xs sm:min-w-170 sm:text-sm">
             <thead className="sticky top-0 z-10 bg-default-white-bg">
               <tr className="text-right text-gray-700">

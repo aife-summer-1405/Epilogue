@@ -1,56 +1,48 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import BuyerPersonalInfoForm from "./BuyerPersonalInfoForm";
 import BuyerSecurityForm from "./BuyerSecurityForm";
-import { useGetBuyerProfile } from "@/hooks/queries/panel/buyer/useGetBuyerProfile";
+import { useGetUserProfile } from "@/hooks/queries/useGetUserProfile";
+import Button from "@/components/atoms/button/Button";
 
 type ActiveTab = "personal" | "security";
 
-interface BuyerProfileContainerProps {
-  userId?: string;
-}
-
-const BuyerProfileContainer: React.FC<BuyerProfileContainerProps> = ({
-  userId,
-}) => {
+const BuyerProfileContainer = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>("personal");
-  const { data, isLoading } = useGetBuyerProfile(userId);
+  const { data, isLoading } = useGetUserProfile();
 
   return (
-    <section
-      className="flex min-h-170 w-full flex-col rounded-[32px] border border-gray-200/80 bg-[#f6f6f6] p-5 shadow-xs sm:p-8 lg:p-10 dark:border-zinc-800 dark:bg-[#272727]"
-      dir="rtl"
-    >
+    <>
       <div className="flex w-full flex-col items-start gap-6">
         <h1 className="text-xl font-extrabold text-gray-900 sm:text-2xl dark:text-white">
           اطلاعات کاربری
         </h1>
 
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={() => setActiveTab("personal")}
-            className={`rounded-2xl border px-5 py-2.5 text-sm font-bold transition-all ${
+            className={`rounded-2xl border px-5 py-2.5 text-sm font-bold transition-all cursor-pointer ${
               activeTab === "personal"
                 ? "border-[#0f2d59] bg-white text-[#0f2d59] shadow-xs dark:border-blue-400 dark:bg-[#1e1e1e] dark:text-blue-400"
                 : "border-gray-300 bg-transparent text-gray-500 hover:border-gray-400 dark:border-zinc-700 dark:text-gray-400"
             }`}
           >
             اطلاعات شخصی
-          </button>
+          </Button>
 
-          <button
-            type="button"
+          <Button
+            variant="outline"
             onClick={() => setActiveTab("security")}
-            className={`rounded-2xl border px-5 py-2.5 text-sm font-bold transition-all ${
+            className={`rounded-2xl border px-5 py-2.5 text-sm font-bold transition-all cursor-pointer ${
               activeTab === "security"
                 ? "border-[#0f2d59] bg-white text-[#0f2d59] shadow-xs dark:border-blue-400 dark:bg-[#1e1e1e] dark:text-blue-400"
                 : "border-gray-300 bg-transparent text-gray-500 hover:border-gray-400 dark:border-zinc-700 dark:text-gray-400"
             }`}
           >
             اطلاعات امنیتی
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -68,12 +60,12 @@ const BuyerProfileContainer: React.FC<BuyerProfileContainerProps> = ({
             </div>
           </div>
         ) : (
-          <BuyerPersonalInfoForm user={data?.user} />
+          <BuyerPersonalInfoForm user={data ? data : undefined} />
         )
       ) : (
         <BuyerSecurityForm />
       )}
-    </section>
+    </>
   );
 };
 
