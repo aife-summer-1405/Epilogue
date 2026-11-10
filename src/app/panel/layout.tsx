@@ -28,6 +28,8 @@ import { IconSvgObject } from "@/core/types/icon.types";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentUserAction } from "../actions/user.actions";
 import { useLogout } from "@/hooks/mutations/useLogout";
+import { getCookie } from "@/utils/getCookie";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface IProps {
   children: React.ReactNode;
@@ -58,7 +60,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: CheckListIcon,
     text: "مدیریت رزرو ها",
-    path: "/panel/reserveManagement",
+    path: "/panel/reserveManagement/seller",
   },
   {
     icon: SaveMoneyDollarIcon,
@@ -76,7 +78,7 @@ const menuBuyerNavigationItems: INavigationItems[] = [
   {
     icon: CheckListIcon,
     text: "مدیریت رزرو ها",
-    path: "/panel/buyerReserveManagement",
+    path: "/panel/reserveManagement/buyer",
   },
   {
     icon: SaveMoneyDollarIcon,
@@ -119,6 +121,7 @@ const NavLink: FC<INavLinkProps> = ({ item, active, onClick }) => (
 const PanelLayout: FC<IProps> = ({ children }) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | undefined>(undefined);
 
   const { data: currentUser, isLoading } = useQuery({
     queryKey: ["currentUser"],
@@ -133,14 +136,17 @@ const PanelLayout: FC<IProps> = ({ children }) => {
 
   const { mutate: logout, isPending } = useLogout();
 
-  const userRole = !isLoading && currentUser?.role;
-
   const navigationItems =
     userRole === "seller"
       ? menuSellerNavigationItems
       : menuBuyerNavigationItems;
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    const role = getCookie("userRole");
+    setUserRole(role);
+  }, []);
 
   const sidebarContent = (
     <>
@@ -154,7 +160,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
             <NavLink
               key={item.path}
               item={item}
-              active={pathname === item.path}
+              active={pathname.includes(item.path)}
               onClick={closeMenu}
             />
           ))}
@@ -165,14 +171,16 @@ const PanelLayout: FC<IProps> = ({ children }) => {
           مدیریت
         </p>
         <div className="flex flex-col gap-5 xl:gap-6">
-          {navigationItems.map((item) => (
-            <NavLink
-              key={item.path}
-              item={item}
-              active={pathname === item.path}
-              onClick={closeMenu}
-            />
-          ))}
+          {userRole
+            ? navigationItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  item={item}
+                  active={pathname.includes(item.path)}
+                  onClick={closeMenu}
+                />
+              ))
+            : null}
           <button
             type="button"
             disabled={isPending}
@@ -193,8 +201,8 @@ const PanelLayout: FC<IProps> = ({ children }) => {
   );
 
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-[1920px] gap-4 p-3 sm:p-4 lg:gap-8 lg:p-8">
-      <aside className="hidden w-72 shrink-0 flex-col gap-8 overflow-y-auto rounded-[40px] border border-neutral-300 bg-neutral-200 p-6 lg:flex xl:w-80 xl:p-8 2xl:w-[22%]">
+    <div className="mx-auto flex min-h-dvh w-full max-w-[1920px] gap-4 p-3 sm:p-4 lg:gap-8 lg:p-8">
+      <aside className="hidden w-72 max-h-dvh sticky top-3 sm:top-4 lg:top-8 shrink-0 flex-col gap-8 rounded-[40px] border border-neutral-300 bg-neutral-200 p-6 lg:flex xl:w-80 xl:p-8 2xl:w-[22%]">
         {sidebarContent}
       </aside>
       <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-8">
@@ -234,9 +242,13 @@ const PanelLayout: FC<IProps> = ({ children }) => {
               className="size-10 shrink-0 rounded-full object-cover"
             />
             <div className="flex min-w-0 flex-col">
-              <p className="truncate text-base font-normal text-default-black sm:text-[20px]">
-                {currentUser?.fullName}
-              </p>
+              {!isLoading ? (
+                <p className="truncate text-base font-normal text-default-black sm:text-[20px]">
+                  {currentUser?.fullName}
+                </p>
+              ) : (
+                <Skeleton className="w-20 h-7.5 bg-neutral-500" />
+              )}
               <span className="text-xs font-normal text-primary-500 dark:text-primary-800 sm:text-sm">
                 {userRole === "buyer" ? "( خریدار )" : "( فروشنده )"}
               </span>
@@ -256,7 +268,9 @@ const PanelLayout: FC<IProps> = ({ children }) => {
             </Link>
           </div>
         </header>
-        <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+        <main className="flex-1 shrink-0 w-full rounded-[40px] border border-neutral-300 bg-neutral-200 p-6">
+          {children}
+        </main>
       </div>
     </div>
   );

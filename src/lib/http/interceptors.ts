@@ -92,6 +92,7 @@ const onError = async (error: AxiosError) => {
     cookieStore.delete("accessToken");
     cookieStore.delete("refreshToken");
     cookieStore.delete("userId");
+    cookieStore.delete("userRole");
     redirect("/auth/login");
   }
 
