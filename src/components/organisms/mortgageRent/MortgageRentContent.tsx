@@ -103,7 +103,11 @@ const MortgageRentContent: React.FC = () => {
             >
               <ProductCard
                 key={house.id}
-                slides={house.photos.map((src) => ({ src, alt: house.title }))}
+                slides={
+                  Array.isArray(house.photos)
+                    ? house.photos.map((src) => ({ src, alt: house.title }))
+                    : null
+                }
                 title={house.title}
                 address={house.address}
                 rating={Number(house.rate ?? house.rating ?? 0)}
