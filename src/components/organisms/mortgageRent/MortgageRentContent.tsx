@@ -109,31 +109,38 @@ const MortgageRentContent: React.FC = () => {
 
       {!isLoading && !isError && housesList.length > 0 && (
         <div className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:mt-8 lg:grid-cols-3">
-          {housesList.map((house: IHouseItem) => (
-            <Link key={house.id} href={`/mortgage-rent/${house.id}`}>
-              <ProductCard
-                slides={(house.photos || []).map((src) => ({
-                  src,
-                  alt: house.title,
-                }))}
-                title={house.title}
-                address={house.address}
-                rating={Number(house.rate ?? house.rating ?? 0)}
-                bedrooms={Number(house.rooms ?? house.bedrooms ?? 0)}
-                bathrooms={Number(house.bathrooms ?? 0)}
-                guests={Number(house.capacity ?? house.guests ?? 0)}
-                parking={Number(house.parking ?? 0)}
-                monthlyRent={formatPrice(house.rent ?? house.price)}
-                pricePerNight={formatPrice(
-                  house.discounted_price ?? house.price,
-                )}
-                off={house.discount ? Number(house.discount) : undefined}
-                originalPrice={
-                  house.discount ? formatPrice(house.price) : undefined
-                }
-              />
-            </Link>
-          ))}
+          {housesList.map((house: IHouseItem) => {
+            const validSlides =
+              Array.isArray(house.photos) && house.photos.length > 0
+                ? house.photos.map((src) => ({
+                    src: src || "",
+                    alt: house.title || "تصویر ملک",
+                  }))
+                : [{ src: "", alt: house.title || "تصویر ملک" }];
+
+            return (
+              <Link key={house.id} href={`/mortgage-rent/${house.id}`}>
+                <ProductCard
+                  slides={validSlides}
+                  title={house.title}
+                  address={house.address}
+                  rating={Number(house.rate ?? house.rating ?? 0)}
+                  bedrooms={Number(house.rooms ?? house.bedrooms ?? 0)}
+                  bathrooms={Number(house.bathrooms ?? 0)}
+                  guests={Number(house.capacity ?? house.guests ?? 0)}
+                  parking={Number(house.parking ?? 0)}
+                  monthlyRent={formatPrice(house.rent ?? house.price)}
+                  pricePerNight={formatPrice(
+                    house.discounted_price ?? house.price,
+                  )}
+                  off={house.discount ? Number(house.discount) : undefined}
+                  originalPrice={
+                    house.discount ? formatPrice(house.price) : undefined
+                  }
+                />
+              </Link>
+            );
+          })}
         </div>
       )}
 
