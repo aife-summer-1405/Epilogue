@@ -25,9 +25,11 @@ import HomeLogo from "@/components/atoms/Logo/home-logo";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { IconSvgObject } from "@/core/types/icon.types";
-import { useQuery } from "@tanstack/react-query";
-import { getCurrentUserAction } from "../actions/user.actions";
 import { useLogout } from "@/hooks/mutations/useLogout";
+import { getCookie } from "@/utils/getCookie";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetUserProfile } from "@/hooks/queries/useGetUserProfile";
+import AuthError from "@/components/organisms/panel/AuthToast";
 
 interface IProps {
   children: React.ReactNode;
@@ -58,7 +60,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: CheckListIcon,
     text: "مدیریت رزرو ها",
-    path: "/panel/reserveManagement",
+    path: "/panel/reserveManagement/seller",
   },
   {
     icon: SaveMoneyDollarIcon,
@@ -76,7 +78,7 @@ const menuBuyerNavigationItems: INavigationItems[] = [
   {
     icon: CheckListIcon,
     text: "مدیریت رزرو ها",
-    path: "/panel/buyerReserveManagement",
+    path: "/panel/reserveManagement/buyer",
   },
   {
     icon: SaveMoneyDollarIcon,
@@ -119,21 +121,11 @@ const NavLink: FC<INavLinkProps> = ({ item, active, onClick }) => (
 const PanelLayout: FC<IProps> = ({ children }) => {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | undefined>(undefined);
 
-  const { data: currentUser, isLoading } = useQuery({
-    queryKey: ["currentUser"],
-    queryFn: async () => {
-      const result = await getCurrentUserAction();
-      return result.success ? result.user : null;
-    },
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
+  const { data: currentUser, isLoading } = useGetUserProfile();
 
   const { mutate: logout, isPending } = useLogout();
-
-  const userRole = !isLoading && currentUser?.role;
 
   const navigationItems =
     userRole === "seller"
@@ -141,6 +133,11 @@ const PanelLayout: FC<IProps> = ({ children }) => {
       : menuBuyerNavigationItems;
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  useEffect(() => {
+    const role = getCookie("userRole");
+    setUserRole(role);
+  }, []);
 
   const sidebarContent = (
     <>
@@ -154,7 +151,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
             <NavLink
               key={item.path}
               item={item}
-              active={pathname === item.path}
+              active={pathname.includes(item.path)}
               onClick={closeMenu}
             />
           ))}
@@ -165,14 +162,16 @@ const PanelLayout: FC<IProps> = ({ children }) => {
           مدیریت
         </p>
         <div className="flex flex-col gap-5 xl:gap-6">
-          {navigationItems.map((item) => (
-            <NavLink
-              key={item.path}
-              item={item}
-              active={pathname === item.path}
-              onClick={closeMenu}
-            />
-          ))}
+          {userRole
+            ? navigationItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  item={item}
+                  active={pathname.includes(item.path)}
+                  onClick={closeMenu}
+                />
+              ))
+            : null}
           <button
             type="button"
             disabled={isPending}
@@ -193,72 +192,83 @@ const PanelLayout: FC<IProps> = ({ children }) => {
   );
 
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-[1920px] gap-4 p-3 sm:p-4 lg:gap-8 lg:p-8">
-      <aside className="hidden w-72 shrink-0 flex-col gap-8 overflow-y-auto rounded-[40px] border border-neutral-300 bg-neutral-200 p-6 lg:flex xl:w-80 xl:p-8 2xl:w-[22%]">
-        {sidebarContent}
-      </aside>
-      <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-8">
-        <header className="flex items-center justify-between gap-3 rounded-[24px] border border-neutral-300 bg-neutral-200 px-3 py-2 sm:px-4">
-          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <div className="lg:hidden">
-              <DrawerComponent
-                open={isMenuOpen}
-                onOpenChange={setIsMenuOpen}
-                swipeDirection="right"
-                className="w-[85%] max-w-sm overflow-y-auto bg-neutral-200 p-6"
-                trigger={
-                  <button
-                    type="button"
-                    aria-label="باز کردن منو"
-                    className="flex size-10 shrink-0 items-center justify-center rounded-full text-default-text"
-                  >
-                    <HugeiconsIcon icon={Menu01Icon} size={24} />
-                  </button>
-                }
-                close={
-                  <button
-                    type="button"
-                    className="w-full rounded-2xl border border-neutral-300 py-3 text-default-text"
-                  >
-                    بستن منو
-                  </button>
-                }
-              >
-                <div className="flex flex-col gap-8">{sidebarContent}</div>
-              </DrawerComponent>
+    <>
+      <AuthError />
+      <div className="mx-auto flex min-h-dvh w-full max-w-[1920px] gap-4 p-3 sm:p-4 lg:gap-8 lg:p-8">
+        <aside className="hidden w-72 max-h-dvh sticky top-3 sm:top-4 lg:top-8 shrink-0 flex-col gap-8 rounded-[40px] border border-neutral-300 bg-neutral-200 p-6 lg:flex xl:w-80 xl:p-8 2xl:w-[22%]">
+          {sidebarContent}
+        </aside>
+        <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-8">
+          <header className="flex items-center justify-between gap-3 rounded-[24px] border border-neutral-300 bg-neutral-200 px-3 py-2 sm:px-4">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+              <div className="lg:hidden">
+                <DrawerComponent
+                  open={isMenuOpen}
+                  onOpenChange={setIsMenuOpen}
+                  swipeDirection="right"
+                  className="w-[85%] max-w-sm overflow-y-auto bg-neutral-200 p-6"
+                  trigger={
+                    <button
+                      type="button"
+                      aria-label="باز کردن منو"
+                      className="flex size-10 shrink-0 items-center justify-center rounded-full text-default-text"
+                    >
+                      <HugeiconsIcon icon={Menu01Icon} size={24} />
+                    </button>
+                  }
+                  close={
+                    <button
+                      type="button"
+                      className="w-full rounded-2xl border border-neutral-300 py-3 text-default-text"
+                    >
+                      بستن منو
+                    </button>
+                  }
+                >
+                  <div className="flex flex-col gap-8">{sidebarContent}</div>
+                </DrawerComponent>
+              </div>
+              <ImageFallback
+                src={currentUser?.profilePicture ?? profileFallBack}
+                fallbackSrc={profileFallBack}
+                alt="پروفایل"
+                width={40}
+                height={40}
+                className="size-10 shrink-0 rounded-full object-cover"
+              />
+              <div className="flex min-w-0 flex-col">
+                {!isLoading ? (
+                  <p className="truncate text-base font-normal text-default-black sm:text-[20px]">
+                    {currentUser?.fullName}
+                  </p>
+                ) : (
+                  <Skeleton className="w-20 h-7.5 bg-neutral-500" />
+                )}
+                <span className="text-xs font-normal text-primary-500 dark:text-primary-800 sm:text-sm">
+                  {userRole === "buyer" ? "( خریدار )" : "( فروشنده )"}
+                </span>
+              </div>
             </div>
-            <ImageFallback
-              src={currentUser?.profilePicture ?? profileFallBack}
-              fallbackSrc={profileFallBack}
-              alt="پروفایل"
-              className="size-10 shrink-0 rounded-full object-cover"
-            />
-            <div className="flex min-w-0 flex-col">
-              <p className="truncate text-base font-normal text-default-black sm:text-[20px]">
-                {currentUser?.fullName}
-              </p>
-              <span className="text-xs font-normal text-primary-500 dark:text-primary-800 sm:text-sm">
-                {userRole === "buyer" ? "( خریدار )" : "( فروشنده )"}
-              </span>
+            <div className="flex shrink-0 items-center gap-2 sm:gap-4">
+              <ThemeToggle />
+              <Link href="/" className="rounded-full">
+                <ButtonOnlyIcon size="sm" variant="primary" hasIcon={false}>
+                  <HugeiconsIcon
+                    icon={Home07Icon}
+                    size={24}
+                    color="currentColor"
+                    strokeWidth={1.5}
+                  />
+                </ButtonOnlyIcon>
+              </Link>
             </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-            <ThemeToggle />
-            <Link href="/" className="rounded-full">
-              <ButtonOnlyIcon size="sm" variant="primary" hasIcon={false}>
-                <HugeiconsIcon
-                  icon={Home07Icon}
-                  size={24}
-                  color="currentColor"
-                  strokeWidth={1.5}
-                />
-              </ButtonOnlyIcon>
-            </Link>
-          </div>
-        </header>
-        <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
+          </header>
+          <main className="flex-1 shrink-0 w-full rounded-[40px] border border-neutral-300 bg-neutral-200 p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

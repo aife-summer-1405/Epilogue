@@ -3,28 +3,13 @@
 import { isAxiosError } from "axios";
 import { cookies } from "next/headers";
 import api from "@/lib/http/interceptors";
-import type { GetUserResponse } from "@/core/types/user.types";
+import type { GetUserResponse, UserDto } from "@/core/types/user.types";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export type UserRole = "buyer" | "seller" | "admin";
 
-export type CurrentUser = {
-  id: string;
-  role: UserRole;
-  membershipDate: string | null;
-  email: string;
-  phoneNumber: string | null;
-  emailVerified: boolean;
-  fullName: string;
-  firstName: string;
-  lastName: string;
-  profilePicture: string | null;
-  createdAt: string;
-  updatedAt: string;
-};
-
 export type GetCurrentUserActionResult =
-  | { success: true; user: CurrentUser; additionalPercentage: number }
+  | { success: true; user: UserDto; additionalPercentage: number }
   | { success: false; message: string; unauthenticated?: boolean };
 
 export async function getCurrentUserAction(): Promise<GetCurrentUserActionResult> {

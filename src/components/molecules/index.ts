@@ -18,3 +18,6 @@ export type { MapMarkerProps } from "./MapMarker";
 
 export { default as CommentCard } from "./CommentCard";
 export type { CommentCardProps } from "./CommentCard";
+
+export { default as ProfileSelectModal } from "./profile-select-modal";
+export type { ProfileSelectModalProps } from "./profile-select-modal";

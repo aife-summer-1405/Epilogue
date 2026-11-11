@@ -58,6 +58,10 @@ export async function loginAction(
         ...base,
         httpOnly: false,
       });
+      cookieStore.set("userRole", data.user.role, {
+        ...base,
+        httpOnly: false,
+      });
     }
     if (data.refreshToken) {
       cookieStore.set("refreshToken", data.refreshToken, {
