@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/components/molecules/Pagination";
 import BlogCard from "@/components/molecules/blog-card/BlogCard";
 import BlogsFilterSection from "./BlogsFilterSection";
 import { useGetBlogs } from "@/hooks/queries/useGetBlogs";
-import { BlogItem, GetBlogsParams } from "@/services/blogs/blogs.service";
+import {
+  BlogItem,
+  parseBlogSearchParams,
+} from "@/services/blogs/blogs.service";
 import { IFilterInputs } from "../../molecules/inputs/filterInput/IFilterInput";
 
 const CATEGORY_NAMES_MAP: Record<string, string> = {
@@ -13,13 +17,6 @@ const CATEGORY_NAMES_MAP: Record<string, string> = {
   "2": "گردشگری",
   "3": "راهنمای ملک",
   "4": "حقوقی و قرارداد",
-};
-
-const INITIAL_PARAMS: GetBlogsParams = {
-  page: 1,
-  limit: 12,
-  sort: "created_at",
-  order: "DESC",
 };
 
 const normalizePersian = (str?: string) => {
@@ -33,13 +30,18 @@ const normalizePersian = (str?: string) => {
 };
 
 const BlogsContent: React.FC = () => {
-  const [queryParams, setQueryParams] =
-    useState<GetBlogsParams>(INITIAL_PARAMS);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const apiParams = useMemo(() => {
-    const { title, ...rest } = queryParams;
-    return rest;
-  }, [queryParams]);
+    const raw: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      raw[key] = value;
+    });
+    return parseBlogSearchParams(raw);
+  }, [searchParams]);
+
+  const titleQuery = searchParams.get("title") || "";
 
   const { data, isLoading, isError, isFetching } = useGetBlogs(apiParams);
 
@@ -65,34 +67,17 @@ const BlogsContent: React.FC = () => {
     }));
   }, [data?.data]);
 
-  const handleFilterChange = useCallback(
-    (newFilters: Partial<GetBlogsParams>) => {
-      setQueryParams((prev) => ({
-        ...prev,
-        ...newFilters,
-        page: 1,
-      }));
-    },
-    [],
-  );
-
-  const handleResetFilters = useCallback(() => {
-    setQueryParams(INITIAL_PARAMS);
-  }, []);
-
   const handlePageChange = (newPage: number) => {
-    setQueryParams((prev) => ({
-      ...prev,
-      page: newPage,
-    }));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(newPage));
+    router.push(`?${params.toString()}`);
   };
 
   const handleLoadMoreMobile = () => {
-    setQueryParams((prev) => ({
-      ...prev,
-      limit: (prev.limit || 12) + 12,
-    }));
+    const params = new URLSearchParams(searchParams.toString());
+    const nextLimit = (apiParams.limit || 12) + 12;
+    params.set("limit", String(nextLimit));
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const formatBlogDate = (dateString?: string) => {
@@ -120,7 +105,7 @@ const BlogsContent: React.FC = () => {
 
   const filteredBlogsList = useMemo(() => {
     const rawList = data?.data || [];
-    const searchQuery = normalizePersian(queryParams.title);
+    const searchQuery = normalizePersian(titleQuery);
 
     if (!searchQuery) return rawList;
 
@@ -132,18 +117,13 @@ const BlogsContent: React.FC = () => {
         normalizedCaption.includes(searchQuery)
       );
     });
-  }, [data?.data, queryParams.title]);
+  }, [data?.data, titleQuery]);
 
   const totalPages = data?.totalPages || 1;
 
   return (
     <div className="flex w-full flex-col items-center" dir="rtl">
-      <BlogsFilterSection
-        filters={queryParams}
-        categoryOptions={categoryOptions}
-        onFilterChange={handleFilterChange}
-        onResetFilters={handleResetFilters}
-      />
+      <BlogsFilterSection categoryOptions={categoryOptions} />
 
       {isLoading && (
         <div className="mt-8 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -232,7 +212,7 @@ const BlogsContent: React.FC = () => {
       {!isLoading && !isError && totalPages > 1 && (
         <div className="mt-14 mb-8 hidden w-full justify-center md:flex">
           <Pagination
-            currentPage={queryParams.page || 1}
+            currentPage={apiParams.page || 1}
             totalPages={totalPages}
             onPageChange={handlePageChange}
           />
