@@ -9,10 +9,14 @@ import MortgageFilterSection from "./MortgageFilterSection";
 import { useGetHouses } from "@/hooks/queries/useGetHouses";
 import { IHouseItem } from "@/core/types/houses/houseItems.types";
 import { IHouseParams } from "@/core/types/houses/houseParams.types";
+import { useComparisonStore } from "@/store/comparison.store";
+import ComparisonBar from "@/components/molecules/comparison-bar/ComparisonBar";
 
 const MortgageRentContent: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const selectedIds = useComparisonStore((state) => state.selectedIds);
+  const { toggleHouse } = useComparisonStore((state) => state.actions);
 
   const queryParams = useMemo<IHouseParams>(() => {
     const getStr = (k: string) => searchParams.get(k) || undefined;
@@ -82,7 +86,11 @@ const MortgageRentContent: React.FC = () => {
   const totalPages = data?.totalPages || 1;
 
   return (
-    <div className="flex w-full flex-col items-center" dir="rtl">
+    <div
+      className={`flex w-full flex-col items-center"
+    ${selectedIds.length > 0 ? "pb-24" : ""}`}
+      dir="rtl"
+    >
       <MortgageFilterSection
         totalCount={totalCount}
         fallbackLocations={dynamicLocationOptions}
@@ -137,6 +145,9 @@ const MortgageRentContent: React.FC = () => {
                   originalPrice={
                     house.discount ? formatPrice(house.price) : undefined
                   }
+                  selectableForCompare
+                  isCompared={selectedIds.includes(String(house.id))}
+                  onToggleCompare={() => toggleHouse(house.id)}
                 />
               </Link>
             );
@@ -172,6 +183,7 @@ const MortgageRentContent: React.FC = () => {
           />
         </div>
       )}
+      {selectedIds.length > 0 && <ComparisonBar />}
     </div>
   );
 };
