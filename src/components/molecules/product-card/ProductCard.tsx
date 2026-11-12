@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { ProductCardProps } from "./product-card.types";
 import ImageFallback from "../ImageFallBack/ImageFallBack";
+import Checkbox from "../../atoms/checkbox/Checkbox";
 
 export default function ProductCard({
   title,
@@ -30,6 +31,9 @@ export default function ProductCard({
   onClick,
   onDetailsClick,
   slides,
+  selectableForCompare,
+  isCompared = false,
+  onToggleCompare,
 }: ProductCardProps) {
   const isOff = typeof off === "number" && off > 0;
 
@@ -40,6 +44,7 @@ export default function ProductCard({
         "w-full overflow-hidden rounded-[28px]",
         " bg-white border border-gray-200 dark:border-none",
         "dark:bg-[#272727] dark:text-white",
+        isCompared && "ring-2 ring-[#1e3a8a] dark:ring-blue-400",
         className,
       )}
       onClick={onClick}
@@ -78,6 +83,25 @@ export default function ProductCard({
             </span>
           )}
         </div>
+
+        {selectableForCompare && (
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggleCompare?.();
+            }}
+            className="absolute top-3 left-3 z-10 flex cursor-pointer items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-gray-800 shadow-sm backdrop-blur-xs transition-transform hover:scale-105 dark:bg-[#1e1e1e]/95 dark:text-white"
+          >
+            <Checkbox
+              id={`compare-${title}`}
+              checked={isCompared}
+              label="مقایسه"
+              labelClassName="cursor-pointer text-xs font-bold"
+            />
+          </div>
+        )}
+
         <div className="absolute inset-x-3 bottom-3 flex items-center gap-1 text-right text-[16px] text-white">
           <HugeiconsIcon icon={Location01Icon} size={24} color="currentColor" />
           <span className="line-clamp-1">{address}</span>
