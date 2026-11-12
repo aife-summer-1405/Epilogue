@@ -1,53 +1,83 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { FilterRemoveIcon } from "@hugeicons/core-free-icons";
 import FilterInput from "../../molecules/inputs/filterInput/FilterInput";
 import { IFilterInputs } from "../../molecules/inputs/filterInput/IFilterInput";
 import { GetBlogsParams } from "@/services/blogs/blogs.service";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallBack";
 
 interface BlogsFilterSectionProps {
-  filters: GetBlogsParams;
   categoryOptions: IFilterInputs[];
-  onFilterChange: (newFilters: Partial<GetBlogsParams>) => void;
-  onResetFilters: () => void;
 }
 
-const SORT_TABS: { label: string; value: GetBlogsParams["sort"] }[] = [
+const BLOG_FILTER_KEYS = [
+  "page",
+  "limit",
+  "sort",
+  "order",
+  "title",
+  "category_id",
+  "author_id",
+] as const;
+
+const SORT_TABS: {
+  label: string;
+  value: NonNullable<GetBlogsParams["sort"]>;
+}[] = [
   { label: "آخرین بروزرسانی", value: "updated_at" },
   { label: "جدید ترین", value: "created_at" },
   { label: "پر بازدید ترین", value: "views" },
 ];
 
 const BlogsFilterSection: React.FC<BlogsFilterSectionProps> = ({
-  filters,
   categoryOptions,
-  onFilterChange,
-  onResetFilters,
 }) => {
-  const [searchInput, setSearchInput] = useState(filters.title || "");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
 
-  useEffect(() => {
-    setSearchInput(filters.title || "");
-  }, [filters.title]);
+  const currentSort =
+    (searchParams.get("sort") as GetBlogsParams["sort"]) || "created_at";
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchInput !== (filters.title || "")) {
-        onFilterChange({ title: searchInput || undefined });
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [searchInput, filters.title, onFilterChange]);
+  const [searchValue, setSearchValue] = useState(
+    () => searchParams.get("title") ?? "",
+  );
 
-  const extractCategoryValue = (val: unknown): number | undefined => {
-    if (!val) return undefined;
-    if (typeof val === "string" || typeof val === "number") return Number(val);
-    if (typeof val === "object" && "value" in val) {
-      return Number((val as { value: unknown }).value);
+  const [selectedCategory, setSelectedCategory] =
+    useState<IFilterInputs | null>(() => {
+      const catId = searchParams.get("category_id");
+      if (!catId) return null;
+      return (
+        categoryOptions.find((opt) => String(opt.value) === catId) ?? {
+          label: `دسته‌بندی ${catId}`,
+          value: catId,
+        }
+      );
+    });
+
+  const updateUrlParam = (key: string, value: string | null) => {
+    const nextParams = new URLSearchParams(searchParams.toString());
+    if (value === null || value === "") {
+      nextParams.delete(key);
+    } else {
+      nextParams.set(key, value);
     }
-    return undefined;
+    nextParams.set("page", "1");
+    router.push(`?${nextParams.toString()}`, { scroll: false });
+  };
+
+  const debouncedTitleSearch = useDebouncedCallback((val: string) => {
+    updateUrlParam("title", val.trim() === "" ? null : val.trim());
+  }, 500);
+
+  const handleResetAll = () => {
+    BLOG_FILTER_KEYS.forEach((key) => params.delete(key));
+    setSearchValue("");
+    setSelectedCategory(null);
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const filterWrapperClass =
@@ -63,12 +93,15 @@ const BlogsFilterSection: React.FC<BlogsFilterSectionProps> = ({
           <label className="text-right text-sm font-bold text-gray-900 dark:text-white">
             جستجو
           </label>
-          <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
+          <div className="flex h-12 items-center rounded-full bg-neutral-200 dark:bg-[#353535] px-4">
             <input
               type="text"
               placeholder="عنوان مقاله مورد نظر..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              value={searchValue}
+              onChange={(e) => {
+                setSearchValue(e.target.value);
+                debouncedTitleSearch(e.target.value);
+              }}
               className="w-full bg-transparent text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none dark:text-gray-100 dark:placeholder:text-gray-500"
             />
           </div>
@@ -79,20 +112,25 @@ const BlogsFilterSection: React.FC<BlogsFilterSectionProps> = ({
             isTitle="دسته بندی"
             placeHolder="انتخاب دسته‌بندی..."
             items={categoryOptions}
-            onValueChange={(val) =>
-              onFilterChange({ category_id: extractCategoryValue(val) })
-            }
+            value={selectedCategory}
+            onValueChange={(val) => {
+              setSelectedCategory(val);
+              updateUrlParam(
+                "category_id",
+                val?.value ? String(val.value) : null,
+              );
+            }}
           />
         </div>
 
         <div className="flex flex-wrap items-center justify-start gap-2 lg:col-span-5 lg:justify-end">
           {SORT_TABS.map((tab) => {
-            const isActive = filters.sort === tab.value;
+            const isActive = currentSort === tab.value;
             return (
               <button
                 key={tab.value}
                 type="button"
-                onClick={() => onFilterChange({ sort: tab.value })}
+                onClick={() => updateUrlParam("sort", tab.value)}
                 className={`h-11 rounded-full border px-4 text-xs font-bold transition-all ${
                   isActive
                     ? "border-[#1e3a8a] bg-[#1e3a8a] text-white shadow-sm"
@@ -106,10 +144,7 @@ const BlogsFilterSection: React.FC<BlogsFilterSectionProps> = ({
 
           <button
             type="button"
-            onClick={() => {
-              setSearchInput("");
-              onResetFilters();
-            }}
+            onClick={handleResetAll}
             className="inline-flex h-11 items-center justify-center gap-1.5 rounded-full bg-red-600 px-4 text-xs font-bold text-white transition-colors hover:bg-red-700"
           >
             <span>حذف</span>

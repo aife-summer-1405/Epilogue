@@ -1,20 +1,49 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/components/molecules/Pagination";
 import ProductCard from "@/components/molecules/product-card/ProductCard";
 import MortgageFilterSection from "./MortgageFilterSection";
 import { useGetHouses } from "@/hooks/queries/useGetHouses";
-import { GetHousesParams, HouseItem } from "@/services/houses/houses.service";
-import Link from "next/link";
+import { IHouseItem } from "@/core/types/houses/houseItems.types";
+import { IHouseParams } from "@/core/types/houses/houseParams.types";
+import { useComparisonStore } from "@/store/comparison.store";
+import ComparisonBar from "@/components/molecules/comparison-bar/ComparisonBar";
 
 const MortgageRentContent: React.FC = () => {
-  const [queryParams, setQueryParams] = useState<GetHousesParams>({
-    page: 1,
-    limit: 9,
-    order: "DESC",
-    sort: "last_updated",
-  });
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedIds = useComparisonStore((state) => state.selectedIds);
+  const { toggleHouse } = useComparisonStore((state) => state.actions);
+
+  const queryParams = useMemo<IHouseParams>(() => {
+    const getStr = (k: string) => searchParams.get(k) || undefined;
+    const getNum = (k: string) => {
+      const val = searchParams.get(k);
+      return val && !isNaN(Number(val)) ? Number(val) : undefined;
+    };
+
+    return {
+      page: getNum("page") || 1,
+      limit: getNum("limit") || 9,
+      order: (getStr("order") as "ASC" | "DESC") || "DESC",
+      sort: (getStr("sort") as IHouseParams["sort"]) || "last_updated",
+      search: getStr("search"),
+      location: getStr("location"),
+      propertyType: getStr("propertyType"),
+      transactionType: getStr("transactionType"),
+      minPrice: getNum("minPrice"),
+      maxPrice: getNum("maxPrice"),
+      minRent: getNum("minRent"),
+      maxRent: getNum("maxRent"),
+      minMortgage: getNum("minMortgage"),
+      maxMortgage: getNum("maxMortgage"),
+      minArea: getNum("minArea"),
+      maxArea: getNum("maxArea"),
+    };
+  }, [searchParams]);
 
   const { data, isLoading, isError, isFetching } = useGetHouses(queryParams);
 
@@ -33,28 +62,17 @@ const MortgageRentContent: React.FC = () => {
     }));
   }, [data?.data]);
 
-  const handleApplyFilter = (newFilters: Partial<GetHousesParams>) => {
-    setQueryParams((prev) => ({
-      ...prev,
-      ...newFilters,
-      page: 1,
-      limit: 9,
-    }));
-  };
-
   const handlePageChange = (newPage: number) => {
-    setQueryParams((prev) => ({
-      ...prev,
-      page: newPage,
-    }));
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", String(newPage));
+    router.push(`?${params.toString()}`);
   };
 
   const handleLoadMoreMobile = () => {
-    setQueryParams((prev) => ({
-      ...prev,
-      limit: (prev.limit || 9) + 9,
-    }));
+    const params = new URLSearchParams(searchParams.toString());
+    const nextLimit = (queryParams.limit || 9) + 9;
+    params.set("limit", String(nextLimit));
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const formatPrice = (val?: number | string) => {
@@ -64,14 +82,18 @@ const MortgageRentContent: React.FC = () => {
   };
 
   const housesList = data?.data || [];
+  const totalCount = data?.totalCount ?? housesList.length;
   const totalPages = data?.totalPages || 1;
 
   return (
-    <div className="flex w-full flex-col items-center" dir="rtl">
+    <div
+      className={`flex w-full flex-col items-center"
+    ${selectedIds.length > 0 ? "pb-24" : ""}`}
+      dir="rtl"
+    >
       <MortgageFilterSection
-        initialFilters={queryParams}
-        locationOptions={dynamicLocationOptions}
-        onApplyFilter={handleApplyFilter}
+        totalCount={totalCount}
+        fallbackLocations={dynamicLocationOptions}
       />
 
       {isLoading && (
@@ -95,37 +117,41 @@ const MortgageRentContent: React.FC = () => {
 
       {!isLoading && !isError && housesList.length > 0 && (
         <div className="mt-6 grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:mt-8 lg:grid-cols-3">
-          {housesList.map((house: HouseItem) => (
-            <Link
-              key={house.id}
-              // هدایت به صفحه دیتیل با آیدی واقعی هر خانه
-              href={`/mortgage-rent/${house.id}`}
-            >
-              <ProductCard
-                key={house.id}
-                slides={
-                  Array.isArray(house.photos)
-                    ? house.photos.map((src) => ({ src, alt: house.title }))
-                    : null
-                }
-                title={house.title}
-                address={house.address}
-                rating={Number(house.rate ?? house.rating ?? 0)}
-                bedrooms={Number(house.rooms ?? house.bedrooms ?? 0)}
-                bathrooms={Number(house.bathrooms ?? 0)}
-                guests={Number(house.capacity ?? house.guests ?? 0)}
-                parking={Number(house.parking ?? 0)}
-                monthlyRent={formatPrice(house.rent ?? house.price)}
-                pricePerNight={formatPrice(
-                  house.discounted_price ?? house.price,
-                )}
-                off={house.discount ? Number(house.discount) : undefined}
-                originalPrice={
-                  house.discount ? formatPrice(house.price) : undefined
-                }
-              />
-            </Link>
-          ))}
+          {housesList.map((house: IHouseItem) => {
+            const validSlides =
+              Array.isArray(house.photos) && house.photos.length > 0
+                ? house.photos.map((src) => ({
+                    src: src || "",
+                    alt: house.title || "تصویر ملک",
+                  }))
+                : [{ src: "", alt: house.title || "تصویر ملک" }];
+
+            return (
+              <Link key={house.id} href={`/mortgage-rent/${house.id}`}>
+                <ProductCard
+                  slides={validSlides}
+                  title={house.title}
+                  address={house.address}
+                  rating={Number(house.rate ?? house.rating ?? 0)}
+                  bedrooms={Number(house.rooms ?? house.bedrooms ?? 0)}
+                  bathrooms={Number(house.bathrooms ?? 0)}
+                  guests={Number(house.capacity ?? house.guests ?? 0)}
+                  parking={Number(house.parking ?? 0)}
+                  monthlyRent={formatPrice(house.rent ?? house.price)}
+                  pricePerNight={formatPrice(
+                    house.discounted_price ?? house.price,
+                  )}
+                  off={house.discount ? Number(house.discount) : undefined}
+                  originalPrice={
+                    house.discount ? formatPrice(house.price) : undefined
+                  }
+                  selectableForCompare
+                  isCompared={selectedIds.includes(String(house.id))}
+                  onToggleCompare={() => toggleHouse(house.id)}
+                />
+              </Link>
+            );
+          })}
         </div>
       )}
 
@@ -157,6 +183,7 @@ const MortgageRentContent: React.FC = () => {
           />
         </div>
       )}
+      {selectedIds.length > 0 && <ComparisonBar />}
     </div>
   );
 };

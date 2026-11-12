@@ -71,8 +71,8 @@ const FilterInput: FC<IProps> = ({
         <ComboboxContent>
           <ComboboxEmpty>چیزی یافت نشد !</ComboboxEmpty>
           <ComboboxList>
-            {(item) => (
-              <ComboboxItem key={item.value} value={item}>
+            {(item, index) => (
+              <ComboboxItem key={index} value={item}>
                 {item.label}
               </ComboboxItem>
             )}

@@ -17,4 +17,7 @@ export type ProductCardProps = {
   onClick?: () => void;
   onDetailsClick?: () => void;
   slides: ISlide[];
+  selectableForCompare?: boolean;
+  isCompared?: boolean;
+  onToggleCompare?: () => void;
 };
