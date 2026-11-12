@@ -41,8 +41,31 @@ export interface GetBlogsResponse {
   totalPages: number;
 }
 
-const getBaseUrl = () =>
-  process.env.NEXT_PUBLIC_API_URL || "http://87.107.2.216:3002/";
+export type RawBlogFilters = { [key: string]: string | string[] | undefined };
+
+export const parseBlogSearchParams = (raw: RawBlogFilters): GetBlogsParams => {
+  const getStr = (k: string) =>
+    typeof raw[k] === "string" ? (raw[k] as string) : undefined;
+  const getNum = (k: string) => {
+    const val = getStr(k);
+    return val && !isNaN(Number(val)) ? Number(val) : undefined;
+  };
+
+  return {
+    page: getNum("page") || 1,
+    limit: getNum("limit") || 12,
+    sort: (getStr("sort") as GetBlogsParams["sort"]) || "created_at",
+    order: (getStr("order") as "ASC" | "DESC") || "DESC",
+    category_id: getNum("category_id"),
+    author_id: getNum("author_id"),
+  };
+};
+
+const getBaseUrl = () => {
+  const url =
+    process.env.NEXT_PUBLIC_API_URL || "https://aife-api.hexorix.net/api";
+  return url.replace(/\/+$/, "");
+};
 
 export const getBlogs = async (
   params: GetBlogsParams,
