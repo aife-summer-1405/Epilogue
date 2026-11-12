@@ -119,7 +119,7 @@ const NumberField: React.FC<NumberFieldProps> = ({
     <label className="text-base font-semibold text-default-black dark:text-white">
       {label}
     </label>
-    <div className="flex h-12 items-center rounded-full bg-neutral-200 px-4 dark:bg-[#353535]">
+    <div className="flex h-12 items-center rounded-full bg-neutral-200 dark:bg-[#353535] px-4">
       <input
         type="number"
         placeholder="وارد کنید"

@@ -93,7 +93,7 @@ const BlogsFilterSection: React.FC<BlogsFilterSectionProps> = ({
           <label className="text-right text-sm font-bold text-gray-900 dark:text-white">
             جستجو
           </label>
-          <div className="flex h-12 items-center rounded-full bg-gray-100 px-4 dark:bg-[#1e1e1e]">
+          <div className="flex h-12 items-center rounded-full bg-neutral-200 dark:bg-[#353535] px-4">
             <input
               type="text"
               placeholder="عنوان مقاله مورد نظر..."
