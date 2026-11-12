@@ -5,13 +5,18 @@ import Button from "@/components/atoms/button/Button";
 import DropDownMenu from "@/components/molecules/dropdown/DropDownMenu";
 import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
 import SelectComponent from "@/components/molecules/select/Select";
+import StatCard from "@/components/molecules/statCard/StatCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import useFakeLoading from "@/hooks/useFakeLoading";
 import {
+  AlertCircleIcon,
+  CreditCardIcon,
   EllipsisVerticalIcon,
   HeartIcon,
-  LinkCircle02Icon,
   ListChecksIcon,
   ListIcon,
   MoneyRemove02Icon,
+  TrashIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
@@ -27,16 +32,7 @@ const options: ApexOptions = {
 
 const series = [{ name: "Sales", data: [44, 55, 41] }];
 
-type Reservation = {
-  id: number;
-  name: string;
-  image: string;
-  date: string;
-  price: string;
-  status: string;
-};
-
-const reservations: Reservation[] = Array.from({ length: 8 }, (_, i) => ({
+const reservations = Array.from({ length: 8 }, (_, i) => ({
   id: i + 1,
   name: "هتل سراوان راتین رشت",
   image: "/images/hotel.jpg",
@@ -50,118 +46,38 @@ const items = [
   { label: "سال جاری", value: "year" },
 ];
 
+const dropDownOptions = [
+  { label: "پرداخت کردن", icon: CreditCardIcon },
+  { label: "جزئیات", icon: AlertCircleIcon },
+  { label: "حذف", icon: TrashIcon },
+];
+
+const href = "/panel/reserveManagement/buyer";
+
+const stats = [
+  { icon: ListIcon, label: "کل رزرو ها", value: 20, href },
+  { icon: ListChecksIcon, label: "رزرو های فعال", value: 20, href },
+  { icon: MoneyRemove02Icon, label: "پرداخت نشده", value: 20, href },
+  { icon: HeartIcon, label: "علاقه مندی ها", value: 20, href },
+];
+
+const progressStyles = buildStyles({
+  strokeLinecap: "round",
+  pathColor: "var(--color-primary-800)",
+  trailColor: "var(--color-neutral-200)",
+  textColor: "var(--color-primary-800)",
+  textSize: "18px",
+});
+
 const BuyerDashboard = () => {
+  const isLoading = useFakeLoading();
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="flex w-full items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4 min-w-0">
-          <div className="flex min-h-10 min-w-10 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12 shrink-0">
-            <HugeiconsIcon
-              icon={ListIcon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                کل رزرو ها
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4 min-w-0">
-          <div className="flex min-h-10 min-w-10 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12 shrink-0">
-            <HugeiconsIcon
-              icon={ListChecksIcon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                رزرو های فعال
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4 min-w-0">
-          <div className="flex min-h-10 min-w-10 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12 shrink-0">
-            <HugeiconsIcon
-              icon={MoneyRemove02Icon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                پرداخت نشده
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4 min-w-0">
-          <div className="flex min-h-10 min-w-10 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12 shrink-0">
-            <HugeiconsIcon
-              icon={HeartIcon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                علاقه مندی ها
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
+        {stats.map((stat) => (
+          <StatCard key={stat.label} {...stat} isLoading={isLoading} />
+        ))}
       </div>
       <div className="flex flex-col items-stretch gap-4 xl:flex-row">
         <div className="flex w-full flex-col gap-4 rounded-[24px] bg-default-white-bg p-4 sm:gap-5 sm:p-6 xl:w-1/2">
@@ -182,12 +98,16 @@ const BuyerDashboard = () => {
             />
           </div>
           <div className="flex-1 flex flex-col justify-center min-h-28.75">
-            <ReactApexChart
-              type="bar"
-              series={series}
-              options={options}
-              height={115}
-            />
+            {isLoading ? (
+              <Skeleton className="h-28.75 w-full rounded-[16px]" />
+            ) : (
+              <ReactApexChart
+                type="bar"
+                series={series}
+                options={options}
+                height={115}
+              />
+            )}
           </div>
         </div>
         <div className="flex w-full flex-col gap-4 rounded-[24px] bg-default-white-bg p-4 sm:gap-5 sm:p-6 xl:w-1/2">
@@ -208,23 +128,26 @@ const BuyerDashboard = () => {
             </Button>
           </div>
           <div className="flex-1 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <p className="text-xs font-normal text-neutral-dark-200 sm:text-sm xl:text-[14px]">
-              آخرین ویرایش 3 روز پیش
-            </p>
-            <div className="size-28 shrink-0 sm:size-32.5">
-              <CircularProgressbar
-                value={16}
-                text={`${16}%`}
-                strokeWidth={12}
-                styles={buildStyles({
-                  strokeLinecap: "round",
-                  pathColor: "var(--color-primary-800)",
-                  trailColor: "var(--color-neutral-200)",
-                  textColor: "var(--color-primary-800)",
-                  textSize: "18px",
-                })}
-              />
-            </div>
+            {isLoading ? (
+              <>
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="size-28 shrink-0 rounded-full sm:size-32.5" />
+              </>
+            ) : (
+              <>
+                <p className="text-xs font-normal text-neutral-dark-200 sm:text-sm xl:text-[14px]">
+                  آخرین ویرایش 3 روز پیش
+                </p>
+                <div className="size-28 shrink-0 sm:size-32.5">
+                  <CircularProgressbar
+                    value={16}
+                    text={`${16}%`}
+                    strokeWidth={12}
+                    styles={progressStyles}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -262,44 +185,67 @@ const BuyerDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {reservations.map((item) => (
-                <tr key={item.id} className="border-t border-neutral-300">
-                  <td className="py-3">
-                    <div className="flex items-center gap-3">
-                      <ImageFallback
-                        src={item.image}
-                        alt={item.name}
-                        className="size-8 shrink-0 rounded-full object-cover"
-                        width={32}
-                        height={32}
-                      />
-                      <span className="truncate text-sm font-normal text-default-text sm:text-base">
-                        {item.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-3 text-sm font-normal text-default-text sm:text-base">
-                    {item.date}
-                  </td>
-                  <td className="py-3 text-sm font-normal text-default-text sm:text-base">
-                    {item.price} <span className="mr-1">تومان</span>
-                  </td>
-                  <td className="py-3">
-                    <Badge text={item.status} type="success" />
-                  </td>
-                  <td className="flex justify-end py-3 pl-3">
-                    <DropDownMenu
-                      triggerRender={
-                        <HugeiconsIcon
-                          icon={EllipsisVerticalIcon}
-                          className="size-5 cursor-pointer text-default-black sm:size-6"
+              {isLoading
+                ? Array.from({ length: 5 }, (_, i) => (
+                    <tr key={i} className="border-t border-neutral-300">
+                      <td className="py-3">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="size-8 rounded-full" />
+                          <Skeleton className="h-4 w-36" />
+                        </div>
+                      </td>
+                      <td className="py-3">
+                        <Skeleton className="h-4 w-32" />
+                      </td>
+                      <td className="py-3">
+                        <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="py-3">
+                        <Skeleton className="h-7 w-20 rounded-[8px]" />
+                      </td>
+                      <td className="py-3 pl-3">
+                        <Skeleton className="mr-auto size-6 rounded-full" />
+                      </td>
+                    </tr>
+                  ))
+                : reservations.map((item) => (
+                    <tr key={item.id} className="border-t border-neutral-300">
+                      <td className="py-3">
+                        <div className="flex items-center gap-3">
+                          <ImageFallback
+                            src={item.image}
+                            alt={item.name}
+                            className="size-8 shrink-0 rounded-full object-cover"
+                            width={32}
+                            height={32}
+                          />
+                          <span className="truncate text-sm font-normal text-default-text sm:text-base">
+                            {item.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 text-sm font-normal text-default-text sm:text-base">
+                        {item.date}
+                      </td>
+                      <td className="py-3 text-sm font-normal text-default-text sm:text-base">
+                        {item.price} <span className="mr-1">تومان</span>
+                      </td>
+                      <td className="py-3">
+                        <Badge text={item.status} type="success" />
+                      </td>
+                      <td className="flex justify-end py-3 pl-3">
+                        <DropDownMenu
+                          triggerRender={
+                            <HugeiconsIcon
+                              icon={EllipsisVerticalIcon}
+                              className="size-5 cursor-pointer text-default-black sm:size-6"
+                            />
+                          }
+                          dropDownItems={dropDownOptions}
                         />
-                      }
-                      dropDownItems={["پرداخت", "جزئیات", "حذف"]}
-                    />
-                  </td>
-                </tr>
-              ))}
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>

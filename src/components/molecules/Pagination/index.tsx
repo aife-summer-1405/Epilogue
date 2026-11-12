@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import React, { useCallback, useMemo } from "react";
 
 export interface PaginationProps {
@@ -7,6 +8,9 @@ export interface PaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   siblingCount?: number;
+  itemClassName?: string;
+  containerClassName?: string;
+  buttonsClassName?: string;
 }
 
 const Pagination: React.FC<PaginationProps> = ({
@@ -14,6 +18,9 @@ const Pagination: React.FC<PaginationProps> = ({
   totalPages,
   onPageChange,
   siblingCount = 1,
+  itemClassName,
+  containerClassName,
+  buttonsClassName,
 }) => {
   const handlePrevious = useCallback(() => {
     if (currentPage > 1) {
@@ -80,14 +87,20 @@ const Pagination: React.FC<PaginationProps> = ({
   return (
     <nav
       aria-label="Pagination"
-      dir="rtl"
-      className="inline-flex items-center gap-1 rounded-full bg-gray-100 p-1.5 dark:bg-[#272727]"
+      dir="ltr"
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full bg-gray-100 p-1.5 dark:bg-[#272727]",
+        containerClassName,
+      )}
     >
       <button
         type="button"
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        className="flex h-9 items-center justify-center gap-1 rounded-xl px-2.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
+        className={cn(
+          "flex h-9 items-center justify-center gap-1 rounded-xl px-2.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white",
+          buttonsClassName,
+        )}
         aria-label="صفحه قبلی"
       >
         <svg
@@ -101,7 +114,7 @@ const Pagination: React.FC<PaginationProps> = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M8.25 4.5l7.5 7.5-7.5 7.5"
+            d="M15.75 19.5L8.25 12l7.5-7.5"
           />
         </svg>
       </button>
@@ -130,7 +143,7 @@ const Pagination: React.FC<PaginationProps> = ({
               isCurrentPage
                 ? "bg-[#1e3a8a] text-white shadow-sm"
                 : "text-gray-600 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
-            }`}
+            } ${itemClassName}`}
           >
             {pageNumber}
           </button>
@@ -141,7 +154,10 @@ const Pagination: React.FC<PaginationProps> = ({
         type="button"
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="flex h-9 items-center justify-center gap-1 rounded-xl px-2.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white"
+        className={cn(
+          "flex h-9 items-center justify-center gap-1 rounded-xl px-2.5 text-xs font-medium text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800 disabled:opacity-40 disabled:hover:bg-transparent dark:text-gray-300 dark:hover:bg-zinc-700 dark:hover:text-white",
+          buttonsClassName,
+        )}
         aria-label="صفحه بعدی"
       >
         <svg
@@ -155,7 +171,7 @@ const Pagination: React.FC<PaginationProps> = ({
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M15.75 19.5L8.25 12l7.5-7.5"
+            d="M8.25 4.5l7.5 7.5-7.5 7.5"
           />
         </svg>
       </button>
