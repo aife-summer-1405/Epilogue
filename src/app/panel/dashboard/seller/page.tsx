@@ -5,11 +5,13 @@ import Button from "@/components/atoms/button/Button";
 import DropDownMenu from "@/components/molecules/dropdown/DropDownMenu";
 import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
 import SelectComponent from "@/components/molecules/select/Select";
+import StatCard from "@/components/molecules/statCard/StatCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import useFakeLoading from "@/hooks/useFakeLoading";
 import {
   Building06Icon,
   EllipsisVerticalIcon,
   HourglassIcon,
-  LinkCircle02Icon,
   ListChecksIcon,
   ViewIcon,
 } from "@hugeicons/core-free-icons";
@@ -18,16 +20,7 @@ import Link from "next/link";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-type Reservation = {
-  id: number;
-  name: string;
-  image: string;
-  date: string;
-  price: string;
-  status: string;
-};
-
-const reservations: Reservation[] = Array.from({ length: 8 }, (_, i) => ({
+const reservations = Array.from({ length: 8 }, (_, i) => ({
   id: i + 1,
   name: "هتل سراوان راتین رشت",
   image: "/images/hotel.jpg",
@@ -41,118 +34,39 @@ const items = [
   { label: "سال جاری", value: "year" },
 ];
 
-const BuyerDashboard = () => {
+const dropDownOptions = [
+  { label: "تایید رزرو" },
+  { label: "لغو رزرو" },
+  { label: "جزئیات" },
+  { label: "حذف" },
+];
+
+const href = "/panel/reserveManagement/buyer";
+
+const stats = [
+  { icon: Building06Icon, label: "کل ملک ها", value: 20, href },
+  { icon: ListChecksIcon, label: "رزرو های فعال", value: 20, href },
+  { icon: HourglassIcon, label: "رزرو های در انتظار", value: 20, href },
+  { icon: ViewIcon, label: "بازدید های امروز", value: 20, href },
+];
+
+const progressStyles = buildStyles({
+  strokeLinecap: "round",
+  pathColor: "var(--color-primary-800)",
+  trailColor: "var(--color-neutral-200)",
+  textColor: "var(--color-primary-800)",
+  textSize: "18px",
+});
+
+const SellerDashboard = () => {
+  const isLoading = useFakeLoading();
+
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="flex w-full min-w-0 items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4">
-          <div className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12">
-            <HugeiconsIcon
-              icon={Building06Icon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                کل ملک ها
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full min-w-0 items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4">
-          <div className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12">
-            <HugeiconsIcon
-              icon={ListChecksIcon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                رزرو های فعال
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full min-w-0 items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4">
-          <div className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12">
-            <HugeiconsIcon
-              icon={HourglassIcon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                رزرو های در انتظار
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
-        <div className="flex w-full min-w-0 items-center gap-3 rounded-[24px] bg-default-white-bg p-4 sm:gap-4">
-          <div className="flex min-h-10 min-w-10 shrink-0 items-center justify-center rounded-[8px] bg-neutral-200 sm:min-h-12 sm:min-w-12">
-            <HugeiconsIcon
-              icon={ViewIcon}
-              className="size-5 text-primary-500 dark:text-primary-800 sm:size-6"
-            />
-          </div>
-          <div className="flex w-full min-w-0 flex-col">
-            <div className="flex items-center justify-between gap-2">
-              <p className="truncate text-sm font-normal text-default-text sm:text-base">
-                بازدید های امروز
-              </p>
-              <Link
-                href={"/panel/reserveManagement/buyer"}
-                className="shrink-0 rounded-full"
-              >
-                <HugeiconsIcon
-                  icon={LinkCircle02Icon}
-                  className="size-5 text-default-text transform-[scaleX(-1)] sm:size-5.5"
-                />
-              </Link>
-            </div>
-            <p className="text-xl font-bold text-default-text sm:text-2xl">
-              20
-            </p>
-          </div>
-        </div>
+        {stats.map((stat) => (
+          <StatCard key={stat.label} {...stat} isLoading={isLoading} />
+        ))}
       </div>
       <div className="flex flex-col items-stretch gap-4 xl:flex-row">
         <div className="flex w-full flex-col gap-4 rounded-[24px] bg-default-white-bg p-4 sm:gap-5 sm:p-6 xl:w-1/2">
@@ -173,46 +87,52 @@ const BuyerDashboard = () => {
             />
           </div>
           <div className="flex flex-1 flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="size-3 rounded-full bg-neutral-400 sm:size-4" />
-                  <span className="text-xs text-neutral-dark-300 sm:text-[14px]">
-                    درآمد کل
-                  </span>
+            {isLoading ? (
+              <>
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-12 w-28" />
+                  <Skeleton className="h-12 w-28" />
                 </div>
-                <div className="flex items-center gap-1 text-xs font-normal text-default-text sm:gap-2 sm:text-[14px]">
-                  <p>100,000,000</p>
-                  <p>تومان</p>
+                <Skeleton className="size-28 shrink-0 self-end rounded-full sm:size-32.5" />
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="size-3 rounded-full bg-neutral-400 sm:size-4" />
+                      <span className="text-xs text-neutral-dark-300 sm:text-[14px]">
+                        درآمد کل
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-normal text-default-text sm:gap-2 sm:text-[14px]">
+                      <p>100,000,000</p>
+                      <p>تومان</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <div className="size-3 rounded-full bg-primary-600 sm:size-4" />
+                      <span className="text-xs text-neutral-dark-300 sm:text-[14px]">
+                        درآمد این ماه
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs font-normal text-default-text sm:gap-2 sm:text-[14px]">
+                      <p>60,000,000</p>
+                      <p>تومان</p>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="size-3 rounded-full bg-primary-600 sm:size-4" />
-                  <span className="text-xs text-neutral-dark-300 sm:text-[14px]">
-                    درآمد این ماه
-                  </span>
+                <div className="size-28 shrink-0 self-end sm:size-32.5">
+                  <CircularProgressbar
+                    value={66}
+                    text={`${66}%`}
+                    strokeWidth={12}
+                    styles={progressStyles}
+                  />
                 </div>
-                <div className="flex items-center gap-1 text-xs font-normal text-default-text sm:gap-2 sm:text-[14px]">
-                  <p>60,000,000</p>
-                  <p>تومان</p>
-                </div>
-              </div>
-            </div>
-            <div className="size-28 shrink-0 self-end sm:size-32.5">
-              <CircularProgressbar
-                value={66}
-                text={`${66}%`}
-                strokeWidth={12}
-                styles={buildStyles({
-                  strokeLinecap: "round",
-                  pathColor: "var(--color-primary-800)",
-                  trailColor: "var(--color-neutral-200)",
-                  textColor: "var(--color-primary-800)",
-                  textSize: "18px",
-                })}
-              />
-            </div>
+              </>
+            )}
           </div>
         </div>
         <div className="flex w-full flex-col gap-4 rounded-[24px] bg-default-white-bg p-4 sm:gap-5 sm:p-6 xl:w-1/2">
@@ -233,23 +153,26 @@ const BuyerDashboard = () => {
             </Button>
           </div>
           <div className="flex flex-1 flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <p className="text-xs font-normal text-neutral-dark-200 sm:text-sm xl:text-[14px]">
-              آخرین ویرایش 3 روز پیش
-            </p>
-            <div className="size-28 shrink-0 self-end sm:size-32.5">
-              <CircularProgressbar
-                value={16}
-                text={`${16}%`}
-                strokeWidth={12}
-                styles={buildStyles({
-                  strokeLinecap: "round",
-                  pathColor: "var(--color-primary-800)",
-                  trailColor: "var(--color-neutral-200)",
-                  textColor: "var(--color-primary-800)",
-                  textSize: "18px",
-                })}
-              />
-            </div>
+            {isLoading ? (
+              <>
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="size-28 shrink-0 self-end rounded-full sm:size-32.5" />
+              </>
+            ) : (
+              <>
+                <p className="text-xs font-normal text-neutral-dark-200 sm:text-sm xl:text-[14px]">
+                  آخرین ویرایش 3 روز پیش
+                </p>
+                <div className="size-28 shrink-0 self-end sm:size-32.5">
+                  <CircularProgressbar
+                    value={16}
+                    text={`${16}%`}
+                    strokeWidth={12}
+                    styles={progressStyles}
+                  />
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -287,49 +210,67 @@ const BuyerDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {reservations.map((item) => (
-                <tr key={item.id} className="border-t border-neutral-300">
-                  <td className="py-3">
-                    <div className="flex items-center gap-3">
-                      <ImageFallback
-                        src={item.image}
-                        alt={item.name}
-                        className="size-8 shrink-0 rounded-full object-cover"
-                        width={32}
-                        height={32}
-                      />
-                      <span className="truncate text-sm font-normal text-default-text sm:text-base">
-                        {item.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-3 text-sm font-normal text-default-text sm:text-base">
-                    {item.date}
-                  </td>
-                  <td className="py-3 text-sm font-normal text-default-text sm:text-base">
-                    {item.price} <span className="mr-1">تومان</span>
-                  </td>
-                  <td className="py-3">
-                    <Badge text={item.status} type="success" />
-                  </td>
-                  <td className="flex justify-end py-3 pl-3">
-                    <DropDownMenu
-                      triggerRender={
-                        <HugeiconsIcon
-                          icon={EllipsisVerticalIcon}
-                          className="size-5 cursor-pointer text-default-black sm:size-6"
+              {isLoading
+                ? Array.from({ length: 5 }, (_, i) => (
+                    <tr key={i} className="border-t border-neutral-300">
+                      <td className="py-3">
+                        <div className="flex items-center gap-3">
+                          <Skeleton className="size-8 rounded-full" />
+                          <Skeleton className="h-4 w-36" />
+                        </div>
+                      </td>
+                      <td className="py-3">
+                        <Skeleton className="h-4 w-32" />
+                      </td>
+                      <td className="py-3">
+                        <Skeleton className="h-4 w-24" />
+                      </td>
+                      <td className="py-3">
+                        <Skeleton className="h-7 w-20 rounded-[8px]" />
+                      </td>
+                      <td className="py-3 pl-3">
+                        <Skeleton className="mr-auto size-6 rounded-full" />
+                      </td>
+                    </tr>
+                  ))
+                : reservations.map((item) => (
+                    <tr key={item.id} className="border-t border-neutral-300">
+                      <td className="py-3">
+                        <div className="flex items-center gap-3">
+                          <ImageFallback
+                            src={item.image}
+                            alt={item.name}
+                            className="size-8 shrink-0 rounded-full object-cover"
+                            width={32}
+                            height={32}
+                          />
+                          <span className="truncate text-sm font-normal text-default-text sm:text-base">
+                            {item.name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 text-sm font-normal text-default-text sm:text-base">
+                        {item.date}
+                      </td>
+                      <td className="py-3 text-sm font-normal text-default-text sm:text-base">
+                        {item.price} <span className="mr-1">تومان</span>
+                      </td>
+                      <td className="py-3">
+                        <Badge text={item.status} type="success" />
+                      </td>
+                      <td className="flex justify-end py-3 pl-3">
+                        <DropDownMenu
+                          triggerRender={
+                            <HugeiconsIcon
+                              icon={EllipsisVerticalIcon}
+                              className="size-5 cursor-pointer text-default-black sm:size-6"
+                            />
+                          }
+                          dropDownItems={dropDownOptions}
                         />
-                      }
-                      dropDownItems={[
-                        "تایید رزرو",
-                        "لغو رزرو",
-                        "جزئیات",
-                        "حذف",
-                      ]}
-                    />
-                  </td>
-                </tr>
-              ))}
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
         </div>
@@ -338,4 +279,4 @@ const BuyerDashboard = () => {
   );
 };
 
-export default BuyerDashboard;
+export default SellerDashboard;

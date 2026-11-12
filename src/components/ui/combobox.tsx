@@ -68,10 +68,12 @@ function ComboboxInput({
   disabled = false,
   showTrigger = true,
   showClear = false,
+  inputClassName,
   ...props
 }: ComboboxPrimitive.Input.Props & {
   showTrigger?: boolean;
   showClear?: boolean;
+  inputClassName?: string;
 }) {
   return (
     <InputGroup
@@ -84,7 +86,10 @@ function ComboboxInput({
         render={
           <InputGroupInput
             disabled={disabled}
-            className="text-base! leading-5.5! font-normal text-default-black! placeholder:text-neutral-800!"
+            className={cn(
+              "text-base! leading-5.5! font-normal text-default-black! placeholder:text-neutral-800!",
+              inputClassName,
+            )}
           />
         }
         {...props}
@@ -93,7 +98,6 @@ function ComboboxInput({
         {showTrigger && (
           <InputGroupButton
             size="icon-xs"
-            // variant="ghost"
             render={<ComboboxTrigger />}
             data-slot="input-group-button"
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
@@ -174,7 +178,7 @@ function ComboboxItem({
       {children}
       <ComboboxPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none absolute right-2 flex items-center justify-center" />
+          <span className="pointer-events-none absolute left-2 flex items-center justify-center" />
         }
       >
         <HugeiconsIcon

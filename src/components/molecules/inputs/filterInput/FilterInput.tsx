@@ -24,6 +24,7 @@ interface IProps {
   isNumeric?: boolean;
   defaultValue?: IFilterInputs;
   value?: IFilterInputs | null;
+  inputClassName?: string;
 }
 
 const FilterInput: FC<IProps> = ({
@@ -37,6 +38,7 @@ const FilterInput: FC<IProps> = ({
   isNumeric = false,
   defaultValue,
   value,
+  inputClassName,
 }) => {
   return (
     <div className={cn("flex flex-col gap-3", styles[size], className)}>
@@ -53,7 +55,8 @@ const FilterInput: FC<IProps> = ({
         defaultValue={defaultValue}
       >
         <ComboboxInput
-          className={`border-none! ring-0!`}
+          className={cn("border-none! ring-0!")}
+          inputClassName={inputClassName}
           placeholder={placeHolder}
           showClear
           onBeforeInput={(e) => {

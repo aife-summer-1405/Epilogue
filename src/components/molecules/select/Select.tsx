@@ -25,6 +25,7 @@ interface ISelectProps {
   ) => void;
   triggerClassName?: string;
   defaultValue?: string;
+  placeHolder?: string;
 }
 
 const defaultItems: IItems[] = [
@@ -42,6 +43,7 @@ const SelectComponent: FC<ISelectProps> = ({
   onChange,
   triggerClassName,
   defaultValue,
+  placeHolder,
 }) => {
   return (
     <Select
@@ -50,7 +52,7 @@ const SelectComponent: FC<ISelectProps> = ({
       onValueChange={onChange}
     >
       <SelectTrigger className={cn("w-full", triggerClassName)}>
-        <SelectValue />
+        <SelectValue placeholder={placeHolder} />
       </SelectTrigger>
       <SelectContent alignItemWithTrigger={false}>
         <SelectGroup>
