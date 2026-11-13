@@ -5,7 +5,22 @@ export function proxy(request: NextRequest) {
   const userId = request.cookies.get("userId")?.value;
   const userRole = request.cookies.get("userRole")?.value;
 
-  // 1. Auth Check
+  if (!userRole) {
+    const loginUrl = new URL("/auth/login", request.url);
+    const response = NextResponse.redirect(loginUrl);
+
+    response.cookies.delete("userRole");
+    response.cookies.delete("userId");
+    response.cookies.delete("accessToken");
+    response.cookies.delete("refreshToken");
+
+    response.cookies.set("auth_error", "login-required", {
+      maxAge: 10,
+      path: "/",
+    });
+    return response;
+  }
+
   if (!userId) {
     const loginUrl = new URL("/auth/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
@@ -18,7 +33,6 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  // 2. Dashboard Routing
   if (pathname === "/panel/dashboard" || pathname === "/panel/dashboard/") {
     if (userRole === "buyer") {
       return NextResponse.redirect(
@@ -32,7 +46,6 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // 3. Role Protection for specific dashboard pages
   if (
     (pathname === "/panel/dashboard/buyer" ||
       pathname === "/panel/dashboard/buyer/") &&
@@ -53,7 +66,6 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  // 4. House Management Access (Catches /panel/houseManagement, /add-house, /36, etc.)
   if (pathname.startsWith("/panel/houseManagement")) {
     if (userRole === "buyer") {
       const dashboardUrl = new URL("/panel/dashboard/buyer", request.url);
@@ -67,10 +79,45 @@ export function proxy(request: NextRequest) {
     }
   }
 
+  if (
+    pathname === "/panel/reserveManagement" ||
+    pathname === "/panel/reserveManagement/"
+  ) {
+    if (userRole === "buyer") {
+      return NextResponse.redirect(
+        new URL("/panel/reserveManagement/buyer", request.url),
+      );
+    }
+    if (userRole === "seller") {
+      return NextResponse.redirect(
+        new URL("/panel/reserveManagement/seller", request.url),
+      );
+    }
+  }
+
+  if (
+    (pathname === "/panel/reserveManagement/buyer" ||
+      pathname === "/panel/reserveManagement/buyer/") &&
+    userRole === "seller"
+  ) {
+    return NextResponse.redirect(
+      new URL("/panel/reserveManagement/seller", request.url),
+    );
+  }
+
+  if (
+    (pathname === "/panel/reserveManagement/seller" ||
+      pathname === "/panel/reserveManagement/seller/") &&
+    userRole === "buyer"
+  ) {
+    return NextResponse.redirect(
+      new URL("/panel/reserveManagement/buyer", request.url),
+    );
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  // This single matcher is enough to cover all routes under /panel
   matcher: ["/panel/:path*"],
 };
