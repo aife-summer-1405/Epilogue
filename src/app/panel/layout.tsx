@@ -85,7 +85,7 @@ const menuBuyerNavigationItems: INavigationItems[] = [
     text: "مدیریت پرداخت ها",
     path: "/panel/paymentManagement",
   },
-  { icon: HeartIcon, text: "علاقه مندی ها", path: "/profile/favorites" },
+  { icon: HeartIcon, text: "علاقه مندی ها", path: "/panel/favorites" },
 ];
 
 interface INavLinkProps {

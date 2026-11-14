@@ -32,7 +32,8 @@ const ThemedDatePicker: FC<IProps> = ({ label, value, onChange, minDate }) => {
         calendarPosition="bottom-right"
         inputClass="!h-10 !py-6 w-full! text-neutral-dark-300 dark:text-neutral-400 font-normal !rounded-full !border-0 !bg-[#F0F0F3] !px-4 !pl-10 !text-base !outline-none dark:!bg-[#353535]"
         containerClassName="w-full!"
-        zIndex={100}
+        portal
+        zIndex={9999}
         className={theme === "dark" ? "bg-dark" : ""}
       />
     </div>
