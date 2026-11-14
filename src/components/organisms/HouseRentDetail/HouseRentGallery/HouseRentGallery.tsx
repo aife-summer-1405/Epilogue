@@ -180,7 +180,7 @@ export function HouseRentGallery({
                 <HugeiconsIcon
                   icon={FavouriteIcon}
                   size={19}
-                  className={isFav ? "text-red-500 fill-red-500" : "text-neutral-700"}
+                  className={isFav ? "text-red-500 fill-red-500" : ""}
                 />
               </ButtonOnlyIcon>
 
