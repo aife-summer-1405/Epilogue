@@ -4,21 +4,7 @@ import instance from "@/lib/http/interceptors";
 import { Feedback, CreateFeedbackPayload } from "@/core/types/RentHouse/feedback";
 import { AxiosError } from "axios";
 
-// === Feedback Actions ===
 
-export async function createFeedbackAction(payload: CreateFeedbackPayload): Promise<Feedback | null> {
-  try {
-    const response = await instance.post<Feedback>("/feedback", payload, {
-      headers: { tokenNeeded: "true" },
-    });
-    return response.data;
-  } catch (error: unknown) {
-    if (error instanceof AxiosError) {
-      console.error("FEEDBACK CREATE ERROR:", error.response?.data || error.message);
-    }
-    throw new Error("خطا در ثبت دیدگاه");
-  }
-}
 
 export async function getReceivedFeedbacksAction(userId: string | number): Promise<Feedback[]> {
   try {

@@ -1,12 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addFavoriteAction, removeFavoriteAction } from "@/app/actions/Feedback.actions";
+import {
+  addFavoriteAction,
+  removeFavoriteAction,
+} from "@/app/actions/Favorite.actions";
 import { toast } from "react-toastify";
 
 export const useToggleFavorite = () => {
   const queryClient = useQueryClient();
 
   const addMutation = useMutation({
-    mutationFn: (payload: { user_id: string; house_id: string }) => addFavoriteAction(payload),
+    mutationFn: (payload: { user_id: string; house_id: string }) =>
+      addFavoriteAction(payload),
     onSuccess: () => {
       toast.success("با موفقیت به علاقه‌مندی‌ها اضافه شد");
       queryClient.invalidateQueries({ queryKey: ["house"] });
@@ -17,7 +21,8 @@ export const useToggleFavorite = () => {
   });
 
   const removeMutation = useMutation({
-    mutationFn: (favoriteId: string | number) => removeFavoriteAction(favoriteId),
+    mutationFn: (favoriteId: string | number) =>
+      removeFavoriteAction(favoriteId),
     onSuccess: () => {
       toast.success("از علاقه‌مندی‌ها حذف شد");
       queryClient.invalidateQueries({ queryKey: ["house"] });
