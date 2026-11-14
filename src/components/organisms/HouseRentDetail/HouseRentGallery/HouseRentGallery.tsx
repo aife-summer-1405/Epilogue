@@ -162,12 +162,14 @@ export function HouseRentGallery({
       <section className="w-full min-w-0">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row-reverse sm:items-start sm:justify-between">
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
-            <Button size="sm">
-              <span className="flex items-center gap-2">
-                <span className="mt-1">{rating} ستاره</span>
-                <HugeiconsIcon icon={StarIcon} size={24} />
-              </span>
-            </Button>
+<Button size="sm">
+  <span className="flex items-center gap-2">
+    <span className="mt-1">
+      {rating ? Number(rating).toString() : "0"} ستاره
+    </span>
+    <HugeiconsIcon icon={StarIcon} size={24} />
+  </span>
+</Button>
 
             <div className="flex items-center gap-2">
               <ButtonOnlyIcon
