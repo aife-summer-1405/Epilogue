@@ -153,7 +153,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* تاریخ برگشت */}
         <div className="space-y-2">
           <label className="block text-sm font-medium">تاریخ برگشت</label>
 
@@ -182,7 +181,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* تعداد مسافران */}
         <div className="space-y-2">
           <label htmlFor="travelerCount" className="block text-sm font-medium">
             تعداد مسافران
@@ -206,7 +204,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* قیمت رزرو */}
         <div className="space-y-3 pt-1">
           <p className="flex items-center justify-center gap-2 text-sm font-bold text-black dark:text-white">
             <HugeiconsIcon icon={Money02Icon} size={24} />
@@ -232,7 +229,6 @@ export default function HouseReserveSidebar({ house }: Props) {
           </div>
         </div>
 
-        {/* رفتن به صفحه بعد */}
         <Button
           type="button"
           size="md"
