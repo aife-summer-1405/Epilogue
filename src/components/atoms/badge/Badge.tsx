@@ -3,13 +3,13 @@ import { FC } from "react";
 
 interface IProps {
   text: string;
-  type: "success" | "warning" | "error";
+  type: "confirmed" | "pending" | "canceled";
 }
 
 const badgeTypeClasses = {
-  success: "bg-[#CCF2ED] text-[#008C78]",
-  warning: "bg-[#FFF6E0] text-[#F8B524]",
-  error: "bg-[#FFECEC] text-[#FF5555]",
+  confirmed: "bg-[#CCF2ED] text-[#008C78]",
+  pending: "bg-[#FFF6E0] text-[#F8B524]",
+  canceled: "bg-[#FFECEC] text-[#FF5555]",
 };
 
 const Badge: FC<IProps> = ({ text, type }) => {

@@ -80,7 +80,14 @@ const HousesListClient = () => {
         {houses.map((house) => (
           <ViewProductCard
             key={house.id}
-            slides={house.photos.map((src) => ({ src, alt: house.title }))}
+            slides={
+              Array.isArray(house.photos) && house.photos.length > 0
+                ? house.photos.map((src) => ({
+                    src: src || "",
+                    alt: house.title || "تصویر ملک",
+                  }))
+                : [{ src: "", alt: house.title || "تصویر ملک" }]
+            }
             title={house.title}
             address={house.address}
             bathrooms={house.bathrooms}
@@ -109,7 +116,14 @@ const HousesListClient = () => {
         {houses.map((house) => (
           <ProductCard
             key={house.id}
-            slides={house.photos.map((src) => ({ src, alt: house.title }))}
+            slides={
+              Array.isArray(house.photos) && house.photos.length > 0
+                ? house.photos.map((src) => ({
+                    src: src || "",
+                    alt: house.title || "تصویر ملک",
+                  }))
+                : [{ src: "", alt: house.title || "تصویر ملک" }]
+            }
             title={house.title}
             address={house.address}
             bathrooms={house.bathrooms}

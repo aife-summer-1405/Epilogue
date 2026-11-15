@@ -10,10 +10,7 @@ import {
   TrashIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { DateObject } from "react-multi-date-picker";
-import { Suspense, useEffect, useState } from "react";
-import { getToday, getTomorrow } from "@/utils/getToday";
-import { getUtcTimestamp } from "@/utils/date";
+import { Suspense, useMemo, useState } from "react";
 import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
 import { Dialog } from "@base-ui/react";
@@ -23,26 +20,35 @@ import SelectComponent from "@/components/molecules/select/Select";
 import DropDownMenu from "@/components/molecules/dropdown/DropDownMenu";
 import Badge from "@/components/atoms/badge/Badge";
 import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
-import ThemedDatePicker from "@/components/molecules/themedDatePicker/ThemedDatePicker";
-import ReservedDetailModal from "@/components/organisms/panel/buyer/reserveManagement/ReservedDetailModal";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import useFakeLoading from "@/hooks/useFakeLoading";
-
-const toMidnight = (date: DateObject) =>
-  new DateObject(date).set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-
-const propertyTypeOptions: IFilterInputs[] = [
-  { label: "آپارتمان", value: "apartment" },
-  { label: "ویلا", value: "villa" },
-  { label: "خانه", value: "house" },
-  { label: "زمین", value: "land" },
-  { label: "تجاری", value: "commercial" },
-];
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  IReserved,
+  IReservedList,
+  ReservedParams,
+} from "@/core/types/panel/buyer/reserveManagement.types";
+import {
+  getBuyerReserved,
+  payReserveRequestById,
+  removeBuyerReserveById,
+} from "@/services/panel/buyer/reserveManagement.service";
+import EditReserveModal from "@/components/organisms/panel/buyer/reserveManagement/EditReserveModal";
+import ReserveDetailModal from "@/components/organisms/panel/buyer/reserveManagement/ReserveDetailModal";
+import { toast } from "react-toastify";
+import { formatPersianDate, formatPrice } from "@/utils/formatters";
+import { ReserveStatus } from "@/components/organisms/panel/buyer/reserveManagement/reserveDetail.shared";
+import { PayRequestBody } from "@/core/types/panel/buyer/paymentManagement.types";
 
 const reserveTypeOptions: IFilterInputs[] = [
   { label: "تایید شده", value: "confirmed" },
   { label: "در انتظار", value: "pending" },
+  { label: "تایید نشده", value: "canceled" },
 ];
 
 const perPageOptions = [
@@ -51,53 +57,91 @@ const perPageOptions = [
   { value: "18", label: "18 در هر صفحه" },
 ];
 
-const thClass =
-  "py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base";
-const tdClass =
-  "py-3 text-sm font-normal text-default-text whitespace-nowrap sm:text-base";
-
 const BuyerReservePage = () => {
   const router = useRouter();
-  const [startDate, setStartDate] = useState<DateObject | null>(null);
-  const [endDate, setEndDate] = useState<DateObject | null>(null);
-  const [whichPage, setWhichPage] = useState<number>(1);
-  const isTableLoading = useFakeLoading(whichPage);
+  const queryClient = useQueryClient();
+
+  const [statusValue, setStatusValue] = useState<ReserveStatus | null>(null);
+  const [params, setParams] = useState<ReservedParams>({
+    page: "1",
+    limit: "8",
+    sort: null,
+    order: null,
+    status: null,
+  });
+
+  const { data, isPending } = useQuery<IReservedList>({
+    queryKey: ["BuyerReservedManagement", params],
+    queryFn: () => getBuyerReserved(params),
+    placeholderData: keepPreviousData,
+  });
+
+  const { mutate: deleteReserveMutate } = useMutation({
+    mutationKey: [`DeleteReserve`],
+    mutationFn: (id: string) => removeBuyerReserveById(id),
+    onMutate: () => {
+      toast.loading("درحال حذف رزرو", { toastId: "DeletingReserveToast" });
+    },
+    onSuccess: () => {
+      toast.update("DeletingReserveToast", {
+        render: "رزرو شما با موفقیت حذف شد",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["BuyerReservedManagement", params],
+      });
+    },
+    onError: () => {
+      toast.update("DeletingReserveToast", {
+        render: "رزرو مورد نظر پیدا نشد",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    },
+  });
+
+  const { mutate: payReserveMutate } = useMutation({
+    mutationKey: [`PayRequestReserved`],
+    mutationFn: (body: PayRequestBody) => payReserveRequestById(body),
+    onMutate: () => {
+      toast.loading("درحال ارسال درخواست پرداخت", {
+        toastId: "DeletingReserveToast",
+      });
+    },
+    onSuccess: () => {
+      toast.update("DeletingReserveToast", {
+        render: "پرداخت شما با موفقیت انجام شد منتظر تایید پرداخت باشید",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["BuyerReservedManagement", params],
+      });
+    },
+    onError: () => {
+      toast.update("DeletingReserveToast", {
+        render: "پرداخت با خطا روبرو شد",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
+    },
+  });
+
+  const totalPages = useMemo(() => {
+    if (!data) return 1;
+    return Math.max(
+      1,
+      Math.ceil((data.totalCount || 1) / Number(params.limit)),
+    );
+  }, [params.limit, data]);
 
   const openDetails = (id: number) => {
-    router.push(`?homeId=${id}`, { scroll: false });
-  };
-
-  const dropDownOptions = [
-    { label: "پرداخت کردن", icon: CreditCardIcon },
-    { label: "جزئیات", icon: AlertCircleIcon, onClick: () => openDetails(1) },
-    { label: "حذف", icon: TrashIcon },
-  ];
-
-  useEffect(() => {
-    setStartDate(getToday());
-    setEndDate(getTomorrow());
-  }, []);
-
-  const handleStartDateChange = (date: DateObject | null) => {
-    if (!date || Array.isArray(date)) return;
-
-    const selected = toMidnight(date);
-    setStartDate(selected);
-
-    if (!endDate || getUtcTimestamp(endDate) <= getUtcTimestamp(selected)) {
-      setEndDate(new DateObject(selected).add(1, "day"));
-    }
-  };
-
-  const handleEndDateChange = (date: DateObject | null) => {
-    if (!date || Array.isArray(date)) return;
-
-    const selected = toMidnight(date);
-    if (startDate && getUtcTimestamp(selected) <= getUtcTimestamp(startDate)) {
-      return;
-    }
-
-    setEndDate(selected);
+    router.push(`?detailId=${id}`, { scroll: false });
   };
 
   return (
@@ -135,52 +179,35 @@ const BuyerReservePage = () => {
             }
             hasFooter={true}
             footer={
-              <div className="flex w-full flex-col-reverse items-center justify-center gap-3 sm:flex-row sm:gap-8">
+              <div className="flex w-full flex-col-reverse items-center justify-between gap-3 sm:flex-row sm:gap-8">
                 <Dialog.Close
                   data-slot="dialog-close"
                   render={
                     <Button
-                      className="w-full cursor-pointer rounded-[16px] border-neutral-dark-300 py-3 text-center text-base font-normal text-neutral-dark-300 sm:w-60 dark:border-neutral-400 dark:text-neutral-400"
+                      className="w-full cursor-pointer rounded-[16px] border-neutral-dark-300 py-3 text-center text-base font-normal text-neutral-dark-300 sm:w-4/10 dark:border-neutral-400 dark:text-neutral-400"
                       variant="outline"
                     />
                   }
                 >
                   انصراف
                 </Dialog.Close>
-                <Button className="w-full rounded-[16px] text-white sm:w-60">
+                <Button
+                  onClick={() => setParams({ ...params, status: statusValue })}
+                  className="w-full rounded-[16px] text-white sm:w-4/10"
+                >
                   اعمال فیلتر
                 </Button>
               </div>
             }
           >
             <div className="flex w-full flex-col items-center gap-5 sm:gap-8">
-              <div className="flex w-full flex-col items-center gap-5 sm:w-auto sm:flex-row sm:gap-8">
-                <ThemedDatePicker
-                  label="تاریخ رفت"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                />
-                <ThemedDatePicker
-                  label="تاریخ برگشت"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  minDate={
-                    startDate
-                      ? new DateObject(startDate).add(1, "day")
-                      : undefined
-                  }
-                />
-              </div>
-              <div className="flex w-full flex-col items-center gap-5 sm:w-auto sm:flex-row sm:gap-8">
-                <FilterInput
-                  items={propertyTypeOptions}
-                  className="w-full sm:w-60"
-                  isTitle="نوع ملک"
-                  inputClassName="text-neutral-dark-300! dark:text-neutral-400! font-normal! text-base!"
-                />
+              <div className="flex w-full flex-col items-center gap-5 sm:flex-row sm:gap-8">
                 <FilterInput
                   items={reserveTypeOptions}
-                  className="w-full sm:w-60"
+                  onValueChange={(value) =>
+                    value ? setStatusValue(value.value) : setStatusValue(null)
+                  }
+                  className="w-full"
                   isTitle="وضعیت رزرو"
                   inputClassName="text-neutral-dark-300! dark:text-neutral-400! font-normal! text-base!"
                 />
@@ -194,17 +221,50 @@ const BuyerReservePage = () => {
           <table className="w-full min-w-225 text-xs sm:text-sm">
             <thead className="sticky top-0 z-10 bg-default-white-bg">
               <tr className="text-right">
-                <th className={thClass}>نام اقامتگاه</th>
-                <th className={thClass}>تاریخ رزرو</th>
-                <th className={thClass}>قیمت</th>
-                <th className={thClass}>اطلاعات مسافر</th>
-                <th className={thClass}>وضعیت رزرو</th>
-                <th className={thClass}>وضعیت پرداخت</th>
-                <th className={`${thClass} text-left`}>عملیات</th>
+                <th
+                  className={
+                    "py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base"
+                  }
+                >
+                  نام اقامتگاه
+                </th>
+                <th
+                  className={
+                    "py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base"
+                  }
+                >
+                  تاریخ رزرو
+                </th>
+                <th
+                  className={
+                    "py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base"
+                  }
+                >
+                  قیمت
+                </th>
+                <th
+                  className={
+                    "py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base"
+                  }
+                >
+                  اطلاعات مسافر
+                </th>
+                <th
+                  className={
+                    "py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base"
+                  }
+                >
+                  وضعیت رزرو
+                </th>
+                <th
+                  className={`${"py-3 font-bold text-sm text-default-text whitespace-nowrap sm:text-base"} text-left`}
+                >
+                  عملیات
+                </th>
               </tr>
             </thead>
             <tbody>
-              {isTableLoading ? (
+              {isPending ? (
                 Array.from({ length: 8 }, (_, i) => (
                   <tr key={i} className="border-t border-neutral-300">
                     <td className="py-3 pr-2">
@@ -233,47 +293,111 @@ const BuyerReservePage = () => {
                     </td>
                   </tr>
                 ))
-              ) : (
-                <tr className="border-t border-neutral-300 transition-colors duration-300 ease-in-out hover:bg-primary-50 dark:hover:bg-neutral-200">
-                  <td className="py-3 pr-2">
-                    <div className="flex items-center gap-3">
-                      <ImageFallback
-                        src={"/images/hotel.jpg"}
-                        alt={"هتل سراوان رانین رشت"}
-                        className="size-8 shrink-0 rounded-full object-cover"
-                        width={32}
-                        height={32}
-                      />
-                      <span className="whitespace-nowrap text-sm font-normal text-default-text sm:text-base">
-                        هتل سراوان رانین رشت
-                      </span>
-                    </div>
-                  </td>
-                  <td className={tdClass}>12 مرداد 1401 - 12:33</td>
-                  <td className={tdClass}>
-                    2000000 <span className="mr-1">تومان</span>
-                  </td>
-                  <td className={tdClass}>2 نفر مسافر</td>
-                  <td className="py-3">
-                    <Badge text={"تایید شده"} type={"success"} />
-                  </td>
-                  <td className="py-3">
-                    <Badge text={"پرداخت شده"} type={"success"} />
-                  </td>
-                  <td className="py-3 pl-3">
-                    <div className="flex justify-end">
-                      <DropDownMenu
-                        triggerRender={
-                          <HugeiconsIcon
-                            icon={EllipsisVerticalIcon}
-                            className="size-5 cursor-pointer text-default-black sm:size-6"
-                          />
-                        }
-                        dropDownItems={dropDownOptions}
-                      />
-                    </div>
+              ) : data?.data.length === 0 ? (
+                <tr className="border-t border-neutral-300">
+                  <td
+                    colSpan={7}
+                    className="py-10 text-center text-sm text-neutral-dark-300 dark:text-neutral-400"
+                  >
+                    رزروی یافت نشد
                   </td>
                 </tr>
+              ) : (
+                data?.data.map((value: IReserved, index: number) => {
+                  const reserveStatusLabel =
+                    value.status === "canceled"
+                      ? "تایید نشده"
+                      : value.status === "confirmed"
+                        ? "تایید شده"
+                        : "در انتظار";
+                  const travellersCount = value.traveler_details.length;
+                  return (
+                    <tr
+                      key={index}
+                      className="border-t border-neutral-300 transition-colors duration-300 ease-in-out hover:bg-primary-50 dark:hover:bg-neutral-200"
+                    >
+                      <td className="py-3 pr-2">
+                        <div className="flex items-center gap-3">
+                          <ImageFallback
+                            src={"/images/hotel.jpg"}
+                            alt={value.house.title}
+                            className="size-8 shrink-0 rounded-full object-cover"
+                            width={32}
+                            height={32}
+                          />
+                          <span className="whitespace-nowrap text-sm font-normal text-default-text sm:text-base">
+                            {value.house.title}
+                          </span>
+                        </div>
+                      </td>
+                      <td
+                        className={
+                          "py-3 text-sm font-normal text-default-text whitespace-nowrap sm:text-base"
+                        }
+                      >
+                        {formatPersianDate(value.createdAt)}
+                      </td>
+                      <td
+                        className={
+                          "py-3 text-sm font-normal text-default-text whitespace-nowrap sm:text-base"
+                        }
+                      >
+                        {formatPrice(Number(value.house.price))}
+                        <span className="mr-1">تومان</span>
+                      </td>
+                      <td
+                        className={
+                          "py-3 text-sm font-normal text-default-text whitespace-nowrap sm:text-base"
+                        }
+                      >
+                        {travellersCount} نفر مسافر
+                      </td>
+                      <td className="py-3">
+                        <Badge text={reserveStatusLabel} type={value.status} />
+                      </td>
+                      <td className="py-3 pl-3">
+                        <div className="flex justify-end">
+                          <DropDownMenu
+                            triggerRender={
+                              <HugeiconsIcon
+                                icon={EllipsisVerticalIcon}
+                                className="size-5 cursor-pointer text-default-black sm:size-6"
+                              />
+                            }
+                            dropDownItems={[
+                              ...(value.status === "confirmed"
+                                ? [
+                                    {
+                                      label: "پرداخت کردن",
+                                      icon: CreditCardIcon,
+                                      onClick: () =>
+                                        payReserveMutate({
+                                          amount: Number(value.house.price),
+                                          bookingId: String(value.id),
+                                          description: `Pay Request For Reserve ID ${value.id}, Amount ${value.house.price}`,
+                                          callbackUrl: `/mock-payment/${value.id}`,
+                                        }),
+                                    },
+                                  ]
+                                : []),
+                              {
+                                label: "جزئیات",
+                                icon: AlertCircleIcon,
+                                onClick: () => openDetails(Number(value.id)),
+                              },
+                              {
+                                label: "حذف",
+                                icon: TrashIcon,
+                                onClick: () =>
+                                  deleteReserveMutate(String(value.id)),
+                              },
+                            ]}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -281,9 +405,11 @@ const BuyerReservePage = () => {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0 sm:mx-0">
             <Pagination
-              currentPage={whichPage}
-              onPageChange={(event) => setWhichPage(event)}
-              totalPages={20}
+              currentPage={Number(params.page)}
+              onPageChange={(event) =>
+                setParams({ ...params, page: String(event) })
+              }
+              totalPages={totalPages}
               siblingCount={0}
               containerClassName="w-fit! bg-transparent! gap-1! sm:gap-2!"
               itemClassName="cursor-pointer! size-7! rounded-full! flex! items-center! justify-center!"
@@ -294,14 +420,19 @@ const BuyerReservePage = () => {
             <SelectComponent
               items={perPageOptions}
               placeHolder={"تعداد نمایش"}
-              onChange={(event) => console.log(event)}
+              onChange={(event) =>
+                event
+                  ? setParams({ ...params, limit: event })
+                  : setParams({ ...params, limit: "8" })
+              }
               triggerClassName="bg-transparent rounded-[16px] border border-neutral-300 px-3 py-2 text-base font-normal text-default-text placeholder:text-default-text h-auto!"
             />
           </div>
         </div>
       </div>
       <Suspense>
-        <ReservedDetailModal />
+        <ReserveDetailModal />
+        <EditReserveModal />
       </Suspense>
     </div>
   );
