@@ -52,3 +52,10 @@ export const getBuyerPayments = async (params: PaymentParams) => {
   });
   return response.data;
 };
+
+export const getBuyerPaymentDetailById = async (params: ReservedDetail) => {
+  const response = await instance(`/payments/${params}`, {
+    headers: { tokenNeeded: true },
+  });
+  return response.data;
+};
