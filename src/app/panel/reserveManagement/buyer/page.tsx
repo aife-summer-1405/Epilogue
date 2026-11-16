@@ -32,6 +32,7 @@ import {
   IReserved,
   IReservedList,
   ReservedParams,
+  ReservedStatus,
 } from "@/core/types/panel/buyer/reserveManagement.types";
 import {
   getBuyerReserved,
@@ -42,7 +43,6 @@ import EditReserveModal from "@/components/organisms/panel/buyer/reserveManageme
 import ReserveDetailModal from "@/components/organisms/panel/buyer/reserveManagement/ReserveDetailModal";
 import { toast } from "react-toastify";
 import { formatPersianDate, formatPrice } from "@/utils/formatters";
-import { ReserveStatus } from "@/components/organisms/panel/buyer/reserveManagement/reserveDetail.shared";
 import { PayRequestBody } from "@/core/types/panel/buyer/paymentManagement.types";
 
 const reserveTypeOptions: IFilterInputs[] = [
@@ -61,7 +61,7 @@ const BuyerReservePage = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const [statusValue, setStatusValue] = useState<ReserveStatus | null>(null);
+  const [statusValue, setStatusValue] = useState<ReservedStatus | null>(null);
   const [params, setParams] = useState<ReservedParams>({
     page: "1",
     limit: "8",
