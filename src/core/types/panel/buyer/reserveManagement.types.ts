@@ -60,3 +60,12 @@ export interface IHouseDetail {
   yard_type: string | null;
   caption: string | null;
 }
+
+export interface IReservedUpdateBody {
+  houseId: string;
+  reservedDates: string[];
+  traveler_details: TravelersDetails[];
+  status: string;
+  sharedEmail: string;
+  sharedMobile: string;
+}

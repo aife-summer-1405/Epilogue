@@ -439,8 +439,10 @@ const ReserveDetailModal = () => {
                   <span className="text-xs font-normal text-neutral-dark-300 dark:text-neutral-400">
                     ایمیل
                   </span>
-                  <span className="wrap-break-words text-sm font-bold text-default-text">
-                    <span dir="ltr">{booking.sharedEmail || "-"}</span>
+                  <span className="block w-full min-w-0 text-sm font-bold text-default-text">
+                    <span dir="ltr" className="block break-all text-right">
+                      {booking.sharedEmail || "-"}
+                    </span>
                   </span>
                 </div>
               </div>
@@ -453,8 +455,8 @@ const ReserveDetailModal = () => {
                   <span className="text-xs font-normal text-neutral-dark-300 dark:text-neutral-400">
                     شماره موبایل
                   </span>
-                  <span className="wrap-break-words text-sm font-bold text-default-text">
-                    <span dir="ltr">{booking.sharedMobile || "-"}</span>
+                  <span dir="ltr" className="block break-all text-right">
+                    {booking.sharedMobile || "-"}
                   </span>
                 </div>
               </div>
