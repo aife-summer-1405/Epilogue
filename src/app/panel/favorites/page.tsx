@@ -9,7 +9,7 @@ import {
   TrashIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FilterInput from "@/components/molecules/inputs/filterInput/FilterInput";
 import { IFilterInputs } from "@/components/molecules/inputs/filterInput/IFilterInput";
 import RangeInput from "@/components/molecules/inputs/RangeInput";
@@ -20,23 +20,19 @@ import SelectComponent from "@/components/molecules/select/Select";
 import DropDownMenu from "@/components/molecules/dropdown/DropDownMenu";
 import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
 import { Skeleton } from "@/components/ui/skeleton";
-import useFakeLoading from "@/hooks/useFakeLoading";
+import { useRouter } from "next/navigation";
+import { useGetBuyerFavorites } from "@/hooks/queries/useGetBuyerFavorites";
+import { useDeleteBuyerFavorite } from "@/hooks/mutations/panel/buyer/useBuyerFavoriteMutations";
 
 interface IFavorite {
-  id: number;
+  id: number | string;
+  houseId: string;
   name: string;
   image: string;
   price: string;
+  rawPrice: number;
   address: string;
 }
-
-const initialFavorites: IFavorite[] = Array.from({ length: 10 }, (_, i) => ({
-  id: i + 1,
-  name: "هتل سراوان رانین رشت",
-  image: "/images/hotel.jpg",
-  price: "2,000,000",
-  address: "گیلان - رشت - میدان آزادی - جنب چهار راه علم الهدی - پلاک 12",
-}));
 
 const propertyTypeOptions: IFilterInputs[] = [
   { label: "آپارتمان", value: "apartment" },
@@ -68,28 +64,91 @@ const thClass =
 const tdClass =
   "py-3 text-sm font-normal text-default-text whitespace-nowrap sm:text-base";
 
+const formatPrice = (val?: string | number | null): string => {
+  if (val === undefined || val === null || val === "") return "0";
+  const num = Number(val);
+  return isNaN(num) ? String(val) : num.toLocaleString("en-US");
+};
+
 const BuyerFavoritesPage = () => {
+  const router = useRouter();
   const [whichPage, setWhichPage] = useState<number>(1);
+  const [perPage, setPerPage] = useState<number>(12);
   const [search, setSearch] = useState<string>("");
-  const [favorites, setFavorites] = useState<IFavorite[]>(initialFavorites);
   const [priceRange, setPriceRange] = useState<number[]>([
     PRICE_MIN,
     PRICE_MAX,
   ]);
-  const isTableLoading = useFakeLoading(whichPage);
+  const [appliedPriceRange, setAppliedPriceRange] = useState<number[] | null>(
+    null,
+  );
+
+  const { data: apiData, isLoading: isTableLoading } = useGetBuyerFavorites({
+    page: whichPage,
+    limit: perPage,
+    sort: "createdAt",
+    order: "DESC",
+  });
+
+  const { mutate: deleteFavoriteMutate } = useDeleteBuyerFavorite();
+
+  const favorites = useMemo<IFavorite[]>(() => {
+    const rawList = apiData?.data ?? [];
+    return rawList.map((item) => {
+      const house = item.house;
+      const numericPrice = Number(house?.price ?? 0);
+      const firstPhoto =
+        Array.isArray(house?.photos) && house.photos.length > 0
+          ? house.photos[0]
+          : "/images/hotel.jpg";
+
+      return {
+        id: item.id,
+        houseId: String(item.house_id || house?.id || ""),
+        name: house?.title || "بدون عنوان",
+        image: firstPhoto || "/images/hotel.jpg",
+        price: formatPrice(house?.price),
+        rawPrice: isNaN(numericPrice) ? 0 : numericPrice,
+        address: house?.address || "ثبت نشده",
+      };
+    });
+  }, [apiData?.data]);
+
+  const totalPages = apiData?.totalPages || 1;
+
+  useEffect(() => {
+    if (!isTableLoading && totalPages > 0 && whichPage > totalPages) {
+      setWhichPage(totalPages);
+    }
+  }, [whichPage, totalPages, isTableLoading]);
 
   const filteredFavorites = useMemo(() => {
     const q = search.trim();
-    if (!q) return favorites;
-    return favorites.filter((f) => f.name.includes(q) || f.address.includes(q));
-  }, [favorites, search]);
+    return favorites.filter((f) => {
+      const matchesSearch =
+        !q || f.name.includes(q) || f.address.includes(q);
+      const matchesPrice =
+        !appliedPriceRange ||
+        (f.rawPrice >= appliedPriceRange[0] &&
+          f.rawPrice <= appliedPriceRange[1]);
+      return matchesSearch && matchesPrice;
+    });
+  }, [favorites, search, appliedPriceRange]);
 
-  const removeFavorite = (id: number) => {
-    setFavorites((prev) => prev.filter((f) => f.id !== id));
+  const removeFavorite = (id: number | string) => {
+    deleteFavoriteMutate(id);
   };
 
   const getDropDownOptions = (favorite: IFavorite) => [
-    { label: "رزرو", icon: CheckmarkCircle02Icon },
+    {
+      label: "رزرو",
+      icon: CheckmarkCircle02Icon,
+      onClick: () => {
+        if (favorite.houseId) {
+          router.push(`/fastReserve/${favorite.houseId}`);
+        }
+      },
+    },
     {
       label: "حذف",
       icon: TrashIcon,
@@ -146,9 +205,17 @@ const BuyerFavoritesPage = () => {
                 >
                   انصراف
                 </Dialog.Close>
-                <Button className="w-full rounded-[16px] text-white sm:w-60">
+                <Dialog.Close
+                  data-slot="dialog-close"
+                  render={
+                    <Button
+                      onClick={() => setAppliedPriceRange(priceRange)}
+                      className="w-full cursor-pointer rounded-[16px] text-white sm:w-60"
+                    />
+                  }
+                >
                   اعمال فیلتر
-                </Button>
+                </Dialog.Close>
               </div>
             }
           >
@@ -281,7 +348,7 @@ const BuyerFavoritesPage = () => {
             <Pagination
               currentPage={whichPage}
               onPageChange={(event) => setWhichPage(event)}
-              totalPages={20}
+              totalPages={totalPages}
               siblingCount={0}
               containerClassName="w-fit! bg-transparent! gap-1! sm:gap-2!"
               itemClassName="cursor-pointer! size-7! rounded-full! flex! items-center! justify-center!"
@@ -292,7 +359,10 @@ const BuyerFavoritesPage = () => {
             <SelectComponent
               items={perPageOptions}
               placeHolder={"تعداد نمایش"}
-              onChange={(event) => console.log(event)}
+              onChange={(value: string | null) => {
+                setPerPage(value ? Number(value) : 12);
+                setWhichPage(1);
+              }}
               triggerClassName="bg-transparent rounded-[16px] border border-neutral-300 px-3 py-2 text-base font-normal text-default-text placeholder:text-default-text h-auto!"
             />
           </div>
