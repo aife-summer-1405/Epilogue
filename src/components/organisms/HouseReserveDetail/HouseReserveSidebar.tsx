@@ -6,6 +6,7 @@ import DatePicker from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import DateObject from "react-date-object";
+import { toast } from "react-toastify";
 
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -22,6 +23,7 @@ import { getUtcTimestamp } from "@/utils/date";
 import gregorian from "react-date-object/calendars/gregorian";
 import gregorian_en from "react-date-object/locales/gregorian_en";
 import { getToday, getTomorrow } from "@/utils/getToday";
+import { checkAuthAndExecute } from "@/utils/authGuard";
 
 interface Props {
   house: HouseRent;
@@ -87,33 +89,35 @@ export default function HouseReserveSidebar({ house }: Props) {
   };
 
   const handleBooking = () => {
-    if (!startDate || !endDate || nights <= 0) {
-      alert("تاریخ رفت و برگشت را به‌درستی انتخاب کنید.");
-      return;
-    }
+    checkAuthAndExecute(async () => {
+      if (!startDate || !endDate || nights <= 0) {
+        toast.error("تاریخ رفت و برگشت را به‌درستی انتخاب کنید.");
+        return;
+      }
 
-    const houseId = Number(house.id);
+      const houseId = Number(house.id);
 
-    if (!Number.isInteger(houseId) || houseId <= 0) {
-      alert("شناسه خانه معتبر نیست.");
-      return;
-    }
+      if (!Number.isInteger(houseId) || houseId <= 0) {
+        toast.error("شناسه خانه معتبر نیست.");
+        return;
+      }
 
-    const startDateGregorian = startDate
-      .convert(gregorian, gregorian_en)
-      .format("YYYY-MM-DD");
+      const startDateGregorian = startDate
+        .convert(gregorian, gregorian_en)
+        .format("YYYY-MM-DD");
 
-    const endDateGregorian = endDate
-      .convert(gregorian, gregorian_en)
-      .format("YYYY-MM-DD");
+      const endDateGregorian = endDate
+        .convert(gregorian, gregorian_en)
+        .format("YYYY-MM-DD");
 
-    const params = new URLSearchParams({
-      startDate: startDateGregorian,
-      endDate: endDateGregorian,
-      travelers: String(travelerCount),
+      const params = new URLSearchParams({
+        startDate: startDateGregorian,
+        endDate: endDateGregorian,
+        travelers: String(travelerCount),
+      });
+
+      router.push(`/houseBooking/${houseId}?${params.toString()}`);
     });
-
-    router.push(`/houseBooking/${houseId}?${params.toString()}`);
   };
 
   return (

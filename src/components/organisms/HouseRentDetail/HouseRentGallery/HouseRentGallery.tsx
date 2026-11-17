@@ -16,6 +16,9 @@ import Button from "@/components/atoms/button/Button";
 import HouseRentGalleryModal from "./HouseRentGalleryModal";
 import { useToggleFavorite } from "@/hooks/queries/useFavorite";
 import { toast } from "react-toastify";
+import { getAuthUserIdAction } from "@/app/actions/getAuthStatus";
+import { checkAuthAndExecute } from "@/utils/authGuard";
+
 
 export interface HouseRentGalleryProps {
   houseId: number | string;
@@ -23,7 +26,7 @@ export interface HouseRentGalleryProps {
   address: string;
   rating: number | string;
   photos?: string[] | null;
-  userId?: string | number; 
+  userId?: string | number;
 }
 
 export function HouseRentGallery({
@@ -38,29 +41,47 @@ export function HouseRentGallery({
   const [activeImage, setActiveImage] = useState(0);
   const [copied, setCopied] = useState(false);
 
+  const [currentUserId, setCurrentUserId] = useState<string | null>(
+    userId ? String(userId) : null
+  );
   const [isFav, setIsFav] = useState<boolean>(false);
   const [favId, setFavId] = useState<string | number | undefined>(undefined);
 
   const { addMutation, removeMutation } = useToggleFavorite();
 
-  const currentUserId = userId || (typeof window !== "undefined" ? localStorage.getItem("user_id") : null) || "362";
-
   useEffect(() => {
-    if (typeof window !== "undefined" && currentUserId) {
-      const savedFav = localStorage.getItem(`fav_user_${currentUserId}_house_${houseId}`);
-      if (savedFav) {
-        try {
-          const parsed = JSON.parse(savedFav);
-          setIsFav(parsed.isFav);
-          setFavId(parsed.favId);
-        } catch {
+    let isMounted = true;
+
+    const initUserAndFav = async () => {
+      const resolvedId = userId ? String(userId) : await getAuthUserIdAction();
+      if (!isMounted) return;
+
+      setCurrentUserId(resolvedId);
+
+      if (resolvedId) {
+        const savedFav = localStorage.getItem(`fav_user_${resolvedId}_house_${houseId}`);
+        if (savedFav) {
+          try {
+            const parsed = JSON.parse(savedFav);
+            setIsFav(parsed.isFav);
+            setFavId(parsed.favId);
+          } catch {}
+        } else {
+          setIsFav(false);
+          setFavId(undefined);
         }
       } else {
         setIsFav(false);
         setFavId(undefined);
       }
-    }
-  }, [houseId, currentUserId]);
+    };
+
+    initUserAndFav();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [houseId, userId]);
 
   const images = (Array.isArray(photos) ? photos : []).filter(
     (photo): photo is string =>
@@ -76,55 +97,48 @@ export function HouseRentGallery({
   };
 
   const handleFavoriteToggle = () => {
-    if (!currentUserId) {
-      toast.error("لطفاً ابتدا وارد حساب کاربری خود شوید.");
-      return;
-    }
+    checkAuthAndExecute((loggedInUserId) => {
+      const activeUserId = currentUserId || loggedInUserId;
 
-    if (isFav) {
-      const currentFavId = favId;
-      
-      if (!currentFavId) {
-        setIsFav(false);
-        if (typeof window !== "undefined") {
-          localStorage.removeItem(`fav_user_${currentUserId}_house_${houseId}`);
-        }
-        toast.info("وضعیت علاقه‌مندی بازنشانی شد. لطفاً دوباره کلیک کنید.");
-        return;
-      }
+      if (isFav) {
+        const currentFavId = favId;
 
-      removeMutation.mutate(currentFavId, {
-        onSuccess: () => {
+        if (!currentFavId) {
           setIsFav(false);
-          setFavId(undefined);
-          if (typeof window !== "undefined") {
-            localStorage.removeItem(`fav_user_${currentUserId}_house_${houseId}`);
-          }
-        },
-      });
-    } else {
-      addMutation.mutate(
-        {
-          user_id: String(currentUserId),
-          house_id: String(houseId),
-        },
-        {
-          onSuccess: (response: any) => {
-            const recordId = response?.id || response?.data?.id || response?.favorite?.id;
-            
-            setIsFav(true);
-            setFavId(recordId);
+          localStorage.removeItem(`fav_user_${activeUserId}_house_${houseId}`);
+          toast.info("وضعیت علاقه‌مندی بازنشانی شد. لطفاً دوباره کلیک کنید.");
+          return;
+        }
 
-            if (typeof window !== "undefined") {
+        removeMutation.mutate(currentFavId, {
+          onSuccess: () => {
+            setIsFav(false);
+            setFavId(undefined);
+            localStorage.removeItem(`fav_user_${activeUserId}_house_${houseId}`);
+          },
+        });
+      } else {
+        addMutation.mutate(
+          {
+            user_id: String(activeUserId),
+            house_id: String(houseId),
+          },
+          {
+            onSuccess: (response: any) => {
+              const recordId = response?.id || response?.data?.id || response?.favorite?.id;
+
+              setIsFav(true);
+              setFavId(recordId);
+
               localStorage.setItem(
-                `fav_user_${currentUserId}_house_${houseId}`,
+                `fav_user_${activeUserId}_house_${houseId}`,
                 JSON.stringify({ isFav: true, favId: recordId })
               );
-            }
-          },
-        }
-      );
-    }
+            },
+          }
+        );
+      }
+    });
   };
 
   const handleCopy = async () => {
@@ -154,22 +168,22 @@ export function HouseRentGallery({
     imageCount === 1
       ? "grid-cols-1 grid-rows-1 aspect-[4/3] sm:aspect-auto sm:h-[500px] lg:h-[626px]"
       : imageCount === 2
-        ? "grid-cols-2 grid-rows-1 h-[220px] sm:h-[320px] md:h-[500px] lg:h-[626px]"
-        : "grid-cols-2 grid-rows-[220px_110px] sm:h-[320px] sm:grid-cols-3 sm:grid-rows-2 md:h-[500px] lg:h-[626px]";
+      ? "grid-cols-2 grid-rows-1 h-[220px] sm:h-[320px] md:h-[500px] lg:h-[626px]"
+      : "grid-cols-2 grid-rows-[220px_110px] sm:h-[320px] sm:grid-cols-3 sm:grid-rows-2 md:h-[500px] lg:h-[626px]";
 
   return (
     <>
       <section className="w-full min-w-0">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row-reverse sm:items-start sm:justify-between">
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
-<Button size="sm">
-  <span className="flex items-center gap-2">
-    <span className="mt-1">
-      {rating ? Number(rating).toString() : "0"} ستاره
-    </span>
-    <HugeiconsIcon icon={StarIcon} size={24} />
-  </span>
-</Button>
+            <Button size="sm">
+              <span className="flex items-center gap-2">
+                <span className="mt-1">
+                  {rating ? Number(rating).toString() : "0"} ستاره
+                </span>
+                <HugeiconsIcon icon={StarIcon} size={24} />
+              </span>
+            </Button>
 
             <div className="flex items-center gap-2">
               <ButtonOnlyIcon
@@ -240,12 +254,12 @@ export function HouseRentGallery({
                 imageCount === 1
                   ? "col-span-1 row-span-1"
                   : imageCount === 2
-                    ? "col-span-1 row-span-1"
-                    : isMain
-                      ? "col-span-2 row-span-1 sm:col-span-2 sm:row-span-2"
-                      : isThird
-                        ? "col-start-2 row-start-2 sm:col-start-3 sm:row-start-2"
-                        : "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1";
+                  ? "col-span-1 row-span-1"
+                  : isMain
+                  ? "col-span-2 row-span-1 sm:col-span-2 sm:row-span-2"
+                  : isThird
+                  ? "col-start-2 row-start-2 sm:col-start-3 sm:row-start-2"
+                  : "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1";
 
               return (
                 <button

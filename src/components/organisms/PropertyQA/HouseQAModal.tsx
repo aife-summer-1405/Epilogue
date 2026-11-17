@@ -11,6 +11,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import Button from "@/components/atoms/button/Button";
 import { usePropertyQAMutations, usePropertyQAs } from "@/hooks/usePropertyQA";
+import { checkAuthAndExecute } from "@/utils/authGuard";
 
 interface HouseQAModalProps {
   houseId: number | string;
@@ -26,6 +27,24 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
 
   const { data: qaList, isLoading } = usePropertyQAs(houseId, isOpen);
   const { questionMutation, answerMutation } = usePropertyQAMutations(houseId);
+
+  const handleSendQuestion = () => {
+    checkAuthAndExecute(async () => {
+      if (newQuestion.trim()) {
+        questionMutation.mutate(newQuestion);
+        setNewQuestion("");
+      }
+    });
+  };
+
+  const handleSendAnswer = (itemId: string | number) => {
+    checkAuthAndExecute(async () => {
+      if (replyText[itemId]?.trim()) {
+        answerMutation.mutate({ questionId: itemId, answer: replyText[itemId] });
+        setActiveReplyId(null);
+      }
+    });
+  };
 
   if (!isOpen) return null;
 
@@ -115,11 +134,7 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
                           />
                           <Button
                             size="sm"
-                            onClick={() => {
-                              if (replyText[item.id]?.trim()) {
-                                answerMutation.mutate({ questionId: item.id, answer: replyText[item.id] });
-                              }
-                            }}
+                            onClick={() => handleSendAnswer(item.id)}
                             disabled={answerMutation.isPending}
                             className="rounded-xl px-4"
                           >
@@ -159,21 +174,15 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
                 value={newQuestion}
                 onChange={(e) => setNewQuestion(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && newQuestion.trim()) {
-                    questionMutation.mutate(newQuestion);
-                    setNewQuestion("");
+                  if (e.key === "Enter") {
+                    handleSendQuestion();
                   }
                 }}
                 className="flex-1 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-[#252525] px-4 py-3 text-sm text-neutral-900 dark:text-white outline-none focus:border-blue-600 transition-colors"
               />
               <Button
                 size="md"
-                onClick={() => {
-                  if (newQuestion.trim()) {
-                    questionMutation.mutate(newQuestion);
-                    setNewQuestion("");
-                  }
-                }}
+                onClick={handleSendQuestion}
                 disabled={questionMutation.isPending || !newQuestion.trim()}
                 className="flex items-center gap-2 rounded-2xl px-6 font-semibold"
               >
