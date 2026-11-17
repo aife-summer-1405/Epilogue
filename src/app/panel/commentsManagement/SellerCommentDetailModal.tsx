@@ -1,10 +1,9 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import Button from "@/components/atoms/button/Button";
 import Modal from "@/components/molecules/modal/Modal";
 import { Skeleton } from "@/components/ui/skeleton";
-import useFakeLoading from "@/hooks/useFakeLoading";
 import {
   CommentAdd01Icon,
   Edit02Icon,
@@ -25,6 +24,7 @@ import {
   getUserFullName,
   isOwnComment,
 } from "./commentUtils";
+import { useGetSellerCommentById } from "@/hooks/queries/useGetSellerComments";
 
 interface IProps {
   comments: ISellerComment[];
@@ -48,8 +48,22 @@ const SellerCommentDetailModal: FC<IProps> = ({
   const searchParams = useSearchParams();
 
   const commentId = searchParams.get("commentId");
-  const comment = commentId ? buildCommentDetail(comments, commentId) : null;
-  const isLoading = useFakeLoading(commentId);
+  const { data: fetchedComment, isLoading } =
+    useGetSellerCommentById(commentId);
+
+  const comment = useMemo(() => {
+    if (!commentId) return null;
+    const localBuilt = buildCommentDetail(comments, commentId);
+    if (fetchedComment) {
+      return {
+        ...localBuilt,
+        ...fetchedComment,
+        parent_comment:
+          fetchedComment.parent_comment ?? localBuilt?.parent_comment ?? null,
+      };
+    }
+    return localBuilt;
+  }, [commentId, fetchedComment, comments]);
 
   const isReply = !!comment?.parent_comment_id;
   const isOwn = !!comment && isOwnComment(comment.user, currentUser);

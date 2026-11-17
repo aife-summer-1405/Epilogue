@@ -22,7 +22,6 @@ import Badge from "@/components/atoms/badge/Badge";
 import ThemedDatePicker from "@/components/molecules/themedDatePicker/ThemedDatePicker";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import useFakeLoading from "@/hooks/useFakeLoading";
 import {
   ICommentFormValues,
   ISellerComment,
@@ -36,8 +35,7 @@ import SellerCommentFormModal from "./SellerCommentFormModal";
 import SellerCommentDeleteModal from "./SellerCommentDeleteModal";
 import {
   buildCommentsResponse,
-  currentUser,
-  initialComments,
+  currentUser as fallbackCurrentUser,
 } from "./commentMock";
 import {
   formatCommentDate,
@@ -46,6 +44,15 @@ import {
   getUserFullName,
   isOwnComment,
 } from "./commentUtils";
+import {
+  useGetSellerComments,
+  useGetCurrentSellerUser,
+} from "@/hooks/queries/useGetSellerComments";
+import {
+  useReplyToComment,
+  useUpdateSellerComment,
+  useDeleteSellerComment,
+} from "@/hooks/mutations/panel/seller/useSellerCommentMutations";
 
 interface IFilters {
   rating: RatingFilter;
@@ -108,7 +115,6 @@ const chipIdleClass =
 
 const SellerCommentPage = () => {
   const router = useRouter();
-  const [comments, setComments] = useState<ISellerComment[]>(initialComments);
   const [search, setSearch] = useState<string>("");
   const [whichPage, setWhichPage] = useState<number>(1);
   const [perPage, setPerPage] = useState<number>(8);
@@ -120,11 +126,55 @@ const SellerCommentPage = () => {
   const [draftEnd, setDraftEnd] = useState<DateObject | null>(null);
   const [formState, setFormState] = useState<IFormState | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const isTableLoading = useFakeLoading(whichPage);
 
-  const response = useMemo(
-    () =>
-      buildCommentsResponse(comments, {
+  const { data: sellerUser } = useGetCurrentSellerUser();
+  const currentUser = sellerUser || fallbackCurrentUser;
+
+  const hasClientSideFiltering =
+    search.trim().length > 0 || filters.type !== "all";
+
+  const apiParams = useMemo(() => {
+    const fromIso = filters.startDate
+      ? filters.startDate.toDate().toISOString()
+      : undefined;
+
+    let toIso: string | undefined = undefined;
+    if (filters.endDate) {
+      const endOfDay = new Date(filters.endDate.toDate());
+      endOfDay.setHours(23, 59, 59, 999);
+      toIso = endOfDay.toISOString();
+    }
+
+    return {
+      page: hasClientSideFiltering ? 1 : whichPage,
+      limit: hasClientSideFiltering ? 200 : perPage,
+      sort: "created_at",
+      order: "DESC" as const,
+      rating: filters.rating !== "all" ? filters.rating : undefined,
+      created_at_from: fromIso,
+      created_at_to: toIso,
+    };
+  }, [
+    whichPage,
+    perPage,
+    filters.rating,
+    filters.startDate,
+    filters.endDate,
+    hasClientSideFiltering,
+  ]);
+
+  const { data: apiData, isLoading: isTableLoading } =
+    useGetSellerComments(apiParams);
+
+  const { mutate: replyMutate } = useReplyToComment();
+  const { mutate: updateMutate } = useUpdateSellerComment();
+  const { mutate: deleteMutate } = useDeleteSellerComment();
+
+  const comments = useMemo(() => apiData?.comments ?? [], [apiData?.comments]);
+
+  const response = useMemo(() => {
+    if (hasClientSideFiltering) {
+      return buildCommentsResponse(comments, {
         page: whichPage,
         perPage,
         search,
@@ -132,19 +182,38 @@ const SellerCommentPage = () => {
         type: filters.type,
         fromDate: filters.startDate ? filters.startDate.toDate() : null,
         toDate: filters.endDate ? filters.endDate.toDate() : null,
-      }),
-    [comments, whichPage, perPage, search, filters],
-  );
+      });
+    }
+
+    return {
+      comments,
+      totalCount: apiData?.totalCount ?? 0,
+      currentPage: apiData?.currentPage ?? whichPage,
+      totalPages: apiData?.totalPages ?? 1,
+    };
+  }, [
+    hasClientSideFiltering,
+    comments,
+    whichPage,
+    perPage,
+    search,
+    filters,
+    apiData,
+  ]);
 
   useEffect(() => {
     setWhichPage(1);
   }, [search, filters, perPage]);
 
   useEffect(() => {
-    if (whichPage !== response.currentPage) {
-      setWhichPage(response.currentPage);
+    if (
+      !isTableLoading &&
+      response.totalPages > 0 &&
+      whichPage > response.totalPages
+    ) {
+      setWhichPage(response.totalPages);
     }
-  }, [whichPage, response.currentPage]);
+  }, [whichPage, response.totalPages, isTableLoading]);
 
   const activeFilterCount =
     (filters.rating !== "all" ? 1 : 0) +
@@ -192,39 +261,45 @@ const SellerCommentPage = () => {
 
     if (formState.mode === "reply") {
       const parent = formState.comment;
-      const reply: ISellerComment = {
-        id: String(Date.now()),
-        house_id: parent.house_id,
-        title: "پاسخ فروشنده",
-        caption,
-        rating: "0",
-        created_at: new Date().toISOString(),
-        parent_comment_id: parent.id,
-        user: currentUser,
-        house: parent.house,
-      };
-      setComments((prev) => [reply, ...prev]);
+      replyMutate(
+        {
+          house_id: parent.house_id,
+          parent_comment_id: parent.id,
+          title: title || "پاسخ فروشنده",
+          caption,
+        },
+        {
+          onSuccess: (res) => {
+            if (res.success) setFormState(null);
+          },
+        },
+      );
     } else {
-      const targetId = formState.comment.id;
-      setComments((prev) =>
-        prev.map((c) => (c.id === targetId ? { ...c, title, caption } : c)),
+      const target = formState.comment;
+      updateMutate(
+        {
+          id: target.id,
+          title,
+          caption,
+          rating: target.rating,
+        },
+        {
+          onSuccess: (res) => {
+            if (res.success) setFormState(null);
+          },
+        },
       );
     }
-
-    setFormState(null);
   };
 
   const handleDeleteConfirm = () => {
     if (!deleteTargetId) return;
 
-    const target = comments.find((c) => c.id === deleteTargetId);
-    if (!target || !isOwnComment(target.user, currentUser)) {
-      setDeleteTargetId(null);
-      return;
-    }
-
-    setComments((prev) => prev.filter((c) => c.id !== deleteTargetId));
-    setDeleteTargetId(null);
+    deleteMutate(deleteTargetId, {
+      onSettled: () => {
+        setDeleteTargetId(null);
+      },
+    });
   };
 
   const handleFilterOpenChange = (open: boolean) => {
@@ -404,7 +479,7 @@ const SellerCommentPage = () => {
               <div className="flex flex-col gap-3">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-base font-semibold text-default-text">
-                    بازه تاریخ
+                    bازه تاریخ
                   </p>
                   {(draftStart || draftEnd) && (
                     <button
