@@ -69,7 +69,6 @@ export const AddHouseFormOrganism = () => {
     if (currentStep > 1) setCurrentStep((prev) => prev - 1);
   };
 
-  // ثبت نهایی اطلاعات و سپس آپلود عکس‌ها در صورت وجود شناسه ملک
   const onSubmitFinal = async (data: AddHouseFormData) => {
     const finalPayload: AddHouseFormData = {
       ...houseData,
@@ -83,11 +82,9 @@ export const AddHouseFormOrganism = () => {
 
     setIsPending(true);
 
-    // ۱. ارسال اطلاعات اصلی ملک به سرور
     const result = await createHouseAction(finalPayload);
 
     if (result.success && result.houseId) {
-      // ۲. اگر عکسی انتخاب شده بود، ارسال به ای‌پی‌آی آپلود عکس با پارامتر id[cite: 1]
       if (selectedImages.length > 0) {
         const uploadResult = await uploadHousePhotosAction(
           result.houseId,

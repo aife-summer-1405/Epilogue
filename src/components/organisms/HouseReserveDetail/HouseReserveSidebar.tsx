@@ -99,7 +99,6 @@ export default function HouseReserveSidebar({ house }: Props) {
       return;
     }
 
-    // تبدیل تاریخ شمسی به میلادی
     const startDateGregorian = startDate
       .convert(gregorian, gregorian_en)
       .format("YYYY-MM-DD");

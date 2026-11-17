@@ -15,7 +15,6 @@ interface Step3Props {
 export const Step3Amenities = ({ control, setValue, getValues }: Step3Props) => {
   const [tagInput, setTagInput] = useState("");
   
-  // استفاده از useWatch برای رندر مجدد کامپوننت با تغییرات تگ‌ها
   const tags = useWatch({ control, name: "tags" }) || [];
 
   const handleAddTag = () => {

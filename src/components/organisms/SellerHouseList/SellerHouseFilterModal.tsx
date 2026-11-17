@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
   minPrice: number;
   maxPrice: number;
-  categories?: Category[]; // اختیاری کردن برای جلوگیری از کرش
+  categories?: Category[]; 
   selectedCategory?: string;
   onApply: (filters: { minPrice: number; maxPrice: number; category?: string }) => void;
 }
@@ -23,7 +23,7 @@ export const SellerHouseFilterModal = ({
   onClose,
   minPrice,
   maxPrice,
-  categories = [], // مقدار پیش‌فرض آرایه خالی
+  categories = [],
   selectedCategory,
   onApply,
 }: Props) => {
@@ -59,21 +59,21 @@ export const SellerHouseFilterModal = ({
 
         <div className="mt-6 space-y-6">
           {/* فیلتر دسته‌بندی */}
-  <div className="space-y-3">
-  <p className="text-base font-semibold text-zinc-900 dark:text-zinc-100">نوع ملک (دسته‌بندی)</p>
-  <select
-    value={category || ""}
-    onChange={(e) => setCategory(e.target.value || undefined)}
-    className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none"
-  >
-    <option value="">همه دسته‌ها</option>
-    {categories.map((cat) => (
-      <option key={cat.id} value={cat.name}>
-        {cat.name}
-      </option>
-    ))}
-  </select>
-</div>
+          <div className="space-y-3">
+            <p className="text-base font-semibold text-zinc-900 dark:text-zinc-100">نوع ملک (دسته‌بندی)</p>
+            <select
+              value={category || ""}
+              onChange={(e) => setCategory(e.target.value || undefined)}
+              className="w-full rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-2.5 text-sm text-zinc-900 dark:text-zinc-100 focus:outline-none"
+            >
+              <option value="">همه دسته‌ها</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* رنج قیمت */}
           <div className="space-y-3">

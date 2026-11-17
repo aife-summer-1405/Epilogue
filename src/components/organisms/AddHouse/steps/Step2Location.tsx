@@ -18,7 +18,6 @@ interface Step2Props {
 export const Step2Location = ({ control, getValues, setValue, location, onChangeLocation }: Step2Props) => {
   const [isSearching, setIsSearching] = useState(false);
 
-  // تابع جستجوی آدرس روی نقشه با استفاده از OpenStreetMap Nominatim
   const handleSearchAddress = async () => {
     const address = getValues("address");
     if (!address || !address.trim()) return;

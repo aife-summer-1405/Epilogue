@@ -18,7 +18,6 @@ interface HouseDetailContentProps {
 export default function HouseDetailContent({ id }: HouseDetailContentProps) {
   const { data: house, isLoading, isError } = useHouse(id);
 
-  // دریافت پویای شناسه کاربر جاری از حافظه مرورگر
   const [loggedInUserId, setLoggedInUserId] = useState<string>("362");
 
   useEffect(() => {

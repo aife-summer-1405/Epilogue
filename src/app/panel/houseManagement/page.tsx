@@ -24,7 +24,6 @@ async function HouseListContent({ searchParams }: PageProps) {
   const maxPrice = resolvedSearchParams.maxPrice ? Number(resolvedSearchParams.maxPrice) : undefined;
   const category = resolvedSearchParams.category || undefined;
 
-  // تعریف ساختار پارامترها با تایپ دقیق بدون استفاده از any
   const queryParams: SellerHouseQueryParams = {
     page,
     limit,
@@ -34,7 +33,6 @@ async function HouseListContent({ searchParams }: PageProps) {
     category,
   };
 
-  // اجرای موازی درخواست‌ها در سرور با استفاده از اینترسپتور سرور
   const [initialData, categoriesData] = await Promise.all([
     getSellerHousesAction(queryParams),
     getCategoriesAction(),

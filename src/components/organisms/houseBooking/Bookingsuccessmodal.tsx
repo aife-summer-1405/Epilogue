@@ -51,7 +51,6 @@ export default function BookingSuccessModal({
       toast.success(`دیدگاه شما ثبت شد و ${pointsAwarded} امتیاز وفاداری دریافت کردید!`);
       reset();
 
-      // تابع اجرای انیمیشن آتش‌بازی و ذرات شادی (تولد / سورپرایز)
       const triggerConfettiExplosion = () => {
         const duration = 2 * 1000;
         const animationEnd = Date.now() + duration;
@@ -66,7 +65,6 @@ export default function BookingSuccessModal({
 
           const particleCount = 50 * (timeLeft / duration);
 
-          // پرتاب ذرات رنگی از سمت چپ و راست صفحه
           confetti({
             ...defaults,
             particleCount,
@@ -86,7 +84,6 @@ export default function BookingSuccessModal({
         return Math.random() * (max - min) + min;
       }
 
-      // اجرای افکت ذرات شادی بلافاصله بعد از موفقیت
       triggerConfettiExplosion();
     },
     onError: (error: Error) => {

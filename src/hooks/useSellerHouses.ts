@@ -8,7 +8,7 @@ export const useSellerHouses = (params: SellerHouseQueryParams, initialData?: an
     queryKey: ["sellerHouses", params],
     queryFn: () => fetchSellerHousesClient(params),
     initialData: initialData,
-    staleTime: 0, // برای اینکه با هر تغییر فوراً فچ انجام شود
+    staleTime: 0,
   });
 };
 

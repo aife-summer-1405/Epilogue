@@ -37,7 +37,6 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isPending, setIsPending] = useState(false);
 
-  // مدیریت عکس‌های قبلی (به صورت URL) و عکس‌های جدید (به صورت فایل)
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState<number>(0);
@@ -62,12 +61,11 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
       },
     });
 
-  // دریافت اطلاعات ملک به محض لود صفحه و قرار دادن روی فرم
   useEffect(() => {
     const fetchHouseData = async () => {
       const res = await getHouseByIdAction(houseId);
       if (res.success && res.data) {
-        reset(res.data); // جایگذاری اطلاعات دقیق ملک روی فیلدها
+        reset(res.data);
         if (res.data.photos) {
           setExistingPhotos(res.data.photos);
         }
@@ -101,11 +99,9 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
 
     setIsPending(true);
 
-    // ۱. ارسال تغییرات متنی ملک
     const result = await updateHouseAction(houseId, finalPayload);
 
     if (result.success) {
-      // ۲. آپلود عکس‌های جدید در صورت انتخاب
       if (newImages.length > 0) {
         await uploadHousePhotosAction(houseId, newImages);
       }

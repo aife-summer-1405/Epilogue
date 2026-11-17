@@ -236,7 +236,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setActiveMenuId(null);
-                                // اصلاح مسیر زیر (حذف edit-house)
                                 router.push(
                                   `/panel/houseManagement/${house.id}`,
                                 );

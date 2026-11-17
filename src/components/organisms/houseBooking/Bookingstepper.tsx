@@ -33,7 +33,7 @@ export const BOOKING_STEPS = [
 ] as const;
 
 interface Props {
-  current: number; // 0 تا 4
+  current: number;
 }
 
 export default function BookingStepper({ current }: Props) {

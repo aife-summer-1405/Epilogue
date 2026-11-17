@@ -15,7 +15,6 @@ export const fetchSellerHousesClient = async (params: SellerHouseQueryParams): P
     });
     return data;
   } catch (error: any) {
-    // چاپ اطلاعات کامل خطا برای بررسی وضعیت استتوس و هدرها
     console.error("🔍 FULL AXIOS ERROR OBJECT:", {
       status: error?.response?.status,
       statusText: error?.response?.statusText,
