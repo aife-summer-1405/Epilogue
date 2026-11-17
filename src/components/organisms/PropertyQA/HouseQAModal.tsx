@@ -35,7 +35,6 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
         dir="rtl"
         className="flex max-h-[85vh] w-full max-w-2xl flex-col rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-neutral-100 dark:border-neutral-800 p-6 shadow-2xl transition-all"
       >
-        {/* هدر مودال */}
         <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
@@ -58,7 +57,6 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
           </button>
         </div>
 
-        {/* لیست پیام‌ها */}
         <div className="my-4 flex-1 overflow-y-auto space-y-4 pr-1 pl-1">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16 gap-3">
@@ -79,7 +77,6 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
                 key={item.id}
                 className="group flex flex-col gap-3 rounded-2xl bg-neutral-50/80 dark:bg-[#252525] p-4 border border-neutral-100 dark:border-neutral-800 transition-all hover:border-neutral-200 dark:hover:border-neutral-700 shadow-xs"
               >
-                {/* بخش سوال */}
                 <div className="flex items-start gap-3">
                   <div className="mt-0.5 text-blue-600 dark:text-blue-400 shrink-0">
                     <HugeiconsIcon icon={UserCircleIcon} size={20} />
@@ -92,7 +89,6 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
                   </div>
                 </div>
 
-                {/* بخش پاسخ */}
                 {item.answer ? (
                   <div className="mr-8 mt-2 flex items-start gap-3 rounded-xl bg-blue-50/50 dark:bg-blue-950/20 p-3.5 border border-blue-100/50 dark:border-blue-900/30">
                     <div className="mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -154,7 +150,6 @@ export default function HouseQAModal({ houseId, isOpen, onClose, isSeller = fals
           )}
         </div>
 
-        {/* بخش ثبت سوال جدید (فقط برای خریدار) */}
         {!isSeller && (
           <div className="mt-2 border-t border-neutral-100 dark:border-neutral-800 pt-4">
             <div className="flex gap-2">

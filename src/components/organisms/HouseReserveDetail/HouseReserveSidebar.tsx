@@ -127,7 +127,6 @@ export default function HouseReserveSidebar({ house }: Props) {
       </h2>
 
       <div className="space-y-4">
-        {/* تاریخ رفت */}
         <div className="space-y-2">
           <label className="block text-sm font-medium">تاریخ رفت</label>
 

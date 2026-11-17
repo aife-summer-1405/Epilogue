@@ -112,7 +112,7 @@ export default function HouseRentSidebar({ house }: Props) {
             className="w-full flex items-center justify-center border-blue-700 text-blue-700 hover:bg-blue-50 rounded-2xl py-3.5 px-4 font-medium"
           >
             <span className="flex items-center gap-2">
-              گفت‌وگو با فروشنده
+              گفت و گو با فروشنده
             </span>
             <HugeiconsIcon icon={ArrowLeft01Icon} size={18} />
           </Button>

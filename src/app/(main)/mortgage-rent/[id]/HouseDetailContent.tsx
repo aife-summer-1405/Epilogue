@@ -51,7 +51,6 @@ export default function HouseDetailContent({ id }: HouseDetailContentProps) {
 
   return (
     <main dir="rtl" className="mx-auto w-full py-5">
-      {/* گالری ملک مجهز به دکمه فیوریت، توست و ارسال پویای userId */}
       <HouseRentGallery
         houseId={property.id}
         title={property.title}

@@ -71,7 +71,6 @@ export default function UserFeedbackPanel({ userRole }: UserFeedbackPanelProps) 
 
       <div className="rounded-[24px] border border-border bg-card p-6 shadow-xs">
         
-        {/* هدر و تب‌ها */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-5">
           <div>
             <h3 className="text-base font-bold text-foreground">

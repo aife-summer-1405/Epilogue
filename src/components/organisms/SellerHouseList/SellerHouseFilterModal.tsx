@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
   minPrice: number;
   maxPrice: number;
-  categories?: Category[]; 
+  categories?: Category[];
   selectedCategory?: string;
   onApply: (filters: { minPrice: number; maxPrice: number; category?: string }) => void;
 }
@@ -58,7 +58,6 @@ export const SellerHouseFilterModal = ({
         </div>
 
         <div className="mt-6 space-y-6">
-          {/* فیلتر دسته‌بندی */}
           <div className="space-y-3">
             <p className="text-base font-semibold text-zinc-900 dark:text-zinc-100">نوع ملک (دسته‌بندی)</p>
             <select
@@ -75,7 +74,6 @@ export const SellerHouseFilterModal = ({
             </select>
           </div>
 
-          {/* رنج قیمت */}
           <div className="space-y-3">
             <p className="text-base font-semibold text-zinc-900 dark:text-zinc-100">رنج قیمت</p>
             <RangeInput

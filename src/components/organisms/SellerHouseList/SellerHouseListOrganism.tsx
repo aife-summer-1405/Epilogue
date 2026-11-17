@@ -94,7 +94,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
       dir="rtl"
       className={`w-full space-y-6 ${isPending ? "opacity-60 transition-opacity" : ""}`}
     >
-      {/* هدر صفحه */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -142,9 +141,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
         </div>
       </div>
 
-      {/* کانتینر جدول */}
       <div className="overflow-hidden rounded-3xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm">
-        {/* نمای دسکتاپ */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-right text-sm">
             <thead>
@@ -276,7 +273,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
           </table>
         </div>
 
-        {/* نمای موبایل و تبلت */}
         <div className="block md:hidden divide-y divide-zinc-100 dark:divide-zinc-800">
           {!initialData.houses.length ? (
             <div className="py-12 text-center text-zinc-400 text-sm">
@@ -391,7 +387,6 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
           )}
         </div>
 
-        {/* پجینیشن */}
         <div className="flex flex-col-reverse gap-4 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-t border-zinc-100 dark:border-zinc-800">
           <div className="flex items-center justify-center sm:justify-start gap-2">
             <span className="text-xs text-zinc-500">تعداد نمایش</span>
