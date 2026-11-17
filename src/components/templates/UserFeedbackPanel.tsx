@@ -42,9 +42,9 @@ export default function UserFeedbackPanel({ userRole }: UserFeedbackPanelProps) 
   const totalPoints = loyaltyData?.totalPoints ?? activeData?.totalPoints ?? 0;
 
   return (
-    <div dir="rtl" className="mx-auto max-w-5xl space-y-8 p-4 sm:p-6">
+    <div dir="rtl" className="w-full max-w-full  overflow-x-hidden space-y-6">
       
-      <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-primary-600 to-primary-800 p-6 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-[24px] bg-gradient-to-r from-primary-600 to-primary-800 p-4 sm:p-6 text-white shadow-xl">
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 backdrop-blur-md">
@@ -69,7 +69,7 @@ export default function UserFeedbackPanel({ userRole }: UserFeedbackPanelProps) 
         </div>
       </div>
 
-      <div className="rounded-[24px] border border-border bg-card p-6 shadow-xs">
+      <div className="rounded-[24px] dark:bg-[#212121] border border-border bg-card p-4 sm:p-6 shadow-xs">
         
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-5">
           <div>
@@ -120,38 +120,38 @@ export default function UserFeedbackPanel({ userRole }: UserFeedbackPanelProps) 
             feedbacks.map((item: any) => (
               <div
                 key={item.id}
-                className="flex flex-col gap-3 rounded-2xl bg-muted/40 p-4 border border-border transition-all hover:border-border/80"
+                className="flex flex-col gap-3 rounded-2xl bg-muted/40 p-4 border border-border transition-all hover:border-border/80 overflow-hidden"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-foreground">
                       <HugeiconsIcon icon={UserAccountIcon} size={20} />
                     </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground">
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-bold text-foreground truncate">
                         شناسه ملک: {item.houseId}
                       </h4>
-                      <span className="text-[11px] text-muted-foreground">
+                      <span className="text-[11px] text-muted-foreground block truncate">
                         {item.created_at ? new Date(item.created_at).toLocaleDateString("fa-IR") : "تاریخ ثبت نشده"}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap shrink-0">
                     {item.pointsAwarded > 0 && (
-                      <span className="rounded-xl bg-success-50 dark:bg-success-900/30 px-3 py-1 text-success-700 dark:text-success-300 text-xs font-bold">
+                      <span className="rounded-xl bg-success-50 dark:bg-success-900/30 px-3 py-1 text-success-700 dark:text-success-300 text-xs font-bold whitespace-nowrap">
                         +{item.pointsAwarded} امتیاز پاداش
                       </span>
                     )}
 
-                    <div className="flex items-center gap-1 rounded-xl bg-warning-50 dark:bg-warning-900/30 px-3 py-1 text-warning-700 dark:text-warning-300 text-xs font-bold">
+                    <div className="flex items-center gap-1 rounded-xl bg-warning-50 dark:bg-warning-900/30 px-3 py-1 text-warning-700 dark:text-warning-300 text-xs font-bold whitespace-nowrap">
                       <span>{item.rating}</span>
                       <HugeiconsIcon icon={StarIcon} size={16} className="fill-warning-500 text-warning-500" />
                     </div>
                   </div>
                 </div>
 
-                <p className="text-sm text-foreground/80 leading-relaxed pr-13">
+                <p className="text-sm text-foreground/80 leading-relaxed break-words pr-0 sm:pr-13">
                   {item.comment}
                 </p>
               </div>

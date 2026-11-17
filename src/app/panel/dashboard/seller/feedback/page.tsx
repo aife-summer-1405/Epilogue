@@ -4,7 +4,7 @@ import UserFeedbackPanel from "@/components/templates/UserFeedbackPanel";
 
 export default function SellerFeedbackPage() {
   return (
-    <main className="min-h-screen bg-neutral-50 dark:bg-[#181818] py-8">
+    <main className="min-h-screen  py-8">
       <div className="mx-auto max-w-5xl px-4 mb-6">
         <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white">
           داشبورد فیدبک‌ها و امتیازات 

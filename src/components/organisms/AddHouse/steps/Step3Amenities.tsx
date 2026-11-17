@@ -3,7 +3,7 @@ import Button from "@/components/atoms/button/Button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Delete01Icon } from "@hugeicons/core-free-icons";
 import { Control, UseFormSetValue, UseFormGetValues, useWatch } from "react-hook-form";
-import { AddHouseFormData } from "@/core/types/addHouse";
+import { AddHouseFormData } from "@/lib/validations/addHouseSchema";
 import { useState } from "react";
 
 interface Step3Props {
@@ -35,9 +35,9 @@ export const Step3Amenities = ({ control, setValue, getValues }: Step3Props) => 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <TextInput name="rooms" title="تعداد اتاق" control={control} placeholder="اتاق" />
-        <TextInput name="bathrooms" title="تعداد حمام" control={control} placeholder="حمام" />
-        <TextInput name="parking" title="تعداد پارکینگ" control={control} placeholder="پارکینگ" />
+        <TextInput name="rooms" title="تعداد اتاق" type="number" control={control} placeholder="اتاق" />
+        <TextInput name="bathrooms" title="تعداد حمام" type="number" control={control} placeholder="حمام" />
+        <TextInput name="parking" title="تعداد پارکینگ" type="number" control={control} placeholder="پارکینگ" />
         
         <div className="space-y-2">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">نوع حیاط</label>
@@ -45,6 +45,7 @@ export const Step3Amenities = ({ control, setValue, getValues }: Step3Props) => 
             {...control.register("yard_type")}
             className="w-full px-4 py-3 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-transparent text-zinc-900 dark:text-zinc-100"
           >
+            <option value="">انتخاب کنید</option>
             <option value="بالکن دار">بالکن دار</option>
             <option value="حیاط اختصاصی">حیاط اختصاصی</option>
             <option value="بدون حیاط">بدون حیاط</option>

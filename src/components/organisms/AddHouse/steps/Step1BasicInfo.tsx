@@ -1,7 +1,7 @@
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
 import TextareaInput from "@/components/molecules/inputs/TextareaInput";
 import { Control } from "react-hook-form";
-import { AddHouseFormData } from "@/core/types/addHouse";
+import { AddHouseFormData } from "@/lib/validations/addHouseSchema";
 
 export const Step1BasicInfo = ({ control }: { control: Control<AddHouseFormData> }) => (
   <div className="space-y-6">

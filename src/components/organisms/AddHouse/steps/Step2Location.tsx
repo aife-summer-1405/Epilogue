@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
 import { Control, UseFormGetValues, UseFormSetValue } from "react-hook-form";
-import { AddHouseFormData } from "@/core/types/addHouse";
 import Button from "@/components/atoms/button/Button";
 import { useState } from "react";
+import { AddHouseFormData } from "@/lib/validations/addHouseSchema";
 
 const MapComponent = dynamic(() => import("../MapComponent"), { ssr: false });
 
@@ -31,7 +31,7 @@ export const Step2Location = ({ control, getValues, setValue, location, onChange
         const lat = parseFloat(data[0].lat);
         const lng = parseFloat(data[0].lon);
         onChangeLocation(lat, lng);
-        setValue("location", { lat, lng }, { shouldDirty: true });
+        setValue("location", { lat, lng }, { shouldDirty: true, shouldValidate: true });
       } else {
         alert("آدرسی یافت نشد.");
       }

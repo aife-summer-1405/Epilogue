@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
 import Button from "@/components/atoms/button/Button";
-import { AddHouseFormData } from "@/core/types/addHouse";
+import { addHouseSchema} from "@/lib/validations/addHouseSchema";
 import {
   createHouseAction,
   uploadHousePhotosAction,
@@ -18,6 +19,7 @@ import { Step2Location } from "./steps/Step2Location";
 import { Step3Amenities } from "./steps/Step3Amenities";
 import { Step4Photos } from "./steps/Step4Photos";
 import { Step5Review } from "./steps/Step5Review";
+import { AddHouseFormData } from "@/core/types/addHouse";
 
 const steps = [
   { id: 1, label: "مشخصات اولیه" },
@@ -52,12 +54,27 @@ export const AddHouseFormOrganism = () => {
     caption: "",
   });
 
-  const { control, handleSubmit, getValues, setValue } =
+  const { control, handleSubmit, getValues, setValue, trigger } =
     useForm<AddHouseFormData>({
+      resolver: zodResolver(addHouseSchema),
       defaultValues: houseData as AddHouseFormData,
+      mode: "onChange",
     });
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
+    let fieldsToValidate: (keyof AddHouseFormData)[] = [];
+
+    if (currentStep === 1) {
+      fieldsToValidate = ["title", "address", "capacity", "price", "caption"];
+    } else if (currentStep === 2) {
+      fieldsToValidate = ["address", "location"];
+    } else if (currentStep === 3) {
+      fieldsToValidate = ["rooms", "bathrooms", "parking", "yard_type"];
+    }
+
+    const isValid = await trigger(fieldsToValidate);
+    if (!isValid) return;
+
     const currentValues = getValues();
     setHouseData((prev) => ({ ...prev, ...currentValues }));
     if (currentStep < steps.length) setCurrentStep((prev) => prev + 1);
@@ -134,9 +151,13 @@ export const AddHouseFormOrganism = () => {
               key={step.id}
               type="button"
               variant="outline"
-              onClick={() => {
-                setHouseData((prev) => ({ ...prev, ...getValues() }));
-                setCurrentStep(step.id);
+              onClick={async () => {
+                if (step.id < currentStep) {
+                  setHouseData((prev) => ({ ...prev, ...getValues() }));
+                  setCurrentStep(step.id);
+                } else {
+                  await handleNextStep();
+                }
               }}
               className={`flex-1 min-w-[130px] rounded-2xl py-3 text-sm font-medium transition ${
                 isActive
