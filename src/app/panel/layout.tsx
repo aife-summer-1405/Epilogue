@@ -72,7 +72,6 @@ const menuSellerNavigationItems: INavigationItems[] = [
     text: "مدیریت نظرات",
     path: "/panel/commentsManagement",
   },
-  // اضافه شدن فیدبک برای فروشنده
   {
     icon: Comment01Icon,
     text: "فیدبک و نظرات",
@@ -92,7 +91,6 @@ const menuBuyerNavigationItems: INavigationItems[] = [
     path: "/panel/paymentManagement",
   },
   { icon: HeartIcon, text: "علاقه مندی ها", path: "/profile/favorites" },
-  // اضافه شدن فیدبک برای خریدار
   {
     icon: Comment01Icon,
     text: "فیدبک و نظرات",

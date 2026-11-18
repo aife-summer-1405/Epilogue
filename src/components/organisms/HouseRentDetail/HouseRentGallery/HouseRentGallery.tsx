@@ -201,8 +201,8 @@ export function HouseRentGallery({
     imageCount === 1
       ? "grid-cols-1 grid-rows-1 aspect-[4/3] sm:aspect-auto sm:h-[500px] lg:h-[626px]"
       : imageCount === 2
-      ? "grid-cols-2 grid-rows-1 h-[220px] sm:h-[320px] md:h-[500px] lg:h-[626px]"
-      : "grid-cols-2 grid-rows-[220px_110px] sm:h-[320px] sm:grid-cols-3 sm:grid-rows-2 md:h-[500px] lg:h-[626px]";
+        ? "grid-cols-2 grid-rows-1 h-[220px] sm:h-[320px] md:h-[500px] lg:h-[626px]"
+        : "grid-cols-2 grid-rows-[220px_110px] sm:h-[320px] sm:grid-cols-3 sm:grid-rows-2 md:h-[500px] lg:h-[626px]";
 
   return (
     <>
@@ -220,7 +220,7 @@ export function HouseRentGallery({
             </Button>
 
             <div className="flex items-center gap-2">
-<SocialBookmarkButton houseId={houseId} />
+              <SocialBookmarkButton houseId={houseId} userId={currentUserId} />
               <ButtonOnlyIcon
                 hasIcon={false}
                 variant="outline"
@@ -301,12 +301,12 @@ export function HouseRentGallery({
                   imageCount === 1
                     ? "col-span-1 row-span-1"
                     : imageCount === 2
-                    ? "col-span-1 row-span-1"
-                    : isMain
-                    ? "col-span-2 row-span-1 sm:col-span-2 sm:row-span-2"
-                    : isThird
-                    ? "col-start-2 row-start-2 sm:col-start-3 sm:row-start-2"
-                    : "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1";
+                      ? "col-span-1 row-span-1"
+                      : isMain
+                        ? "col-span-2 row-span-1 sm:col-span-2 sm:row-span-2"
+                        : isThird
+                          ? "col-start-2 row-start-2 sm:col-start-3 sm:row-start-2"
+                          : "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1";
 
                 return (
                   <button

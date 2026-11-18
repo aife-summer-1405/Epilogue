@@ -1,132 +1,124 @@
 "use client";
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-
+import { useCallback, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 
 import {
-  getSocialBookmarkByHouseIdAction,
+  getSocialBookmarkByIdAction,
   createSocialBookmarkAction,
   updateSocialBookmarkAction,
   deleteSocialBookmarkAction,
-  type CreateBookmarkPayload,
-  type UpdateBookmarkPayload,
-  type SocialBookmark,
 } from "@/app/actions/bookmark.actions";
+import type {
+  CreateBookmarkPayload,
+  UpdateBookmarkPayload,
+} from "@/core/types/bookmark";
 
-function extractBookmark(response: any): SocialBookmark | null {
-  if (!response) return null;
+const detailKey = (id: number | string) => ["social-bookmark", String(id)];
 
-  const data = response.data ?? response;
-  const bookmark =
-    data?.bookmark ??
-    data?.data?.bookmark ??
-    data?.data ??
-    data;
-
-  if (!bookmark || !bookmark.id) return null;
-
-  return {
-    ...bookmark,
-    note: bookmark.note ?? "",
-    shareUrl: data?.shareUrl ?? bookmark.shareUrl ?? "",
-  };
+export function useBookmarkById(id?: number | string | null) {
+  return useQuery({
+    queryKey: detailKey(id ?? "none"),
+    enabled: Boolean(id),
+    retry: false,
+    queryFn: async () => {
+      const r = await getSocialBookmarkByIdAction(id as string | number);
+      if (!r.success) throw new Error(r.message);
+      return r.data; 
+    },
+  });
 }
 
-export function useHouseBookmark(houseId: number | string) {
-  const queryClient = useQueryClient();
-
-  const queryKey = ["house-bookmark", String(houseId)];
-
-  const bookmarkQuery = useQuery({
-    queryKey,
-    queryFn: async () => {
-      const result = await getSocialBookmarkByHouseIdAction(houseId);
-
-      if (!result.success) {
-        throw new Error(result.message);
-      }
-
-      return extractBookmark(result.data);
-    },
-    enabled: Boolean(houseId),
-    retry: false,
-  });
-
-  const createMutation = useMutation({
+export function useCreateBookmark() {
+  const qc = useQueryClient();
+  return useMutation({
     mutationFn: async (payload: CreateBookmarkPayload) => {
-      const result = await createSocialBookmarkAction(payload);
-
-      if (!result.success) {
-        throw new Error(result.message);
-      }
-
-      return result.data;
+      const r = await createSocialBookmarkAction(payload);
+      if (!r.success) throw new Error(r.message);
+      return r.data;
     },
-    onSuccess: async () => {
-      toast.success("نشان‌شده با موفقیت ثبت شد");
-      await queryClient.invalidateQueries({ queryKey });
+    onSuccess: (data) => {
+      toast.success("اقامتگاه با یادداشت شما ذخیره شد");
+      const id = data?.bookmark?.id;
+      if (id) qc.setQueryData(detailKey(id), data);
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "خطا در ثبت نشان‌شده");
-    },
+    onError: (e: Error) => toast.error(e.message || "خطا در ثبت نشان‌شده"),
   });
+}
 
-  const updateMutation = useMutation({
+export function useUpdateBookmark() {
+  const qc = useQueryClient();
+  return useMutation({
     mutationFn: async (payload: UpdateBookmarkPayload) => {
-      const result = await updateSocialBookmarkAction(payload);
-
-      if (!result.success) {
-        throw new Error(result.message);
-      }
-
-      return result.data;
+      const r = await updateSocialBookmarkAction(payload);
+      if (!r.success) throw new Error(r.message);
+      return r.data;
     },
-    onSuccess: async () => {
-      toast.success("نشان‌شده با موفقیت ویرایش شد");
-      await queryClient.invalidateQueries({ queryKey });
+    onSuccess: (_d, vars) => {
+      toast.success("یادداشت با موفقیت ویرایش شد");
+      qc.invalidateQueries({ queryKey: detailKey(vars.id) });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "خطا در ویرایش نشان‌شده");
-    },
+    onError: (e: Error) => toast.error(e.message || "خطا در ویرایش نشان‌شده"),
   });
+}
 
-  const deleteMutation = useMutation({
+export function useDeleteBookmark() {
+  const qc = useQueryClient();
+  return useMutation({
     mutationFn: async (id: number | string) => {
-      const result = await deleteSocialBookmarkAction(id);
-
-      if (!result.success) {
-        throw new Error(result.message);
-      }
-
-      return result.data;
+      const r = await deleteSocialBookmarkAction(id);
+      if (!r.success) throw new Error(r.message);
+      return r.data;
     },
-    onSuccess: async () => {
-      toast.success("نشان‌شده حذف شد");
-      await queryClient.invalidateQueries({ queryKey });
+    onSuccess: (_d, id) => {
+      toast.success("از لیست نشان‌شده‌ها حذف شد");
+      qc.removeQueries({ queryKey: detailKey(id) });
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "خطا در حذف نشان‌شده");
-    },
+    onError: (e: Error) => toast.error(e.message || "خطا در حذف نشان‌شده"),
   });
+}
 
-  return {
-    bookmark: bookmarkQuery.data ?? null,
-    isLoading: bookmarkQuery.isLoading,
-    isError: bookmarkQuery.isError,
-    error: bookmarkQuery.error,
-    refetch: bookmarkQuery.refetch,
+const storageKey = (userId: string, houseId: number | string) =>
+  `bookmark_user_${userId}_house_${houseId}`;
 
-    createBookmark: createMutation.mutateAsync,
-    updateBookmark: updateMutation.mutateAsync,
-    deleteBookmark: deleteMutation.mutateAsync,
+export function useHouseBookmarkRef(
+  houseId: number | string,
+  userId: string | null,
+) {
+  const [bookmarkId, setBookmarkId] = useState<string | null>(null);
 
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
-  };
+  useEffect(() => {
+    if (!userId) {
+      setBookmarkId(null);
+      return;
+    }
+    try {
+      setBookmarkId(localStorage.getItem(storageKey(userId, houseId)));
+    } catch {
+      setBookmarkId(null);
+    }
+  }, [houseId, userId]);
+
+  const save = useCallback(
+    (id: number | string) => {
+      if (!userId) return;
+      try {
+        localStorage.setItem(storageKey(userId, houseId), String(id));
+      } catch {}
+      setBookmarkId(String(id));
+    },
+    [houseId, userId],
+  );
+
+  const clear = useCallback(() => {
+    if (userId) {
+      try {
+        localStorage.removeItem(storageKey(userId, houseId));
+      } catch {}
+    }
+    setBookmarkId(null);
+  }, [houseId, userId]);
+
+  return { bookmarkId, save, clear };
 }

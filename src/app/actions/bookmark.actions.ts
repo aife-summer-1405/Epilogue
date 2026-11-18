@@ -1,164 +1,78 @@
 "use server";
 
 import instance from "@/lib/http/interceptors";
+import type {
+  BookmarkResponse,
+  CreateBookmarkPayload,
+  UpdateBookmarkPayload,
+} from "@/core/types/bookmark";
 
-export interface CreateBookmarkPayload {
-  houseId: number | string;
-  note?: string;
+type ActionResult<T> =
+  | { success: true; data: T }
+  | { success: false; message: string; status?: number };
+
+const AUTH = { headers: { tokenNeeded: "true" } };
+
+function fail(error: any, fallback: string): ActionResult<never> {
+  const status = error?.response?.status as number | undefined;
+  return {
+    success: false,
+    status,
+    message:
+      status === 401
+        ? "برای این کار باید وارد حساب کاربری شوید"
+        : error?.response?.data?.message || error?.message || fallback,
+  };
 }
 
-export interface UpdateBookmarkPayload {
-  id: number | string;
-  houseId?: number | string;
-  note?: string;
-}
-
-export interface SocialBookmark {
-  id: number | string;
-  houseId?: number | string;
-  note?: string;
-  shareUrl?: string;
-  [key: string]: unknown;
-}
-
-export interface BookmarkResponse {
-  bookmark?: SocialBookmark;
-  shareUrl?: string;
-  [key: string]: unknown;
-}
-
-export async function getSocialBookmarkByHouseIdAction(
-  houseId: number | string,
-) {
+export async function getSocialBookmarkByIdAction(
+  id: number | string,
+): Promise<ActionResult<BookmarkResponse | null>> {
   try {
-    const response = await instance.get(
-      `/social-bookmarks/${houseId}`,
-      {
-        headers: {
-          tokenNeeded: "true",
-        },
-      },
-    );
-
-    return {
-      success: true as const,
-      data: response.data,
-    };
+    const res = await instance.get(`/social-bookmarks/${id}`, AUTH);
+    return { success: true, data: res.data };
   } catch (error: any) {
-    console.error("GET BOOKMARK ERROR:", {
-      status: error?.response?.status,
-      data: error?.response?.data,
-      message: error?.message,
-    });
-
-    // فرض: اگر نشان‌شده‌ای برای این شناسه وجود نداشته باشد، API کد 404 می‌دهد.
-    if (error?.response?.status === 404) {
-      return {
-        success: true as const,
-        data: null,
-      };
-    }
-
-    return {
-      success: false as const,
-      message:
-        error?.response?.data?.message ||
-        error?.message ||
-        "خطا در دریافت اطلاعات نشان‌شده",
-    };
+    if (error?.response?.status === 404) return { success: true, data: null };
+    return fail(error, "خطا در دریافت نشان‌شده");
   }
 }
 
 export async function createSocialBookmarkAction(
   payload: CreateBookmarkPayload,
-) {
+): Promise<ActionResult<BookmarkResponse>> {
   try {
-    const response = await instance.post(
+    const res = await instance.post(
       "/social-bookmarks/bookmark",
-      payload,
-      {
-        headers: {
-          tokenNeeded: "true",
-        },
-      },
+      { houseId: Number(payload.houseId), note: payload.note },
+      AUTH,
     );
-
-    return {
-      success: true as const,
-      data: response.data,
-    };
+    return { success: true, data: res.data };
   } catch (error: any) {
-    console.error("CREATE BOOKMARK ERROR:", error?.response?.data || error);
-
-    return {
-      success: false as const,
-      message:
-        error?.response?.data?.message ||
-        error?.message ||
-        "خطا در ثبت نشان‌شده",
-    };
+    return fail(error, "خطا در ثبت نشان‌شده");
   }
 }
 
 export async function updateSocialBookmarkAction(
   payload: UpdateBookmarkPayload,
-) {
+): Promise<ActionResult<unknown>> {
   try {
-    const response = await instance.put(
-      `/social-bookmarks/${payload.id}`,
-      {
-        note: payload.note,
-      },
-      {
-        headers: {
-          tokenNeeded: "true",
-        },
-      },
-    );
+    const body: Record<string, unknown> = { note: payload.note };
+    if (payload.houseId != null) body.houseId = Number(payload.houseId);
 
-    return {
-      success: true as const,
-      data: response.data,
-    };
+    const res = await instance.put(`/social-bookmarks/${payload.id}`, body, AUTH);
+    return { success: true, data: res.data };
   } catch (error: any) {
-    console.error("UPDATE BOOKMARK ERROR:", error?.response?.data || error);
-
-    return {
-      success: false as const,
-      message:
-        error?.response?.data?.message ||
-        error?.message ||
-        "خطا در ویرایش نشان‌شده",
-    };
+    return fail(error, "خطا در ویرایش نشان‌شده");
   }
 }
 
 export async function deleteSocialBookmarkAction(
   id: number | string,
-) {
+): Promise<ActionResult<unknown>> {
   try {
-    const response = await instance.delete(
-      `/social-bookmarks/${id}`,
-      {
-        headers: {
-          tokenNeeded: "true",
-        },
-      },
-    );
-
-    return {
-      success: true as const,
-      data: response.data,
-    };
+    const res = await instance.delete(`/social-bookmarks/${id}`, AUTH);
+    return { success: true, data: res.data };
   } catch (error: any) {
-    console.error("DELETE BOOKMARK ERROR:", error?.response?.data || error);
-
-    return {
-      success: false as const,
-      message:
-        error?.response?.data?.message ||
-        error?.message ||
-        "خطا در حذف نشان‌شده",
-    };
+    return fail(error, "خطا در حذف نشان‌شده");
   }
 }
