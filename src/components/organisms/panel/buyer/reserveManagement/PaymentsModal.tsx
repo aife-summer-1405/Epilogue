@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatPersianDate, formatPrice } from "@/utils/formatters";
 import Button from "@/components/atoms/button/Button";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ReceiptDollarIcon } from "@hugeicons/core-free-icons";
+import { Invoice01Icon } from "@hugeicons/core-free-icons";
 import PaymentDetailModal from "../shared/PaymentDetailModal";
 
 const PaymentsModal = () => {
@@ -198,7 +198,7 @@ const PaymentsModal = () => {
                           className={`p-3 pl-6 flex justify-end items-center`}
                         >
                           <HugeiconsIcon
-                            icon={ReceiptDollarIcon}
+                            icon={Invoice01Icon}
                             className="cursor-pointer"
                             onClick={() => {
                               openPaymentDetail(Number(payment.id));
