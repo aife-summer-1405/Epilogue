@@ -1,4 +1,3 @@
-// src/app/actions/addHouse.action.ts
 "use server";
 
 import instance from "@/lib/http/interceptors";
@@ -29,7 +28,7 @@ export async function uploadHousePhotosAction(houseId: string, images: File[]): 
   try {
     const formData = new FormData();
     images.forEach((file) => {
-      formData.append("photos", file); // کلید درخواست دقیقا برابر با photos
+      formData.append("photos", file); 
     });
 
     await instance.post(`/houses/upload/photos/${houseId}`, formData, {

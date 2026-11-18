@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -14,11 +15,12 @@ import {
 import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
 import Button from "@/components/atoms/button/Button";
 import HouseRentGalleryModal from "./HouseRentGalleryModal";
+import SocialBookmarkButton from "@/components/molecules/bookmark/SocialBookmarkButton";
+
 import { useToggleFavorite } from "@/hooks/queries/useFavorite";
 import { toast } from "react-toastify";
 import { getAuthUserIdAction } from "@/app/actions/getAuthStatus";
 import { checkAuthAndExecute } from "@/utils/authGuard";
-
 
 export interface HouseRentGalleryProps {
   houseId: number | string;
@@ -44,8 +46,11 @@ export function HouseRentGallery({
   const [currentUserId, setCurrentUserId] = useState<string | null>(
     userId ? String(userId) : null
   );
+
   const [isFav, setIsFav] = useState<boolean>(false);
-  const [favId, setFavId] = useState<string | number | undefined>(undefined);
+  const [favId, setFavId] = useState<string | number | undefined>(
+    undefined
+  );
 
   const { addMutation, removeMutation } = useToggleFavorite();
 
@@ -53,19 +58,28 @@ export function HouseRentGallery({
     let isMounted = true;
 
     const initUserAndFav = async () => {
-      const resolvedId = userId ? String(userId) : await getAuthUserIdAction();
+      const resolvedId = userId
+        ? String(userId)
+        : await getAuthUserIdAction();
+
       if (!isMounted) return;
 
       setCurrentUserId(resolvedId);
 
       if (resolvedId) {
-        const savedFav = localStorage.getItem(`fav_user_${resolvedId}_house_${houseId}`);
+        const savedFav = localStorage.getItem(
+          `fav_user_${resolvedId}_house_${houseId}`
+        );
+
         if (savedFav) {
           try {
             const parsed = JSON.parse(savedFav);
             setIsFav(parsed.isFav);
             setFavId(parsed.favId);
-          } catch {}
+          } catch {
+            setIsFav(false);
+            setFavId(undefined);
+          }
         } else {
           setIsFav(false);
           setFavId(undefined);
@@ -92,6 +106,7 @@ export function HouseRentGallery({
 
   const openGallery = (index: number) => {
     if (imageCount === 0) return;
+
     setActiveImage(index);
     setGalleryOpen(true);
   };
@@ -105,8 +120,15 @@ export function HouseRentGallery({
 
         if (!currentFavId) {
           setIsFav(false);
-          localStorage.removeItem(`fav_user_${activeUserId}_house_${houseId}`);
-          toast.info("وضعیت علاقه‌مندی بازنشانی شد. لطفاً دوباره کلیک کنید.");
+
+          localStorage.removeItem(
+            `fav_user_${activeUserId}_house_${houseId}`
+          );
+
+          toast.info(
+            "وضعیت علاقه‌مندی بازنشانی شد. لطفاً دوباره کلیک کنید."
+          );
+
           return;
         }
 
@@ -114,7 +136,10 @@ export function HouseRentGallery({
           onSuccess: () => {
             setIsFav(false);
             setFavId(undefined);
-            localStorage.removeItem(`fav_user_${activeUserId}_house_${houseId}`);
+
+            localStorage.removeItem(
+              `fav_user_${activeUserId}_house_${houseId}`
+            );
           },
         });
       } else {
@@ -125,14 +150,20 @@ export function HouseRentGallery({
           },
           {
             onSuccess: (response: any) => {
-              const recordId = response?.id || response?.data?.id || response?.favorite?.id;
+              const recordId =
+                response?.id ||
+                response?.data?.id ||
+                response?.favorite?.id;
 
               setIsFav(true);
               setFavId(recordId);
 
               localStorage.setItem(
                 `fav_user_${activeUserId}_house_${houseId}`,
-                JSON.stringify({ isFav: true, favId: recordId })
+                JSON.stringify({
+                  isFav: true,
+                  favId: recordId,
+                })
               );
             },
           }
@@ -144,6 +175,7 @@ export function HouseRentGallery({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
+
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -161,7 +193,8 @@ export function HouseRentGallery({
       } else {
         await handleCopy();
       }
-    } catch {}
+    } catch {
+    }
   };
 
   const galleryLayout =
@@ -181,11 +214,13 @@ export function HouseRentGallery({
                 <span className="mt-1">
                   {rating ? Number(rating).toString() : "0"} ستاره
                 </span>
+
                 <HugeiconsIcon icon={StarIcon} size={24} />
               </span>
             </Button>
 
             <div className="flex items-center gap-2">
+<SocialBookmarkButton houseId={houseId} />
               <ButtonOnlyIcon
                 hasIcon={false}
                 variant="outline"
@@ -196,7 +231,9 @@ export function HouseRentGallery({
                 <HugeiconsIcon
                   icon={FavouriteIcon}
                   size={19}
-                  className={isFav ? "text-red-500 fill-red-500" : ""}
+                  className={
+                    isFav ? "text-red-500 fill-red-500" : ""
+                  }
                 />
               </ButtonOnlyIcon>
 
@@ -232,8 +269,14 @@ export function HouseRentGallery({
             <h1 className="wrap-break-word text-lg font-bold leading-8 sm:text-[24px]">
               {title}
             </h1>
+
             <div className="mt-4 flex items-start justify-start gap-1 text-[14px] text-[#8B8D98] sm:text-sm">
-              <HugeiconsIcon icon={Location01Icon} size={18} className="shrink-0" />
+              <HugeiconsIcon
+                icon={Location01Icon}
+                size={18}
+                className="shrink-0"
+              />
+
               <span className="wrap-break-word">{address}</span>
             </div>
           </div>
@@ -244,46 +287,56 @@ export function HouseRentGallery({
             تصویری برای این ملک ثبت نشده است
           </div>
         ) : (
-          <div className={`grid w-full min-w-0 gap-2 overflow-hidden sm:gap-3 ${galleryLayout}`}>
-            {images.slice(0, imageCount === 2 ? 2 : 3).map((photo, index) => {
-              const isMain = index === 0;
-              const isThird = index === 2;
-              const hasMore = imageCount > 3;
+          <div
+            className={`grid w-full min-w-0 gap-2 overflow-hidden sm:gap-3 ${galleryLayout}`}
+          >
+            {images
+              .slice(0, imageCount === 2 ? 2 : 3)
+              .map((photo, index) => {
+                const isMain = index === 0;
+                const isThird = index === 2;
+                const hasMore = imageCount > 3;
 
-              const positionClass =
-                imageCount === 1
-                  ? "col-span-1 row-span-1"
-                  : imageCount === 2
-                  ? "col-span-1 row-span-1"
-                  : isMain
-                  ? "col-span-2 row-span-1 sm:col-span-2 sm:row-span-2"
-                  : isThird
-                  ? "col-start-2 row-start-2 sm:col-start-3 sm:row-start-2"
-                  : "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1";
+                const positionClass =
+                  imageCount === 1
+                    ? "col-span-1 row-span-1"
+                    : imageCount === 2
+                    ? "col-span-1 row-span-1"
+                    : isMain
+                    ? "col-span-2 row-span-1 sm:col-span-2 sm:row-span-2"
+                    : isThird
+                    ? "col-start-2 row-start-2 sm:col-start-3 sm:row-start-2"
+                    : "col-start-1 row-start-2 sm:col-start-3 sm:row-start-1";
 
-              return (
-                <button
-                  key={`${photo}-${index}`}
-                  type="button"
-                  onClick={() => openGallery(index)}
-                  className={`group relative block h-full min-h-0 min-w-0 w-full overflow-hidden rounded-xl bg-neutral-100 sm:rounded-2xl ${positionClass}`}
-                >
-                  <Image
-                    src={photo}
-                    alt={`${title} تصویر ${index + 1}`}
-                    fill
-                    priority={index === 0}
-                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                  {isThird && hasMore && (
-                    <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/50 text-white transition-colors group-hover:bg-black/60">
-                      <span className="text-sm font-semibold">مشاهده همه تصاویر</span>
-                      <span className="text-xs">+{imageCount - 3} تصویر دیگر</span>
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                return (
+                  <button
+                    key={`${photo}-${index}`}
+                    type="button"
+                    onClick={() => openGallery(index)}
+                    className={`group relative block h-full min-h-0 min-w-0 w-full overflow-hidden rounded-xl bg-neutral-100 sm:rounded-2xl ${positionClass}`}
+                  >
+                    <Image
+                      src={photo}
+                      alt={`${title} تصویر ${index + 1}`}
+                      fill
+                      priority={index === 0}
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+
+                    {isThird && hasMore && (
+                      <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/50 text-white transition-colors group-hover:bg-black/60">
+                        <span className="text-sm font-semibold">
+                          مشاهده همه تصاویر
+                        </span>
+
+                        <span className="text-xs">
+                          +{imageCount - 3} تصویر دیگر
+                        </span>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
           </div>
         )}
       </section>
