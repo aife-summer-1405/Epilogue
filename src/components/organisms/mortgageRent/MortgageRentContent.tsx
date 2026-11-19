@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import Pagination from "@/components/molecules/Pagination";
 import ProductCard from "@/components/molecules/product-card/ProductCard";
@@ -87,7 +86,7 @@ const MortgageRentContent: React.FC = () => {
 
   return (
     <div
-      className={`flex w-full flex-col items-center"
+      className={`flex w-full flex-col items-center
     ${selectedIds.length > 0 ? "pb-24" : ""}`}
       dir="rtl"
     >
@@ -127,7 +126,17 @@ const MortgageRentContent: React.FC = () => {
                 : [{ src: "", alt: house.title || "تصویر ملک" }];
 
             return (
-              <Link key={house.id} href={`/mortgage-rent/${house.id}`}>
+              <div
+                key={house.id}
+                onClick={(e) => {
+                  const target = e.target as HTMLElement;
+                  if (target.closest("button, input, label, [role='button']")) {
+                    return;
+                  }
+                  router.push(`/mortgage-rent/${house.id}`);
+                }}
+                className="cursor-pointer"
+              >
                 <ProductCard
                   slides={validSlides}
                   title={house.title}
@@ -149,7 +158,7 @@ const MortgageRentContent: React.FC = () => {
                   isCompared={selectedIds.includes(String(house.id))}
                   onToggleCompare={() => toggleHouse(house.id)}
                 />
-              </Link>
+              </div>
             );
           })}
         </div>
