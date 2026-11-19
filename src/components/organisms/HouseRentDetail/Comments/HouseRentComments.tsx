@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import Button from "@/components/atoms/button/Button";
 import HouseRentCommentCard from "./HouseRentCommentCard";
 import {
   useHouseComments,
   usePostComment,
 } from "@/hooks/queries/houses/useHouseComments";
+import { getCurrentUserAction } from "@/app/actions/user.actions";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { StarIcon } from "@hugeicons/core-free-icons";
 import { checkAuthAndExecute } from "@/utils/authGuard";
@@ -21,14 +24,28 @@ export default function HouseRentComments({ houseId }: Props) {
   const [caption, setCaption] = useState("");
   const [rating, setRating] = useState(5);
 
-  const { data, isPending, isError, isFetching } = useHouseComments(houseId, page);
+  const { data: currentUser } = useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const result = await getCurrentUserAction();
+      return result.success ? result.user : null;
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
-  const {
-    mutate: submitComment,
-    isPending: isSubmitting,
-    isError: isSubmitError,
-    error: submitError,
-  } = usePostComment(houseId);
+  const currentUserId =
+    (currentUser as any)?.id ?? (currentUser as any)?._id ?? null;
+  const currentUserName = currentUser?.fullName?.trim() || "";
+
+  const { data, isPending, isError, isFetching } = useHouseComments(
+    houseId,
+    page
+  );
+
+  const { mutate: submitComment, isPending: isSubmitting } =
+    usePostComment(houseId);
 
   const comments = data?.comments ?? [];
 
@@ -39,7 +56,12 @@ export default function HouseRentComments({ houseId }: Props) {
       const trimmedTitle = title.trim();
       const trimmedCaption = caption.trim();
 
-      if (!trimmedTitle || !trimmedCaption || isSubmitting) return;
+      if (!trimmedTitle || !trimmedCaption) {
+        toast.error("لطفاً عنوان و متن نظر خود را وارد کنید.");
+        return;
+      }
+
+      if (isSubmitting) return;
 
       submitComment(
         {
@@ -55,6 +77,14 @@ export default function HouseRentComments({ houseId }: Props) {
             setCaption("");
             setRating(5);
             setPage(1);
+            toast.success("نظر شما با موفقیت ثبت شد.");
+          },
+          onError: (err) => {
+            toast.error(
+              err instanceof Error
+                ? err.message
+                : "ثبت نظر با خطا مواجه شد. لطفاً دوباره تلاش کنید."
+            );
           },
         }
       );
@@ -66,9 +96,9 @@ export default function HouseRentComments({ houseId }: Props) {
       <Button className="mb-4" variant="outline" size="md">
         نظرات کاربران
       </Button>
-      <div className="w-full min-w-0 rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-[#FFFFFA] p-3 sm:p-5 lg:p-6">
+      <div className="w-full min-w-0 rounded-2xl border border-neutral-200 bg-[#FFFFFA] p-3 dark:bg-[#272727] sm:p-5 lg:p-6">
         <div className="mb-5 flex items-center justify-between gap-3">
-          <span className="rounded-full dark:border-[#353535] dark:text-primary-200 border border-blue-200 px-3 py-1 text-xs text-blue-700">
+          <span className="rounded-full border border-blue-200 px-3 py-1 text-xs text-blue-700 dark:border-[#353535] dark:text-primary-200">
             {data?.totalCount ?? 0} نظر
           </span>
         </div>
@@ -77,7 +107,7 @@ export default function HouseRentComments({ houseId }: Props) {
           <div>
             <label
               htmlFor="house-comment-title"
-              className="mb-2 block text-sm font-medium text-neutral-800"
+              className="mb-2 block text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
               عنوان نظر
             </label>
@@ -90,14 +120,14 @@ export default function HouseRentComments({ houseId }: Props) {
               placeholder="مثلاً اقامت خوبی بود"
               required
               maxLength={100}
-              className="w-full rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-sm outline-none transition focus:border-blue-500"
+              className="w-full rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-sm outline-none transition focus:border-blue-500 dark:border-neutral-700 dark:bg-[#353535]"
             />
           </div>
 
           <div>
             <label
               htmlFor="house-comment-caption"
-              className="mb-2 block text-sm font-medium text-neutral-800"
+              className="mb-2 block text-sm font-medium text-neutral-800 dark:text-neutral-200"
             >
               متن نظر
             </label>
@@ -110,12 +140,12 @@ export default function HouseRentComments({ houseId }: Props) {
               placeholder="تجربه خود را از این اقامتگاه بنویسید..."
               required
               maxLength={2000}
-              className="w-full resize-y rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-sm outline-none transition focus:border-blue-500"
+              className="w-full resize-y rounded-xl border border-neutral-200 bg-neutral-50 p-3 text-sm outline-none transition focus:border-blue-500 dark:border-neutral-700 dark:bg-[#353535]"
             />
           </div>
 
           <fieldset>
-            <legend className="mb-2 text-sm font-medium text-neutral-800">
+            <legend className="mb-2 text-sm font-medium text-neutral-800 dark:text-neutral-200">
               امتیاز شما
             </legend>
 
@@ -130,33 +160,31 @@ export default function HouseRentComments({ houseId }: Props) {
                   className={`flex h-10 w-10 items-center justify-center rounded-lg border text-sm transition ${
                     rating === value
                       ? "border-amber-400 bg-amber-50 font-bold text-amber-500"
-                      : "border-neutral-200 text-neutral-500 bg-neutral-50 hover:border-amber-300"
+                      : "border-neutral-200 bg-neutral-50 text-neutral-500 hover:border-amber-300"
                   }`}
                 >
                   {value}
-                  <HugeiconsIcon className="mb-1 pr-1" icon={StarIcon} fill="#f7df0e" size={15} />
+                  <HugeiconsIcon
+                    className="mb-1 pr-1"
+                    icon={StarIcon}
+                    fill="#f7df0e"
+                    size={15}
+                  />
                 </button>
               ))}
             </div>
           </fieldset>
 
-          {isSubmitError && (
-            <p role="alert" className="text-sm text-red-500">
-              {submitError instanceof Error
-                ? submitError.message
-                : "ثبت نظر با خطا مواجه شد. لطفاً دوباره تلاش کنید."}
-            </p>
-          )}
-
           <button
             type="submit"
+            disabled={isSubmitting}
             className="rounded-xl bg-blue-700 px-6 py-3 text-sm font-medium text-white transition hover:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? "در حال ثبت نظر..." : "ثبت نظر"}
           </button>
         </form>
 
-        <div className="mb-5 border-t border-neutral-100" />
+        <div className="mb-5 border-t border-neutral-100 dark:border-neutral-700" />
 
         {isPending ? (
           <p className="py-8 text-center text-sm text-neutral-500">
@@ -184,6 +212,9 @@ export default function HouseRentComments({ houseId }: Props) {
                 key={comment.id}
                 comment={comment}
                 index={index}
+                houseId={houseId}
+                currentUserId={currentUserId}
+                currentUserName={currentUserName}
               />
             ))}
           </div>
