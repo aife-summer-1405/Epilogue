@@ -53,8 +53,7 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  // 4. House Management Access (Catches /panel/houseManagement, /add-house, /36, etc.)
-  if (pathname.startsWith("/panel/houseManagement")) {
+  if (pathname.startsWith("/panel/dashboard/seller") && userRole === "buyer") {
     if (userRole === "buyer") {
       const dashboardUrl = new URL("/panel/dashboard/buyer", request.url);
       const response = NextResponse.redirect(dashboardUrl);

@@ -107,7 +107,7 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
       }
 
       setIsPending(false);
-      router.push("/panel/houseManagement");
+      router.push("/panel/dashboard/buyer/houseManagement/");
     } else {
       setIsPending(false);
       alert(result.message || "خطا در ویرایش اطلاعات");
@@ -125,15 +125,15 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
   return (
     <div
       dir="rtl"
-      className="w-full max-w-5xl mx-auto space-y-8 bg-white dark:bg-zinc-900 p-6 sm:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800 shadow-sm"
+      className="w-full space-y-8 bg-white dark:bg-[#212121] p-6 sm:p-8 rounded-3xl border border-zinc-100 dark:border-zinc-800 shadow-sm"
     >
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-        <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+        <h1 className="text-xl sm:text-2xl font-bold cursor-pointer text-zinc-900 dark:text-zinc-100">
           ویرایش اطلاعات ملک
         </h1>
         <button
-          onClick={() => router.push("/seller/dashboard/places-management")}
-          className="flex items-center gap-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-[#0f3d61] transition"
+          onClick={() => router.push("/panel/dashboard/buyer/houseManagement/")}
+          className="flex items-center gap-2 cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-[#0f3d61] transition"
         >
           <span>رفتن به لیست املاک</span>
           <HugeiconsIcon icon={ArrowLeft01Icon} size={18} strokeWidth={1.5} />

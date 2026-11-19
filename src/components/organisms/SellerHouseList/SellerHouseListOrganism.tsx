@@ -132,7 +132,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
               startIcon={
                 <HugeiconsIcon icon={Add01Icon} size={20} strokeWidth={2} />
               }
-              onClick={() => router.push("/panel/houseManagement/add-house")}
+              onClick={() => router.push("/panel/dashboard/buyer/houseManagement/add-house")}
               className="flex-1 sm:flex-initial bg-[#0f3d61] hover:bg-[#0b2f4c] dark:bg-[#1a507a] rounded-2xl sm:rounded-full"
             >
               افزودن ملک
@@ -234,7 +234,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                                 e.stopPropagation();
                                 setActiveMenuId(null);
                                 router.push(
-                                  `/panel/houseManagement/${house.id}`,
+                                  `/panel/dashboard/buyer/houseManagement/${house.id}`,
                                 );
                               }}
                               className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-right cursor-pointer"
@@ -351,7 +351,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                           e.stopPropagation();
                           setActiveMenuId(null);
                           router.push(
-                            `/seller/dashboard/places-management/edit-house/${house.id}`,
+                            `/panel/dashboard/buyer/houseManagement/edit-house/${house.id}`,
                           );
                         }}
                         className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition text-right cursor-pointer"

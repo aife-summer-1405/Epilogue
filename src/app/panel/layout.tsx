@@ -55,7 +55,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: Building06Icon,
     text: "مدیریت املاک",
-    path: "/panel/houseManagement",
+    path: "/panel/dashboard/buyer/houseManagement",
   },
   {
     icon: CheckListIcon,
