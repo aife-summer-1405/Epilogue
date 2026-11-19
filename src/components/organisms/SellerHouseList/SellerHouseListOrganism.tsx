@@ -139,9 +139,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
         </div>
       </div>
 
-      {/* overflow-visible تا منوی عملیات بریده نشود یا زیر جدول نرود */}
       <div className="relative overflow-visible rounded-3xl border border-zinc-100 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        {/* نمای دسکتاپ */}
         <div className="hidden overflow-x-auto overflow-y-visible md:block">
           <table className="w-full text-right text-sm">
             <thead>

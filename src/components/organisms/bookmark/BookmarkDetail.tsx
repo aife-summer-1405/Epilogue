@@ -24,7 +24,7 @@ import {
 
 interface Props {
   bookmarkId: string;
-  basePath: string; // "/buyer/bookmarks" یا "/seller/bookmarks"
+  basePath: string; 
 }
 
 export default function BookmarkDetail({ bookmarkId, basePath }: Props) {
