@@ -66,19 +66,6 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  if (pathname.startsWith("/panel/houseManagement")) {
-    if (userRole === "buyer") {
-      const dashboardUrl = new URL("/panel/dashboard/buyer", request.url);
-      const response = NextResponse.redirect(dashboardUrl);
-
-      response.cookies.set("auth_error", "access_denied", {
-        maxAge: 10,
-        path: "/",
-      });
-      return response;
-    }
-  }
-
   if (
     pathname === "/panel/reserveManagement" ||
     pathname === "/panel/reserveManagement/"

@@ -2,7 +2,6 @@
 
 import api from "@/lib/http/interceptors";
 
-// src/types/house.ts
 export interface IHouse {
   id: string;
   title: string;

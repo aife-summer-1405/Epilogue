@@ -8,9 +8,7 @@ import { formatPrice } from "@/utils/formatters";
 
 interface Props {
   values: TravelerFormValues;
-  /** قیمت نمایش‌داده‌شده داخل کارت مشخصات (تومان) */
   price: number;
-  /** متن «هزینه‌های جانبی» (در صورت نبود از متن پیش‌فرض استفاده می‌شود) */
   extraCostsText?: string;
   onEdit: () => void;
 }
@@ -53,7 +51,6 @@ export default function TravelerSummary({
   return (
     <div className="flex flex-col gap-10">
       <div className="grid grid-cols-1 gap-10 md:grid-cols-[minmax(280px,360px)_1fr]">
-        {/* کارت مشخصات مسافران (سمت راست) */}
         <section className="flex flex-col gap-5 rounded-3xl bg-gray-100 p-5 dark:bg-[#353535]">
           <h2 className="text-center text-xl font-bold text-primary-500">
             مشخصات مسافران
@@ -81,7 +78,6 @@ export default function TravelerSummary({
           </Button>
         </section>
 
-        {/* هزینه‌های جانبی (سمت چپ) */}
         <section className="flex flex-col gap-4">
           <h2 className="text-xl font-bold text-primary-500">هزینه های جانبی</h2>
           <p className="text-justify text-sm leading-8 text-neutral-800 dark:text-neutral-200">
@@ -90,7 +86,6 @@ export default function TravelerSummary({
         </section>
       </div>
 
-      {/* اطلاع‌رسانی سفر */}
       <section className="flex flex-col gap-3 border-t border-[#CDCED6] pt-6">
         <p className="text-primary-500">
           اطلاع رسانی سفر ( اطلاعات بلیط و اطلاع رسانی بعدی به این آدرس ارسال می شود . )

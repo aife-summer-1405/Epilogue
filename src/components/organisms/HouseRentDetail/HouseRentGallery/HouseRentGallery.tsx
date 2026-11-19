@@ -2,35 +2,100 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Location01Icon,
   Copy01Icon,
   StarIcon,
   Share01Icon,
+  FavouriteIcon,
 } from "@hugeicons/core-free-icons";
 
 import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
 import Button from "@/components/atoms/button/Button";
 import HouseRentGalleryModal from "./HouseRentGalleryModal";
+import SocialBookmarkButton from "@/components/molecules/bookmark/SocialBookmarkButton";
+
+import { useToggleFavorite } from "@/hooks/queries/useFavorite";
+import { toast } from "react-toastify";
+import { getAuthUserIdAction } from "@/app/actions/getAuthStatus";
+import { checkAuthAndExecute } from "@/utils/authGuard";
 
 export interface HouseRentGalleryProps {
+  houseId: number | string;
   title: string;
   address: string;
   rating: number | string;
   photos?: string[] | null;
+  userId?: string | number;
 }
 
 export function HouseRentGallery({
+  houseId,
   title,
   address,
   rating,
   photos,
+  userId,
 }: HouseRentGalleryProps) {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [activeImage, setActiveImage] = useState(0);
   const [copied, setCopied] = useState(false);
+
+  const [currentUserId, setCurrentUserId] = useState<string | null>(
+    userId ? String(userId) : null
+  );
+
+  const [isFav, setIsFav] = useState<boolean>(false);
+  const [favId, setFavId] = useState<string | number | undefined>(
+    undefined
+  );
+
+  const { addMutation, removeMutation } = useToggleFavorite();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const initUserAndFav = async () => {
+      const resolvedId = userId
+        ? String(userId)
+        : await getAuthUserIdAction();
+
+      if (!isMounted) return;
+
+      setCurrentUserId(resolvedId);
+
+      if (resolvedId) {
+        const savedFav = localStorage.getItem(
+          `fav_user_${resolvedId}_house_${houseId}`
+        );
+
+        if (savedFav) {
+          try {
+            const parsed = JSON.parse(savedFav);
+            setIsFav(parsed.isFav);
+            setFavId(parsed.favId);
+          } catch {
+            setIsFav(false);
+            setFavId(undefined);
+          }
+        } else {
+          setIsFav(false);
+          setFavId(undefined);
+        }
+      } else {
+        setIsFav(false);
+        setFavId(undefined);
+      }
+    };
+
+    initUserAndFav();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [houseId, userId]);
 
   const images = (Array.isArray(photos) ? photos : []).filter(
     (photo): photo is string =>
@@ -46,9 +111,71 @@ export function HouseRentGallery({
     setGalleryOpen(true);
   };
 
+  const handleFavoriteToggle = () => {
+    checkAuthAndExecute((loggedInUserId) => {
+      const activeUserId = currentUserId || loggedInUserId;
+
+      if (isFav) {
+        const currentFavId = favId;
+
+        if (!currentFavId) {
+          setIsFav(false);
+
+          localStorage.removeItem(
+            `fav_user_${activeUserId}_house_${houseId}`
+          );
+
+          toast.info(
+            "وضعیت علاقه‌مندی بازنشانی شد. لطفاً دوباره کلیک کنید."
+          );
+
+          return;
+        }
+
+        removeMutation.mutate(currentFavId, {
+          onSuccess: () => {
+            setIsFav(false);
+            setFavId(undefined);
+
+            localStorage.removeItem(
+              `fav_user_${activeUserId}_house_${houseId}`
+            );
+          },
+        });
+      } else {
+        addMutation.mutate(
+          {
+            user_id: String(activeUserId),
+            house_id: String(houseId),
+          },
+          {
+            onSuccess: (response: any) => {
+              const recordId =
+                response?.id ||
+                response?.data?.id ||
+                response?.favorite?.id;
+
+              setIsFav(true);
+              setFavId(recordId);
+
+              localStorage.setItem(
+                `fav_user_${activeUserId}_house_${houseId}`,
+                JSON.stringify({
+                  isFav: true,
+                  favId: recordId,
+                })
+              );
+            },
+          }
+        );
+      }
+    });
+  };
+
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
+
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -80,17 +207,36 @@ export function HouseRentGallery({
   return (
     <>
       <section className="w-full min-w-0">
-        {/* Header */}
         <div className="mb-4 flex flex-col gap-3 sm:flex-row-reverse sm:items-start sm:justify-between">
           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end">
             <Button size="sm">
               <span className="flex items-center gap-2">
-                <span className="mt-1">{rating} ستاره</span>
+                <span className="mt-1">
+                  {rating ? Number(rating).toString() : "0"} ستاره
+                </span>
+
                 <HugeiconsIcon icon={StarIcon} size={24} />
               </span>
             </Button>
 
             <div className="flex items-center gap-2">
+              <SocialBookmarkButton houseId={houseId} userId={currentUserId} />
+              <ButtonOnlyIcon
+                hasIcon={false}
+                variant="outline"
+                size="sm"
+                onClick={handleFavoriteToggle}
+                aria-label="افزودن به علاقه‌مندی‌ها"
+              >
+                <HugeiconsIcon
+                  icon={FavouriteIcon}
+                  size={19}
+                  className={
+                    isFav ? "text-red-500 fill-red-500" : ""
+                  }
+                />
+              </ButtonOnlyIcon>
+
               <ButtonOnlyIcon
                 hasIcon={false}
                 variant="outline"
@@ -108,7 +254,8 @@ export function HouseRentGallery({
                 onClick={handleShare}
                 aria-label="اشتراک‌گذاری لینک ملک"
               >
-                <HugeiconsIcon icon={Share01Icon} />              </ButtonOnlyIcon>
+                <HugeiconsIcon icon={Share01Icon} size={19} />
+              </ButtonOnlyIcon>
             </div>
 
             {copied && (
@@ -119,7 +266,7 @@ export function HouseRentGallery({
           </div>
 
           <div className="min-w-0 text-right">
-            <h1 className="wrap-break-word text-lg font-bold leading-8  sm:text-[24px]">
+            <h1 className="wrap-break-word text-lg font-bold leading-8 sm:text-[24px]">
               {title}
             </h1>
 
@@ -129,12 +276,12 @@ export function HouseRentGallery({
                 size={18}
                 className="shrink-0"
               />
+
               <span className="wrap-break-word">{address}</span>
             </div>
           </div>
         </div>
 
-        {/* Responsive Gallery */}
         {imageCount === 0 ? (
           <div className="flex aspect-4/3 w-full items-center justify-center rounded-2xl bg-neutral-100 text-sm text-neutral-500 sm:aspect-auto sm:h-[320px] md:h-[400px]">
             تصویری برای این ملک ثبت نشده است
@@ -143,8 +290,9 @@ export function HouseRentGallery({
           <div
             className={`grid w-full min-w-0 gap-2 overflow-hidden sm:gap-3 ${galleryLayout}`}
           >
-            {images.slice(0, imageCount === 2 ? 2 : 3).map(
-              (photo, index) => {
+            {images
+              .slice(0, imageCount === 2 ? 2 : 3)
+              .map((photo, index) => {
                 const isMain = index === 0;
                 const isThird = index === 2;
                 const hasMore = imageCount > 3;
@@ -165,23 +313,13 @@ export function HouseRentGallery({
                     key={`${photo}-${index}`}
                     type="button"
                     onClick={() => openGallery(index)}
-                    aria-label={`نمایش تصویر ${index + 1} از ${imageCount}`}
                     className={`group relative block h-full min-h-0 min-w-0 w-full overflow-hidden rounded-xl bg-neutral-100 sm:rounded-2xl ${positionClass}`}
                   >
                     <Image
                       src={photo}
-                      alt={`${title} - تصویر ${index + 1}`}
+                      alt={`${title} تصویر ${index + 1}`}
                       fill
                       priority={index === 0}
-                      sizes={
-                        imageCount === 1
-                          ? "100vw"
-                          : imageCount === 2
-                            ? "(max-width: 639px) 50vw, 50vw"
-                            : isMain
-                              ? "(max-width: 639px) 100vw, 66vw"
-                              : "(max-width: 639px) 50vw, 34vw"
-                      }
                       className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     />
 
@@ -190,6 +328,7 @@ export function HouseRentGallery({
                         <span className="text-sm font-semibold">
                           مشاهده همه تصاویر
                         </span>
+
                         <span className="text-xs">
                           +{imageCount - 3} تصویر دیگر
                         </span>
@@ -197,23 +336,11 @@ export function HouseRentGallery({
                     )}
                   </button>
                 );
-              }
-            )}
+              })}
           </div>
-        )}
-
-        {imageCount > 3 && (
-          <button
-            type="button"
-            onClick={() => openGallery(0)}
-            className="mt-3 text-sm font-medium text-neutral-700 underline underline-offset-4 hover:text-neutral-950"
-          >
-            مشاهده همه {imageCount} تصویر
-          </button>
         )}
       </section>
 
-      {/* Separate Gallery Modal */}
       {galleryOpen && imageCount > 0 && (
         <HouseRentGalleryModal
           title={title}

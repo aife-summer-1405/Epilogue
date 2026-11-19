@@ -14,7 +14,6 @@ export async function getSellerHousesAction(params: SellerHouseQueryParams): Pro
       }
     });
 
-    // اضافه کردن هدر tokenNeeded برای اینکه اینترسپتور توکن را بخواند
     const response = await instance.get<SellerHouseResponse>("/houses/seller/user", {
       params: cleanParams,
       headers: {
@@ -38,7 +37,6 @@ export async function getSellerHousesAction(params: SellerHouseQueryParams): Pro
 
 export async function getCategoriesAction(): Promise<{ data: Category[]; totalCount: number }> {
   try {
-    // اگر این ای‌پای هم به توکن نیاز دارد، هدر را اینجا هم اضافه کنید
     const response = await instance.get<{ data: Category[]; totalCount: number }>("/categories", {
       headers: {
         tokenNeeded: "true",
@@ -52,13 +50,12 @@ export async function getCategoriesAction(): Promise<{ data: Category[]; totalCo
 
 export async function deleteSellerHouseAction(id: string): Promise<{ success: boolean; message?: string }> {
   try {
-    // برای حذف ملک نیز چون نیاز به احراز هویت است، هدر را اضافه می‌کنیم
     await instance.delete(`/houses/${id}`, {
       headers: {
         tokenNeeded: "true",
       },
     });
-    revalidatePath("/seller/dashboard/places-management");
+    revalidatePath("/panel/dashboard/buyer/houseManagement");
     return { success: true };
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

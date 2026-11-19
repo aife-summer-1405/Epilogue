@@ -55,7 +55,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: Building06Icon,
     text: "مدیریت املاک",
-    path: "/panel/houseManagement",
+    path: "/panel/dashboard/buyer/houseManagement",
   },
   {
     icon: CheckListIcon,
@@ -72,6 +72,11 @@ const menuSellerNavigationItems: INavigationItems[] = [
     text: "مدیریت نظرات",
     path: "/panel/commentsManagement",
   },
+  {
+    icon: Comment01Icon,
+    text: "فیدبک و نظرات",
+    path: "/panel/dashboard/seller/feedback",
+  },
 ];
 
 const menuBuyerNavigationItems: INavigationItems[] = [
@@ -85,7 +90,12 @@ const menuBuyerNavigationItems: INavigationItems[] = [
     text: "مدیریت پرداخت ها",
     path: "/panel/paymentManagement",
   },
-  { icon: HeartIcon, text: "علاقه مندی ها", path: "/panel/favorites" },
+  { icon: HeartIcon, text: "علاقه مندی ها", path: "/profile/favorites" },
+  {
+    icon: Comment01Icon,
+    text: "فیدبک و نظرات",
+    path: "/panel/dashboard/buyer/feedback",
+  },
 ];
 
 interface INavLinkProps {

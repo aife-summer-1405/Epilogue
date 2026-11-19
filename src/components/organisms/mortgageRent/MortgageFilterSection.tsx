@@ -287,7 +287,6 @@ const MortgageFilterSection: React.FC<MortgageFilterSectionProps> = ({
         </div>
       </div>
 
-      {/* مرتب‌سازی */}
       {showSort && (
         <div className={`${FIELD_CELL} ${SELECT_STYLE}`}>
           <FilterInput

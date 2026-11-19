@@ -7,7 +7,6 @@ interface HouseRentPageProps {
   }>;
 }
 
-// 1. کامپوننت اصلی کاملاً تمیز و بدون await مستقیم در بدنه اصلی
 export default function HouseRentDetailPage({
   params,
 }: HouseRentPageProps) {
@@ -26,7 +25,6 @@ export default function HouseRentDetailPage({
   );
 }
 
-// 3. کامپوننت کمکی برای مدیریت async/await روی params داخل Suspense
 async function HouseDetailWrapper({
   params,
 }: {

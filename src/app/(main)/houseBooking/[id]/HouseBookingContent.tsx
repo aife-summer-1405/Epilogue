@@ -108,94 +108,94 @@ export default function HouseBookingContent() {
     setStep(3);
   };
 
-const handleFinalConfirmation = async () => {
-  if (submitting) return;
+  const handleFinalConfirmation = async () => {
+    if (submitting) return;
 
-  const isValid = await trigger();
+    const isValid = await trigger();
 
-  if (!isValid) {
-    setStep(1);
-    return;
-  }
-
-  if (
-    !Number.isInteger(houseId) ||
-    houseId <= 0 ||
-    !startDate ||
-    !endDate ||
-    nights <= 0
-  ) {
-    alert("اطلاعات خانه یا تاریخ‌های رزرو معتبر نیست.");
-    return;
-  }
-
-  const values = getValues();
-
-  const payload = {
-    houseId,
-    reservedDates: [startDate, endDate] as [string, string],
-
-    traveler_details: [
-      {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        gender: values.gender,
-        birthDate: values.birthDate,
-        nationalId: values.nationalId,
-      },
-
-      ...values.additionalTravelers.map((traveler) => ({
-        firstName: traveler.firstName,
-        lastName: traveler.lastName,
-        gender: traveler.gender,
-        birthDate: traveler.birthDate,
-        nationalId: traveler.nationalId,
-      })),
-    ],
-
-    sharedEmail: values.sharedEmail,
-    sharedMobile: values.sharedMobile,
-  };
-
-  setSubmitting(true);
-
-  try {
-    const result = await createBookingAction(payload);
-
-    if (!result.success) {
-      alert(result.message);
+    if (!isValid) {
+      setStep(1);
       return;
     }
 
-    console.log("[Booking] Created:", result.booking);
+    if (
+      !Number.isInteger(houseId) ||
+      houseId <= 0 ||
+      !startDate ||
+      !endDate ||
+      nights <= 0
+    ) {
+      alert("اطلاعات خانه یا تاریخ‌های رزرو معتبر نیست.");
+      return;
+    }
 
-    setSuccess(true);
-  } catch (error) {
-    console.error("[Booking] Unexpected error:", error);
+    const values = getValues();
 
-    alert("خطای غیرمنتظره‌ای هنگام ثبت رزرو رخ داد.");
-  } finally {
-    setSubmitting(false);
-  }
-};
+    const payload = {
+      houseId,
+      reservedDates: [startDate, endDate] as [string, string],
+
+      traveler_details: [
+        {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          gender: values.gender,
+          birthDate: values.birthDate,
+          nationalId: values.nationalId,
+        },
+
+        ...values.additionalTravelers.map((traveler) => ({
+          firstName: traveler.firstName,
+          lastName: traveler.lastName,
+          gender: traveler.gender,
+          birthDate: traveler.birthDate,
+          nationalId: traveler.nationalId,
+        })),
+      ],
+
+      sharedEmail: values.sharedEmail,
+      sharedMobile: values.sharedMobile,
+    };
+
+    setSubmitting(true);
+
+    try {
+      const result = await createBookingAction(payload);
+
+      if (!result.success) {
+        alert(result.message);
+        return;
+      }
+
+      console.log("[Booking] Created:", result.booking);
+
+      setSuccess(true);
+    } catch (error) {
+      console.error("[Booking] Unexpected error:", error);
+
+      alert("خطای غیرمنتظره‌ای هنگام ثبت رزرو رخ داد.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const footer =
     step === 1
       ? {
-          label: "تأیید و ادامه فرایند",
-          onClick: handleTravelerSubmit,
-        }
+        label: "تأیید و ادامه فرایند",
+        onClick: handleTravelerSubmit,
+      }
       : step === 2
         ? {
-            label: "تأیید و ادامه فرایند",
-            onClick: handleConfirmDetails,
-          }
+          label: "تأیید و ادامه فرایند",
+          onClick: handleConfirmDetails,
+        }
         : {
-            label: submitting
-              ? "در حال ثبت رزرو..."
-              : "تأیید اطلاعات و صدور بلیط",
-            onClick: handleFinalConfirmation,
-          };
+          label: submitting
+            ? "در حال ثبت رزرو..."
+            : "تأیید اطلاعات و صدور بلیط",
+          onClick: handleFinalConfirmation,
+        };
 
   const isLoading = houseLoading;
 
@@ -350,7 +350,6 @@ const handleFinalConfirmation = async () => {
         </div>
       </div>
 
-      <BookingSuccessModal open={success} />
-    </main>
+      <BookingSuccessModal open={success} houseId={houseId} />    </main>
   );
 }

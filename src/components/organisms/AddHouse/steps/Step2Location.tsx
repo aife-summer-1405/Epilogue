@@ -1,9 +1,9 @@
 import dynamic from "next/dynamic";
 import TextInput from "@/components/molecules/inputs/textInput/TextInput";
 import { Control, UseFormGetValues, UseFormSetValue } from "react-hook-form";
-import { AddHouseFormData } from "@/core/types/addHouse";
 import Button from "@/components/atoms/button/Button";
 import { useState } from "react";
+import { AddHouseFormData } from "@/lib/validations/addHouseSchema";
 
 const MapComponent = dynamic(() => import("../MapComponent"), { ssr: false });
 
@@ -18,7 +18,6 @@ interface Step2Props {
 export const Step2Location = ({ control, getValues, setValue, location, onChangeLocation }: Step2Props) => {
   const [isSearching, setIsSearching] = useState(false);
 
-  // تابع جستجوی آدرس روی نقشه با استفاده از OpenStreetMap Nominatim
   const handleSearchAddress = async () => {
     const address = getValues("address");
     if (!address || !address.trim()) return;
@@ -32,7 +31,7 @@ export const Step2Location = ({ control, getValues, setValue, location, onChange
         const lat = parseFloat(data[0].lat);
         const lng = parseFloat(data[0].lon);
         onChangeLocation(lat, lng);
-        setValue("location", { lat, lng }, { shouldDirty: true });
+        setValue("location", { lat, lng }, { shouldDirty: true, shouldValidate: true });
       } else {
         alert("آدرسی یافت نشد.");
       }
