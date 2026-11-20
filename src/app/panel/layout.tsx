@@ -9,16 +9,22 @@ import ButtonOnlyIcon from "@/components/atoms/buttonOnlyIcon/buttonOnlyIcon";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Building06Icon,
+  Call02Icon,
   CheckListIcon,
   Comment01Icon,
   DashboardSquare02Icon,
+  Globe02Icon,
   HeartIcon,
   Home07Icon,
+  Layers01Icon,
+  Location01Icon,
   Logout01Icon,
   Menu01Icon,
+  News01Icon,
   Notification01Icon,
   SaveMoneyDollarIcon,
   UserEdit01Icon,
+  UserMultiple02Icon,
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import HomeLogo from "@/components/atoms/Logo/home-logo";
@@ -98,6 +104,47 @@ const menuBuyerNavigationItems: INavigationItems[] = [
   },
 ];
 
+const menuAdminNavigationItems: INavigationItems[] = [
+  { icon: Building06Icon, text: "مدیریت املاک", path: "/panel/admin/houses" },
+  {
+    icon: CheckListIcon,
+    text: "مدیریت رزرو ها",
+    path: "/panel/admin/reservations",
+  },
+  {
+    icon: UserMultiple02Icon,
+    text: "مدیریت کاربران",
+    path: "/panel/admin/users",
+  },
+  {
+    icon: Location01Icon,
+    text: "مدیریت مکان ها",
+    path: "/panel/admin/places",
+  },
+  {
+    icon: SaveMoneyDollarIcon,
+    text: "مدیریت پرداخت ها",
+    path: "/panel/admin/payments",
+  },
+  {
+    icon: Comment01Icon,
+    text: "مدیریت کامنت ها",
+    path: "/panel/admin/comments",
+  },
+  {
+    icon: Layers01Icon,
+    text: "دسته بندی ها",
+    path: "/panel/admin/categories",
+  },
+  {
+    icon: Globe02Icon,
+    text: "شبکه های اجتماعی",
+    path: "/panel/admin/socials",
+  },
+  { icon: News01Icon, text: "مدیریت مقالات", path: "/panel/admin/articles" },
+  { icon: Call02Icon, text: "ارتباط با ما", path: "/panel/admin/contact" },
+];
+
 interface INavLinkProps {
   item: INavigationItems;
   active: boolean;
@@ -138,9 +185,11 @@ const PanelLayout: FC<IProps> = ({ children }) => {
   const { mutate: logout, isPending } = useLogout();
 
   const navigationItems =
-    userRole === "seller"
-      ? menuSellerNavigationItems
-      : menuBuyerNavigationItems;
+    userRole === "admin"
+      ? menuAdminNavigationItems
+      : userRole === "seller"
+        ? menuSellerNavigationItems
+        : menuBuyerNavigationItems;
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -148,6 +197,30 @@ const PanelLayout: FC<IProps> = ({ children }) => {
     const role = getCookie("userRole");
     setUserRole(role);
   }, []);
+
+  const roleLabel =
+    userRole === "admin"
+      ? "( ادمین )"
+      : userRole === "buyer"
+        ? "( خریدار )"
+        : "( فروشنده )";
+
+  const logoutButton = (
+    <button
+      type="button"
+      disabled={isPending}
+      className="group flex w-fit cursor-pointer items-center gap-3 xl:gap-4"
+      onClick={() => logout()}
+    >
+      <HugeiconsIcon
+        icon={Logout01Icon}
+        className="size-5 shrink-0 text-neutral-800 transition group-hover:text-default-text xl:size-6"
+      />
+      <p className="text-base font-normal text-neutral-800 transition group-hover:font-bold group-hover:text-default-text xl:text-lg 2xl:text-[20px]">
+        خروج از حساب کاربری
+      </p>
+    </button>
+  );
 
   const sidebarContent = (
     <>
@@ -182,20 +255,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
                 />
               ))
             : null}
-          <button
-            type="button"
-            disabled={isPending}
-            className="group flex w-fit cursor-pointer items-center gap-3 xl:gap-4"
-            onClick={() => logout()}
-          >
-            <HugeiconsIcon
-              icon={Logout01Icon}
-              className="size-5 shrink-0 text-neutral-800 transition group-hover:text-default-text xl:size-6"
-            />
-            <p className="text-base font-normal text-neutral-800 transition group-hover:font-bold group-hover:text-default-text xl:text-lg 2xl:text-[20px]">
-              خروج از حساب کاربری
-            </p>
-          </button>
+          {logoutButton}
         </div>
       </div>
     </>
@@ -255,7 +315,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
                   <Skeleton className="w-20 h-7.5 bg-neutral-500" />
                 )}
                 <span className="text-xs font-normal text-primary-500 dark:text-primary-800 sm:text-sm">
-                  {userRole === "buyer" ? "( خریدار )" : "( فروشنده )"}
+                  {roleLabel}
                 </span>
               </div>
             </div>
