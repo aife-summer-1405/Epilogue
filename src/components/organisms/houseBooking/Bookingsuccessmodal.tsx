@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import confetti from "canvas-confetti"; // پکیج ذرات شادی و فشفشه
+import confetti from "canvas-confetti";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Tick02Icon,

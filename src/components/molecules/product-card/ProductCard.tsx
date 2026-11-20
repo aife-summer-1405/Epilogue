@@ -55,8 +55,8 @@ export default function ProductCard({
       >
         <div className="relative size-full">
           <ImageFallback
-            src={slides ? slides[0].src : null}
-            alt={slides ? slides[0].alt : "یافت نشد"}
+            src={slides ? slides[0]?.src : null}
+            alt={slides ? slides[0]?.alt : "یافت نشد"}
             fill
             className="object-cover"
             sizes="(min-width: 1024px) 55vw, 100vw"
