@@ -20,7 +20,7 @@ import {
   FinanceParams,
   FinanceStatus,
   IFinanceList,
-} from "@/core/types/panel/buyer/financeManagement.types";
+} from "@/core/types/panel/seller/financeManagement.types";
 import {
   keepPreviousData,
   useMutation,
@@ -134,7 +134,7 @@ const SellerFinancialManagementPage = () => {
     mutationKey: [`DeleteReserve`],
     mutationFn: (id: string) => acceptAPayment(id),
     onMutate: () => {
-      toast.loading("درحال حذف رزرو", { toastId: "VerifyingPayment" });
+      toast.loading("درحال تایید پرداخت", { toastId: "VerifyingPayment" });
     },
     onSuccess: () => {
       toast.update("VerifyingPayment", {
