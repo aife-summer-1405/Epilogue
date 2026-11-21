@@ -11,15 +11,24 @@ import {
   CheckmarkCircle02Icon,
 } from "@hugeicons/core-free-icons";
 import { useAdminUsersQuery } from "@/hooks/useAdminUsers";
-import type { AdminUserItem, GetAdminUsersResponse } from "@/core/types/userManagement.types";
+import type {
+  AdminUserItem,
+  GetAdminUsersResponse,
+} from "@/core/types/userManagement.types";
 import { UsersListTable } from "@/components/organisms/UsersListTable";
 import { UserDeleteModal } from "@/components/molecules/UserDeleteModal";
+import { Pagination } from "../molecules";
 
 interface UserManagementTemplateProps {
   initialData?: GetAdminUsersResponse;
 }
 
-export function UserManagementTemplate({ initialData }: UserManagementTemplateProps) {
+const ITEMS_PER_PAGE = 10;
+
+export function UserManagementTemplate({
+  initialData,
+}: UserManagementTemplateProps) {
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | string>("all");
   const [userToDelete, setUserToDelete] = useState<AdminUserItem | null>(null);
@@ -29,10 +38,15 @@ export function UserManagementTemplate({ initialData }: UserManagementTemplatePr
   } | null>(null);
 
   const { data, isLoading, isFetching, isError, error, refetch } =
-    useAdminUsersQuery({ search: searchQuery || undefined });
+    useAdminUsersQuery({
+      page: currentPage,
+      limit: ITEMS_PER_PAGE,
+      search: searchQuery || undefined,
+    });
 
   const users = data?.data ?? initialData?.data ?? [];
   const totalCount = data?.totalCount ?? initialData?.totalCount ?? users.length;
+  const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
@@ -60,6 +74,11 @@ export function UserManagementTemplate({ initialData }: UserManagementTemplatePr
     setTimeout(() => {
       setToast((prev) => (prev?.text === text ? null : prev));
     }, 3500);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -108,37 +127,55 @@ export function UserManagementTemplate({ initialData }: UserManagementTemplatePr
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="flex items-center justify-between rounded-2xl border border-neutral-300 dark:border-neutral-100 bg-default-white-bg dark:bg-default-dark-content p-4 shadow-sm">
           <div>
-            <p className="text-xs text-neutral-800 dark:text-neutral-600">کل کاربران ثبت‌شده</p>
+            <p className="text-xs text-neutral-800 dark:text-neutral-600">
+              کل کاربران ثبت‌شده
+            </p>
             <p className="mt-1 text-2xl font-extrabold text-default-text">
               {new Intl.NumberFormat("fa-IR").format(totalCount)}
             </p>
           </div>
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary-500 dark:bg-primary-100/40 dark:text-primary-800">
-            <HugeiconsIcon icon={UserMultiple02Icon} size={22} color="currentColor" />
+            <HugeiconsIcon
+              icon={UserMultiple02Icon}
+              size={22}
+              color="currentColor"
+            />
           </div>
         </div>
 
         <div className="flex items-center justify-between rounded-2xl border border-neutral-300 dark:border-neutral-100 bg-default-white-bg dark:bg-default-dark-content p-4 shadow-sm">
           <div>
-            <p className="text-xs text-neutral-800 dark:text-neutral-600">مدیران (در صفحه جاری)</p>
+            <p className="text-xs text-neutral-800 dark:text-neutral-600">
+              مدیران (در صفحه جاری)
+            </p>
             <p className="mt-1 text-2xl font-extrabold text-default-text">
               {new Intl.NumberFormat("fa-IR").format(adminCount)}
             </p>
           </div>
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-secondary-50 text-secondary-600 dark:bg-secondary-100/40 dark:text-secondary-700">
-            <HugeiconsIcon icon={ShieldUserIcon} size={22} color="currentColor" />
+            <HugeiconsIcon
+              icon={ShieldUserIcon}
+              size={22}
+              color="currentColor"
+            />
           </div>
         </div>
 
         <div className="flex items-center justify-between rounded-2xl border border-neutral-300 dark:border-neutral-100 bg-default-white-bg dark:bg-default-dark-content p-4 shadow-sm">
           <div>
-            <p className="text-xs text-neutral-800 dark:text-neutral-600">ایمیل تاییدشده (در صفحه جاری)</p>
+            <p className="text-xs text-neutral-800 dark:text-neutral-600">
+              ایمیل تاییدشده (در صفحه جاری)
+            </p>
             <p className="mt-1 text-2xl font-extrabold text-default-text">
               {new Intl.NumberFormat("fa-IR").format(verifiedCount)}
             </p>
           </div>
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success-50 text-success-700 dark:bg-success-900/30 dark:text-success-500">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} size={22} color="currentColor" />
+            <HugeiconsIcon
+              icon={CheckmarkCircle02Icon}
+              size={22}
+              color="currentColor"
+            />
           </div>
         </div>
       </div>
@@ -154,7 +191,10 @@ export function UserManagementTemplate({ initialData }: UserManagementTemplatePr
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
             placeholder="جستجو بر اساس نام، ایمیل، موبایل یا شناسه..."
             className="w-full rounded-xl border border-neutral-300 dark:border-neutral-200 bg-neutral-100 dark:bg-[#353535] py-2.5 pr-10 pl-4 text-xs sm:text-sm text-default-text placeholder:text-neutral-800 dark:placeholder:text-neutral-600 outline-none focus:border-primary-500 transition-colors"
           />
@@ -171,7 +211,10 @@ export function UserManagementTemplate({ initialData }: UserManagementTemplatePr
               <button
                 key={tab.key}
                 type="button"
-                onClick={() => setRoleFilter(tab.key)}
+                onClick={() => {
+                  setRoleFilter(tab.key);
+                  setCurrentPage(1);
+                }}
                 className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
                   active
                     ? "bg-primary-500 text-white"
@@ -200,11 +243,37 @@ export function UserManagementTemplate({ initialData }: UserManagementTemplatePr
           <p className="mt-1 text-xs">{error?.message}</p>
         </div>
       ) : (
-        <UsersListTable
-          users={filteredUsers}
-          onRequestDelete={(user) => setUserToDelete(user)}
-          onRoleFeedback={showToast}
-        />
+        <>
+          <UsersListTable
+            users={filteredUsers}
+            onRequestDelete={(user) => setUserToDelete(user)}
+            onRoleFeedback={showToast}
+          />
+
+          {totalPages > 1 && (
+            <div className="flex flex-col items-center justify-between gap-3 pt-2 sm:flex-row">
+
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                buttonsClassName="cursor-pointer"
+              />
+                            <p className="text-xs text-neutral-800 dark:text-neutral-600">
+                صفحه{" "}
+                <strong className="text-default-text">
+                  {new Intl.NumberFormat("fa-IR").format(currentPage)}
+                </strong>{" "}
+                از{" "}
+                <strong className="text-default-text">
+                  {new Intl.NumberFormat("fa-IR").format(totalPages)}
+                </strong>{" "}
+                ({new Intl.NumberFormat("fa-IR").format(totalCount)} کاربر)
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       <UserDeleteModal

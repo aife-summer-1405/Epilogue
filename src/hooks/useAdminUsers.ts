@@ -16,14 +16,14 @@ import type {
 
 export const adminUsersKeys = {
   all: ["admin", "users"] as const,
-  list: (params?: { page?: number; search?: string }) =>
+  list: (params?: { page?: number; limit?: number; search?: string }) =>
     [...adminUsersKeys.all, "list", params] as const,
-  detail: (userId: string) =>
-    [...adminUsersKeys.all, "detail", userId] as const,
+  detail: (userId: string) => [...adminUsersKeys.all, "detail", userId] as const,
 };
 
 export function useAdminUsersQuery(params?: {
   page?: number;
+  limit?: number;
   search?: string;
 }) {
   return useQuery({

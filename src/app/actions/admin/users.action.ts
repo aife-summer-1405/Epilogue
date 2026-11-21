@@ -35,8 +35,14 @@ export async function getAdminUsersAction(params?: {
   search?: string;
 }): Promise<ActionResult<GetAdminUsersResponse>> {
   try {
+    const queryParams = {
+      page: params?.page ?? 1,
+      limit: params?.limit ?? 10,
+      ...(params?.search ? { search: params.search } : {}),
+    };
+
     const response = await instance.get("/admin/users", {
-      params,
+      params: queryParams,
       headers: {
         tokenNeeded: "true",
       },
@@ -63,7 +69,10 @@ export async function getAdminUsersAction(params?: {
     console.error("Get Admin Users Error:", error?.response?.data || error?.message);
     return {
       success: false,
-      message: error?.response?.data?.message || error?.message || "خطا در دریافت لیست کاربران",
+      message:
+        error?.response?.data?.message ||
+        error?.message ||
+        "خطا در دریافت لیست کاربران",
     };
   }
 }

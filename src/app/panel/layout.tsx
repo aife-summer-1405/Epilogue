@@ -48,7 +48,7 @@ interface INavigationItems {
 }
 
 const menuNavigationItems: INavigationItems[] = [
-  { icon: DashboardSquare02Icon, text: "داشبورد", path: "/panel" },
+  { icon: DashboardSquare02Icon, text: "داشبورد", path: "/panel/admin" },
   {
     icon: UserEdit01Icon,
     text: "مشخصات کاربری",
