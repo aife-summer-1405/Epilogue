@@ -14,18 +14,17 @@ import type {
   UpdateAdminUserRolePayload,
 } from "@/core/types/userManagement.types";
 
+import type { GetAdminUsersParams } from "@/app/actions/admin/users.action";
+
 export const adminUsersKeys = {
   all: ["admin", "users"] as const,
-  list: (params?: { page?: number; limit?: number; search?: string }) =>
+  list: (params?: GetAdminUsersParams) =>
     [...adminUsersKeys.all, "list", params] as const,
-  detail: (userId: string) => [...adminUsersKeys.all, "detail", userId] as const,
+  detail: (userId: string) =>
+    [...adminUsersKeys.all, "detail", userId] as const,
 };
 
-export function useAdminUsersQuery(params?: {
-  page?: number;
-  limit?: number;
-  search?: string;
-}) {
+export function useAdminUsersQuery(params?: GetAdminUsersParams) {
   return useQuery({
     queryKey: adminUsersKeys.list(params),
     queryFn: async () => {

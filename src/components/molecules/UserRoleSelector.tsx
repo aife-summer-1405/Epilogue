@@ -12,9 +12,9 @@ interface UserRoleSelectorProps {
 }
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
-  { value: "admin", label: "ادمین (Admin)" },
-  { value: "buyer", label: "کاربر / خریدار (Buyer)" },
-  { value: "seller", label: "میزبان / فروشنده (Seller)" },
+  { value: "admin", label: "ادمین " },
+  { value: "buyer", label: "کاربر / خریدار " },
+  { value: "seller", label: "میزبان / فروشنده " },
 ];
 
 export function UserRoleSelector({
