@@ -16,7 +16,7 @@ import { formatPersianDate, formatPrice } from "@/utils/formatters";
 import Button from "@/components/atoms/button/Button";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Invoice01Icon } from "@hugeicons/core-free-icons";
-import PaymentDetailModal from "../shared/PaymentDetailModal";
+import PaymentDetailModal from "../../shared/PaymentDetailModal";
 
 const PaymentsModal = () => {
   const router = useRouter();
