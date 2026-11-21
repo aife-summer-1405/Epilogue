@@ -7,7 +7,6 @@ import ImageFallback from "@/components/molecules/ImageFallBack/ImageFallBack";
 import SelectComponent from "@/components/molecules/select/Select";
 import StatCard from "@/components/molecules/statCard/StatCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import useFakeLoading from "@/hooks/useFakeLoading";
 import {
   Building06Icon,
   EllipsisVerticalIcon,
@@ -17,38 +16,27 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-
-const reservations = Array.from({ length: 8 }, (_, i) => ({
-  id: i + 1,
-  name: "هتل سراوان راتین رشت",
-  image: "/images/hotel.jpg",
-  date: "۱۲ مرداد ۱۴۰۱ - ۱۲:۳۳",
-  price: "۲,۰۰۰,۰۰۰",
-  status: "تایید شده",
-}));
+import { useGetSellerDashboard } from "@/hooks/queries/useGetSellerDashboard";
+import {
+  useConfirmSellerBooking,
+  useCancelSellerBooking,
+  useDeleteSellerBooking,
+} from "@/hooks/mutations/panel/seller/useSellerDashboardMutations";
+import {
+  ISellerBookingItem,
+  ISellerDashboardProfile,
+} from "@/app/actions/panel/seller/sellerDashboard.actions";
 
 const items = [
   { label: "ماه جاری", value: "month" },
   { label: "سال جاری", value: "year" },
 ];
 
-const dropDownOptions = [
-  { label: "تایید رزرو" },
-  { label: "لغو رزرو" },
-  { label: "جزئیات" },
-  { label: "حذف" },
-];
-
 const href = "/panel/reserveManagement/buyer";
-
-const stats = [
-  { icon: Building06Icon, label: "کل ملک ها", value: 20, href },
-  { icon: ListChecksIcon, label: "رزرو های فعال", value: 20, href },
-  { icon: HourglassIcon, label: "رزرو های در انتظار", value: 20, href },
-  { icon: ViewIcon, label: "بازدید های امروز", value: 20, href },
-];
 
 const progressStyles = buildStyles({
   strokeLinecap: "round",
@@ -58,8 +46,243 @@ const progressStyles = buildStyles({
   textSize: "18px",
 });
 
+const formatPersianDateTime = (isoDate?: string): string => {
+  if (!isoDate) return "-";
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime())) return isoDate;
+
+  const datePart = new Intl.DateTimeFormat("fa-IR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+
+  const timePart = new Intl.DateTimeFormat("fa-IR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+
+  return `${datePart} - ${timePart}`;
+};
+
+const formatPrice = (val?: string | number | null): string => {
+  if (val === undefined || val === null || val === "") return "0";
+  const num = Number(val);
+  return isNaN(num) ? String(val) : num.toLocaleString("en-US");
+};
+
+const formatPersianPrice = (val?: string | number | null): string => {
+  if (val === undefined || val === null || val === "") return "۰";
+  const num = Number(val);
+  return isNaN(num) ? String(val) : num.toLocaleString("fa-IR");
+};
+
+const getBookingStatusMeta = (
+  status?: string,
+): { label: string; type: "confirmed" | "pending" | "canceled" } => {
+  const normalized = (status || "").toLowerCase();
+  if (normalized === "confirmed" || normalized === "conformed") {
+    return { label: "تایید شده", type: "confirmed" };
+  }
+  if (normalized === "canceled" || normalized === "cancelled") {
+    return { label: "لغو شده", type: "canceled" };
+  }
+  return { label: "در انتظار تایید", type: "pending" };
+};
+
+const calculateProfileCompletion = (
+  profile: ISellerDashboardProfile | null,
+): number => {
+  if (!profile) return 0;
+  const checks = [
+    Boolean(profile.firstName?.trim()),
+    Boolean(profile.lastName?.trim()),
+    Boolean(profile.email?.trim()),
+    Boolean(profile.phoneNumber?.trim()),
+    Boolean(profile.profilePicture),
+    Boolean(profile.emailVerified),
+  ];
+  const filledCount = checks.filter(Boolean).length;
+  return Math.round((filledCount / checks.length) * 100);
+};
+
+const getLastEditedText = (updatedAt?: string | null): string => {
+  if (!updatedAt) return "هنوز ویرایشی ثبت نشده است";
+  const date = new Date(updatedAt);
+  if (isNaN(date.getTime())) return "بروزرسانی اخیر";
+
+  const diffDays = Math.floor(
+    (Date.now() - date.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  if (diffDays <= 0) return "آخرین ویرایش امروز";
+  if (diffDays === 1) return "آخرین ویرایش دیروز";
+  return `آخرین ویرایش ${diffDays.toLocaleString("fa-IR")} روز پیش`;
+};
+
 const SellerDashboard = () => {
-  const isLoading = useFakeLoading();
+  const router = useRouter();
+  const [timeframe, setTimeframe] = useState<"month" | "year">("month");
+
+  const { data, isLoading } = useGetSellerDashboard();
+  const { mutate: confirmBooking } = useConfirmSellerBooking();
+  const { mutate: cancelBooking } = useCancelSellerBooking();
+  const { mutate: deleteBooking } = useDeleteSellerBooking();
+
+  const bookings = useMemo(() => data?.bookings ?? [], [data?.bookings]);
+
+  const stats = useMemo(() => {
+    const totalHouses = data?.housesTotalCount ?? 0;
+
+    const activeBookings = bookings.filter((b) => {
+      const s = (b.status || "").toLowerCase();
+      return s === "confirmed" || s === "conformed";
+    }).length;
+
+    const pendingBookings = bookings.filter(
+      (b) => (b.status || "").toLowerCase() === "pending",
+    ).length;
+
+    const todayVisits = data?.todayVisitsCount ?? 0;
+
+    return [
+      { icon: Building06Icon, label: "کل ملک ها", value: totalHouses, href },
+      {
+        icon: ListChecksIcon,
+        label: "رزرو های فعال",
+        value: activeBookings,
+        href,
+      },
+      {
+        icon: HourglassIcon,
+        label: "رزرو های در انتظار",
+        value: pendingBookings,
+        href,
+      },
+      { icon: ViewIcon, label: "بازدید های امروز", value: todayVisits, href },
+    ];
+  }, [data?.housesTotalCount, data?.todayVisitsCount, bookings]);
+
+  const incomeMetrics = useMemo(() => {
+    const now = new Date();
+    const currentMonthName = new Intl.DateTimeFormat("fa-IR", {
+      month: "long",
+    }).format(now);
+    const currentYearText = new Intl.DateTimeFormat("fa-IR", {
+      year: "numeric",
+    }).format(now);
+
+    const finance = data?.finance;
+    const totalAmount = Number(finance?.totalAmount ?? 0);
+    const currentMonthAmount = Number(finance?.totalCurrentMonthAmount ?? 0);
+
+    if (timeframe === "year") {
+      const currentGregorianYear = now.getFullYear();
+      const paymentsSumThisYear = (data?.payments ?? []).reduce((sum, p) => {
+        const dStr =
+          p.createdAt || p.booking?.createdAt || p.booking?.created_at;
+        const d = dStr ? new Date(dStr) : null;
+        if (
+          d &&
+          !isNaN(d.getTime()) &&
+          d.getFullYear() === currentGregorianYear
+        ) {
+          return sum + (Number(p.amount) || 0);
+        }
+        return sum;
+      }, 0);
+
+      const periodAmount =
+        paymentsSumThisYear > 0 ? paymentsSumThisYear : totalAmount;
+      const percentage =
+        totalAmount > 0
+          ? Math.min(100, Math.round((periodAmount / totalAmount) * 100))
+          : 0;
+
+      return {
+        subtitle: `آمار درآمد سال ${currentYearText}`,
+        periodLabel: "درآمد امسال",
+        totalAmount,
+        periodAmount,
+        percentage,
+      };
+    }
+
+    const percentage =
+      totalAmount > 0
+        ? Math.min(100, Math.round((currentMonthAmount / totalAmount) * 100))
+        : 0;
+
+    return {
+      subtitle: `از تاریخ ۱ تا ۳۰ ${currentMonthName} ${currentYearText}`,
+      periodLabel: "درآمد این ماه",
+      totalAmount,
+      periodAmount: currentMonthAmount,
+      percentage,
+    };
+  }, [data?.finance, data?.payments, timeframe]);
+
+  const profileCompletion = useMemo(
+    () => calculateProfileCompletion(data?.profile ?? null),
+    [data?.profile],
+  );
+
+  const lastEditedText = useMemo(
+    () =>
+      getLastEditedText(
+        data?.profile?.updatedAt || data?.profile?.updated_at || null,
+      ),
+    [data?.profile],
+  );
+
+  const recentReservations = useMemo(() => {
+    return bookings.slice(0, 8).map((item: ISellerBookingItem) => {
+      const firstPhoto =
+        Array.isArray(item.house?.photos) && item.house.photos.length > 0
+          ? item.house.photos[0]
+          : "/images/hotel.jpg";
+      const statusMeta = getBookingStatusMeta(item.status);
+
+      return {
+        id: String(item.id),
+        name:
+          item.house?.title ||
+          `اقامتگاه شماره ${item.houseId || item.house_id || item.id}`,
+        image: firstPhoto || "/images/hotel.jpg",
+        date: formatPersianDateTime(
+          item.created_at || item.createdAt || item.reservedDates?.[0],
+        ),
+        price: formatPersianPrice(
+          item.amount ??
+            item.totalPrice ??
+            item.total_price ??
+            item.price ??
+            item.house?.price,
+        ),
+        statusLabel: statusMeta.label,
+        statusType: statusMeta.type,
+      };
+    });
+  }, [bookings]);
+
+  const getDropDownOptions = (bookingId: string) => [
+    {
+      label: "تایید رزرو",
+      onClick: () => confirmBooking(bookingId),
+    },
+    {
+      label: "لغو رزرو",
+      onClick: () => cancelBooking(bookingId),
+    },
+    {
+      label: "جزئیات",
+      onClick: () => router.push(`/panel/reservations?bookingId=${bookingId}`),
+    },
+    {
+      label: "حذف",
+      onClick: () => deleteBooking(bookingId),
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-4">
@@ -76,12 +299,14 @@ const SellerDashboard = () => {
                 نمودار درآمد
               </p>
               <span className="text-sm font-normal text-neutral-dark-200 sm:text-base">
-                از تاریخ 1 تا 31 شهریور 1404
+                {incomeMetrics.subtitle}
               </span>
             </div>
             <SelectComponent
               defaultValue="month"
-              onChange={(event) => console.log(event)}
+              onChange={(value: string | null) =>
+                setTimeframe(value === "year" ? "year" : "month")
+              }
               items={items}
               triggerClassName="rounded-[40px] border-neutral-300 w-fit px-3! py-2! h-9! sm:px-4! sm:py-2.5! sm:h-10.5! bg-transparent! text-sm! sm:text-base! font-normal! text-default-text!"
             />
@@ -106,7 +331,7 @@ const SellerDashboard = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1 text-xs font-normal text-default-text sm:gap-2 sm:text-[14px]">
-                      <p>100,000,000</p>
+                      <p>{formatPrice(incomeMetrics.totalAmount)}</p>
                       <p>تومان</p>
                     </div>
                   </div>
@@ -114,19 +339,19 @@ const SellerDashboard = () => {
                     <div className="flex items-center gap-2">
                       <div className="size-3 rounded-full bg-primary-600 sm:size-4" />
                       <span className="text-xs text-neutral-dark-300 sm:text-[14px]">
-                        درآمد این ماه
+                        {incomeMetrics.periodLabel}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 text-xs font-normal text-default-text sm:gap-2 sm:text-[14px]">
-                      <p>60,000,000</p>
+                      <p>{formatPrice(incomeMetrics.periodAmount)}</p>
                       <p>تومان</p>
                     </div>
                   </div>
                 </div>
                 <div className="size-28 shrink-0 self-end sm:size-32.5">
                   <CircularProgressbar
-                    value={66}
-                    text={`${66}%`}
+                    value={incomeMetrics.percentage}
+                    text={`${incomeMetrics.percentage}%`}
                     strokeWidth={12}
                     styles={progressStyles}
                   />
@@ -147,6 +372,7 @@ const SellerDashboard = () => {
             </div>
             <Button
               variant="outline"
+              onClick={() => router.push("/panel/buyer/profile")}
               className="w-fit rounded-[40px] border-neutral-300 px-3! py-2! h-9! sm:px-4! sm:py-2.5! sm:h-10.5! bg-transparent! text-sm! sm:text-base! font-normal! text-default-text! hover:border-primary-800 hover:text-primary-800"
             >
               ویرایش پروفایل
@@ -161,12 +387,12 @@ const SellerDashboard = () => {
             ) : (
               <>
                 <p className="text-xs font-normal text-neutral-dark-200 sm:text-sm xl:text-[14px]">
-                  آخرین ویرایش 3 روز پیش
+                  {lastEditedText}
                 </p>
                 <div className="size-28 shrink-0 self-end sm:size-32.5">
                   <CircularProgressbar
-                    value={16}
-                    text={`${16}%`}
+                    value={profileCompletion}
+                    text={`${profileCompletion}%`}
                     strokeWidth={12}
                     styles={progressStyles}
                   />
@@ -210,67 +436,78 @@ const SellerDashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading
-                ? Array.from({ length: 5 }, (_, i) => (
-                    <tr key={i} className="border-t border-neutral-300">
-                      <td className="py-3">
-                        <div className="flex items-center gap-3">
-                          <Skeleton className="size-8 rounded-full" />
-                          <Skeleton className="h-4 w-36" />
-                        </div>
-                      </td>
-                      <td className="py-3">
-                        <Skeleton className="h-4 w-32" />
-                      </td>
-                      <td className="py-3">
-                        <Skeleton className="h-4 w-24" />
-                      </td>
-                      <td className="py-3">
-                        <Skeleton className="h-7 w-20 rounded-[8px]" />
-                      </td>
-                      <td className="py-3 pl-3">
-                        <Skeleton className="mr-auto size-6 rounded-full" />
-                      </td>
-                    </tr>
-                  ))
-                : reservations.map((item) => (
-                    <tr key={item.id} className="border-t border-neutral-300">
-                      <td className="py-3">
-                        <div className="flex items-center gap-3">
-                          <ImageFallback
-                            src={item.image}
-                            alt={item.name}
-                            className="size-8 shrink-0 rounded-full object-cover"
-                            width={32}
-                            height={32}
-                          />
-                          <span className="truncate text-sm font-normal text-default-text sm:text-base">
-                            {item.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 text-sm font-normal text-default-text sm:text-base">
-                        {item.date}
-                      </td>
-                      <td className="py-3 text-sm font-normal text-default-text sm:text-base">
-                        {item.price} <span className="mr-1">تومان</span>
-                      </td>
-                      <td className="py-3">
-                        <Badge text={item.status} type="success" />
-                      </td>
-                      <td className="flex justify-end py-3 pl-3">
-                        <DropDownMenu
-                          triggerRender={
-                            <HugeiconsIcon
-                              icon={EllipsisVerticalIcon}
-                              className="size-5 cursor-pointer text-default-black sm:size-6"
-                            />
-                          }
-                          dropDownItems={dropDownOptions}
+              {isLoading ? (
+                Array.from({ length: 5 }, (_, i) => (
+                  <tr key={i} className="border-t border-neutral-300">
+                    <td className="py-3">
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="size-8 rounded-full" />
+                        <Skeleton className="h-4 w-36" />
+                      </div>
+                    </td>
+                    <td className="py-3">
+                      <Skeleton className="h-4 w-32" />
+                    </td>
+                    <td className="py-3">
+                      <Skeleton className="h-4 w-24" />
+                    </td>
+                    <td className="py-3">
+                      <Skeleton className="h-7 w-20 rounded-[8px]" />
+                    </td>
+                    <td className="py-3 pl-3">
+                      <Skeleton className="mr-auto size-6 rounded-full" />
+                    </td>
+                  </tr>
+                ))
+              ) : recentReservations.length === 0 ? (
+                <tr className="border-t border-neutral-300">
+                  <td
+                    colSpan={5}
+                    className="py-10 text-center text-sm text-neutral-dark-300 dark:text-neutral-400"
+                  >
+                    رزروی یافت نشد
+                  </td>
+                </tr>
+              ) : (
+                recentReservations.map((item) => (
+                  <tr key={item.id} className="border-t border-neutral-300">
+                    <td className="py-3">
+                      <div className="flex items-center gap-3">
+                        <ImageFallback
+                          src={item.image}
+                          alt={item.name}
+                          className="size-8 shrink-0 rounded-full object-cover"
+                          width={32}
+                          height={32}
                         />
-                      </td>
-                    </tr>
-                  ))}
+                        <span className="truncate text-sm font-normal text-default-text sm:text-base">
+                          {item.name}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3 text-sm font-normal text-default-text sm:text-base">
+                      {item.date}
+                    </td>
+                    <td className="py-3 text-sm font-normal text-default-text sm:text-base">
+                      {item.price} <span className="mr-1">تومان</span>
+                    </td>
+                    <td className="py-3">
+                      <Badge text={item.statusLabel} type={item.statusType} />
+                    </td>
+                    <td className="flex justify-end py-3 pl-3">
+                      <DropDownMenu
+                        triggerRender={
+                          <HugeiconsIcon
+                            icon={EllipsisVerticalIcon}
+                            className="size-5 cursor-pointer text-default-black sm:size-6"
+                          />
+                        }
+                        dropDownItems={getDropDownOptions(item.id)}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
