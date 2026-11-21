@@ -1,4 +1,3 @@
-// src/components/organisms/AddHouse/MapComponent.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -6,7 +5,6 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from "react-lea
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
-// @ts-expect-error fix leaflet icon
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
