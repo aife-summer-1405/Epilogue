@@ -48,7 +48,7 @@ interface INavigationItems {
 }
 
 const menuNavigationItems: INavigationItems[] = [
-  { icon: DashboardSquare02Icon, text: "داشبورد", path: "/panel/admin" },
+  { icon: DashboardSquare02Icon, text: "داشبورد", path: "/panel/dashboard" },
   {
     icon: UserEdit01Icon,
     text: "مشخصات کاربری",
@@ -61,7 +61,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: Building06Icon,
     text: "مدیریت املاک",
-    path: "/panel/dashboard/buyer/houseManagement",
+    path: "/panel/houseManagement",
   },
   {
     icon: CheckListIcon,
@@ -81,7 +81,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
   {
     icon: Comment01Icon,
     text: "فیدبک و نظرات",
-    path: "/panel/dashboard/seller/feedback",
+    path: "/panel/feedback/seller",
   },
 ];
 
@@ -100,7 +100,7 @@ const menuBuyerNavigationItems: INavigationItems[] = [
   {
     icon: Comment01Icon,
     text: "فیدبک و نظرات",
-    path: "/panel/dashboard/buyer/feedback",
+    path: "/panel/feedback/buyer",
   },
 ];
 

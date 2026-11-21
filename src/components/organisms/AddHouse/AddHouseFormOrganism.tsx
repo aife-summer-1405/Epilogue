@@ -118,7 +118,7 @@ export const AddHouseFormOrganism = () => {
       }
 
       setIsPending(false);
-      router.push("/panel/dashboard/buyer/houseManagement/");
+      router.push("/panel/houseManagement/");
     } else {
       setIsPending(false);
       alert(result.message || "خطا در ثبت اطلاعات");
@@ -134,7 +134,7 @@ export const AddHouseFormOrganism = () => {
         <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100">
           ساخت ملک جدید        </h1>
         <button
-          onClick={() => router.push("/panel/dashboard/buyer/houseManagement/")}
+          onClick={() => router.push("/panel/houseManagement/")}
           className="flex items-center gap-2 cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-[#0f3d61] transition"
         >
           <span>رفتن به لیست املاک</span>

@@ -55,7 +55,7 @@ export async function deleteSellerHouseAction(id: string): Promise<{ success: bo
         tokenNeeded: "true",
       },
     });
-    revalidatePath("/panel/dashboard/buyer/houseManagement");
+    revalidatePath("/panel/houseManagement");
     return { success: true };
   } catch (error: unknown) {
     if (error instanceof AxiosError) {

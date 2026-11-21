@@ -128,7 +128,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
               }
               onClick={() =>
                 router.push(
-                  "/panel/dashboard/buyer/houseManagement/add-house",
+                  "/panel/houseManagement/add-house",
                 )
               }
               className="flex-1 rounded-2xl bg-[#0f3d61] hover:bg-[#0b2f4c] dark:bg-[#1a507a] sm:flex-initial sm:rounded-full"
@@ -243,7 +243,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                                   e.stopPropagation();
                                   setActiveMenuId(null);
                                   router.push(
-                                    `/panel/dashboard/buyer/houseManagement/${house.id}`,
+                                    `/panel/houseManagement/${house.id}`,
                                   );
                                 }}
                                 className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-right text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
@@ -373,7 +373,7 @@ export const SellerHouseListOrganism = ({ initialData, categories }: Props) => {
                             e.stopPropagation();
                             setActiveMenuId(null);
                             router.push(
-                              `/panel/dashboard/buyer/houseManagement/edit-house/${house.id}`,
+                              `/panel/houseManagement/edit-house/${house.id}`,
                             );
                           }}
                           className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2 text-right text-xs font-medium text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"

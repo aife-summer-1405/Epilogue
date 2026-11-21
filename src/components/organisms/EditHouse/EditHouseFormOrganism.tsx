@@ -107,7 +107,7 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
       }
 
       setIsPending(false);
-      router.push("/panel/dashboard/buyer/houseManagement/");
+      router.push("/panel/houseManagement/");
     } else {
       setIsPending(false);
       alert(result.message || "خطا در ویرایش اطلاعات");
@@ -132,7 +132,7 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
           ویرایش اطلاعات ملک
         </h1>
         <button
-          onClick={() => router.push("/panel/dashboard/buyer/houseManagement/")}
+          onClick={() => router.push("/panel/houseManagement/")}
           className="flex items-center gap-2 cursor-pointer text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-[#0f3d61] transition"
         >
           <span>رفتن به لیست املاک</span>

@@ -5,11 +5,11 @@ import UserFeedbackPanel from "@/components/templates/UserFeedbackPanel";
 export default function SellerFeedbackPage() {
   return (
     <main className="min-h-screen  py-8">
-      <div className="mx-auto max-w-5xl px-4 mb-6">
-        <h1 className="text-xl font-extrabold text-neutral-900 dark:text-white">
-          داشبورد فیدبک‌ها و امتیازات 
+      <div className=" max-w-5xl px-4 mb-6">
+        <h1 className="text-xl font-extrabold ">
+           داشبورد فیدبک‌ها و امتیازات فروشنده 
         </h1>
-        <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+        <p className="text-xs text-neutral-900 dark:text-neutral-400 mt-1">
           بررسی نظرات مهمانان، امتیازات کسب‌شده و وضعیت وفاداری
         </p>
       </div>

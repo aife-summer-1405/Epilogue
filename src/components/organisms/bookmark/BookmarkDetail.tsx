@@ -16,11 +16,8 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { checkAuthAndExecute } from "@/utils/authGuard";
-import {
-  useBookmarkById,
-  useUpdateBookmark,
-  useDeleteBookmark,
-} from "@/hooks/queries/useSocialBookmark";
+import { useBookmarkById, useDeleteBookmark, useUpdateBookmark } from "@/hooks/mutations/useSocialBookmark";
+
 
 interface Props {
   bookmarkId: string;
