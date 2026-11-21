@@ -408,7 +408,7 @@ const SellerDashboard = () => {
             رزرو های اخیر مشتریان
           </h2>
           <Link
-            href="/panel/reservations"
+            href="/panel/reserveManagement/seller"
             className="shrink-0 text-sm font-normal text-neutral-dark-200 sm:text-base"
           >
             مشاهده همه
