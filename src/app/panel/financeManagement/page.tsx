@@ -32,7 +32,7 @@ import {
   getSellerFinanceList,
 } from "@/services/panel/seller/financeManagement.service";
 import { formatPersianDate, formatPrice } from "@/utils/formatters";
-import PaymentDetailModal from "@/components/organisms/panel/buyer/shared/PaymentDetailModal";
+import PaymentDetailModal from "@/components/organisms/panel/shared/PaymentDetailModal";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 

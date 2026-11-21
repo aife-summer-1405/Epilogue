@@ -16,7 +16,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getBuyerPayments } from "@/services/panel/buyer/reserveManagement.service";
 import { formatPrice } from "@/utils/formatters";
 import { usePathname, useRouter } from "next/navigation";
-import PaymentDetailModal from "@/components/organisms/panel/buyer/shared/PaymentDetailModal";
+import PaymentDetailModal from "@/components/organisms/panel/shared/PaymentDetailModal";
 
 const statusOptions = [
   { value: "all", label: "همه وضعیت ها" },
