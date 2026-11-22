@@ -33,7 +33,7 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-const isAdminRoute =
+  const isAdminRoute =
     pathname === "/panel/dashboard/admin" ||
     pathname.startsWith("/panel/dashboard/admin/");
 
@@ -130,6 +130,50 @@ const isAdminRoute =
     return NextResponse.redirect(
       new URL("/panel/reserveManagement/buyer", request.url),
     );
+  }
+
+  // سیستم ریدایرکت و دسترسی اعلانات (فقط buyer و admin)
+  const isNotificationsAdminRoute =
+    pathname === "/panel/notifications/admin" ||
+    pathname.startsWith("/panel/notifications/admin/");
+
+  const isNotificationsBuyerRoute =
+    pathname === "/panel/notifications/buyer" ||
+    pathname.startsWith("/panel/notifications/buyer/");
+
+  if (
+    pathname === "/panel/notifications" ||
+    pathname === "/panel/notifications/"
+  ) {
+    if (userRole === "admin") {
+      return NextResponse.redirect(
+        new URL("/panel/notifications/admin", request.url),
+      );
+    }
+    if (userRole === "buyer") {
+      return NextResponse.redirect(
+        new URL("/panel/notifications/buyer", request.url),
+      );
+    }
+    return NextResponse.redirect(
+      new URL("/panel/dashboard/seller", request.url),
+    );
+  }
+
+  if (isNotificationsAdminRoute && userRole !== "admin") {
+    const targetPath =
+      userRole === "buyer"
+        ? "/panel/notifications/buyer"
+        : "/panel/dashboard/seller";
+    return NextResponse.redirect(new URL(targetPath, request.url));
+  }
+
+  if (isNotificationsBuyerRoute && userRole !== "buyer") {
+    const targetPath =
+      userRole === "admin"
+        ? "/panel/notifications/admin"
+        : "/panel/dashboard/seller";
+    return NextResponse.redirect(new URL(targetPath, request.url));
   }
 
   return NextResponse.next();
