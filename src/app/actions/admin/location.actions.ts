@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import type {
   GetLocationsParams,
@@ -8,7 +9,31 @@ import type {
   LocationPayload,
 } from "@/core/types/location.types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
+
+async function getAuthHeaders(): Promise<HeadersInit> {
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get("token")?.value ||
+    cookieStore.get("accessToken")?.value ||
+    cookieStore.get("access_token")?.value;
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
+function buildUrl(path: string, searchParams?: URLSearchParams) {
+  const query = searchParams?.toString();
+  const fullPath = query ? `${path}?${query}` : path;
+  return BASE_URL ? `${BASE_URL}${fullPath}` : fullPath;
+}
 
 export async function getLocationsAction(
   params: GetLocationsParams = {}
@@ -27,16 +52,16 @@ export async function getLocationsAction(
     searchParams.set("lng", String(params.lng));
   }
 
-  const res = await fetch(`${BASE_URL}/locations?${searchParams.toString()}`, {
+  const headers = await getAuthHeaders();
+  const res = await fetch(buildUrl("/locations", searchParams), {
     method: "GET",
     cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
   });
 
   if (!res.ok) {
-    throw new Error("خطا در دریافت لیست موقعیت‌های مکانی");
+    const errorText = await res.text().catch(() => "");
+    throw new Error(errorText || `خطا در دریافت لیست (${res.status})`);
   }
 
   return res.json();
@@ -45,20 +70,19 @@ export async function getLocationsAction(
 export async function createLocationAction(
   payload: LocationPayload
 ): Promise<LocationItem> {
-  const res = await fetch(`${BASE_URL}/locations`, {
+  const headers = await getAuthHeaders();
+  const res = await fetch(buildUrl("/locations"), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || "خطا در ثبت موقعیت مکانی جدید");
+    const errorText = await res.text().catch(() => "");
+    throw new Error(errorText || `خطا در ثبت موقعیت (${res.status})`);
   }
 
-  revalidatePath("/admin/locations");
+  revalidatePath("/panel/admin/locations");
   return res.json();
 }
 
@@ -66,35 +90,33 @@ export async function updateLocationAction(
   id: string,
   payload: LocationPayload
 ): Promise<LocationItem> {
-  const res = await fetch(`${BASE_URL}/locations/${id}`, {
+  const headers = await getAuthHeaders();
+  const res = await fetch(buildUrl(`/locations/${id}`), {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || "خطا در ویرایش موقعیت مکانی");
+    const errorText = await res.text().catch(() => "");
+    throw new Error(errorText || `خطا در ویرایش موقعیت (${res.status})`);
   }
 
-  revalidatePath("/admin/locations");
+  revalidatePath("/panel/admin/locations");
   return res.json();
 }
 
 export async function deleteLocationAction(id: string): Promise<void> {
-  const res = await fetch(`${BASE_URL}/locations/${id}`, {
+  const headers = await getAuthHeaders();
+  const res = await fetch(buildUrl(`/locations/${id}`), {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
   });
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => null);
-    throw new Error(errorData?.message || "خطا در حذف موقعیت مکانی");
+    const errorText = await res.text().catch(() => "");
+    throw new Error(errorText || `خطا در حذف موقعیت (${res.status})`);
   }
 
-  revalidatePath("/admin/locations");
+  revalidatePath("/panel/admin/locations");
 }

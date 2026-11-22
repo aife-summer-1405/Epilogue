@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -41,6 +41,12 @@ export function LocationFormModal({
   const [areaName, setAreaName] = useState("");
   const [lat, setLat] = useState<string>("35.6892");
   const [lng, setLng] = useState<string>("51.3890");
+  const [searchStatus, setSearchStatus] = useState<
+    "idle" | "searching" | "found" | "not_found"
+  >("idle");
+
+  const initialAreaRef = useRef<string>("");
+  const hasUserTypedAreaRef = useRef<boolean>(false);
 
   const createMutation = useCreateLocationMutation();
   const updateMutation = useUpdateLocationMutation();
@@ -49,16 +55,28 @@ export function LocationFormModal({
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   useEffect(() => {
+    hasUserTypedAreaRef.current = false;
+    setSearchStatus("idle");
+
     if (editingLocation) {
       setAreaName(editingLocation.areaName);
+      initialAreaRef.current = editingLocation.areaName;
       setLat(String(Number(editingLocation.lat)));
       setLng(String(Number(editingLocation.lng)));
     } else {
       setAreaName("");
+      initialAreaRef.current = "";
       setLat("35.6892");
       setLng("51.3890");
     }
   }, [editingLocation, isOpen]);
+
+  const handleAreaNameChange = (value: string) => {
+    setAreaName(value);
+    if (value.trim() !== initialAreaRef.current.trim()) {
+      hasUserTypedAreaRef.current = true;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,7 +151,7 @@ export function LocationFormModal({
                       : "افزودن موقعیت مکانی جدید"}
                   </h2>
                   <p className="text-xs text-neutral-800 dark:text-neutral-600">
-                    نام منطقه را بنویسید و مختصات را از روی نقشه انتخاب کنید
+                    نام منطقه را بنویسید تا نقشه خودکار روی آن برود یا نقطه را کلیک کنید
                   </p>
                 </div>
               </div>
@@ -153,14 +171,32 @@ export function LocationFormModal({
 
             <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               <div>
-                <label className="mb-1.5 block text-xs font-bold text-default-text">
-                  نام منطقه / شهر (area_name)
-                </label>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <label className="block text-xs font-bold text-default-text">
+                    نام منطقه / شهر 
+                  </label>
+                  {searchStatus === "searching" && (
+                    <span className="text-[11px] font-bold text-primary-500">
+                      در حال جستجو روی نقشه...
+                    </span>
+                  )}
+                  {searchStatus === "found" && (
+                    <span className="text-[11px] font-bold text-success-600 dark:text-success-400">
+                      منطقه روی نقشه پیدا شد
+                    </span>
+                  )}
+                  {searchStatus === "not_found" && (
+                    <span className="text-[11px] font-bold text-danger-600 dark:text-danger-400">
+                      نتیجه‌ای یافت نشد؛ دستی انتخاب کنید
+                    </span>
+                  )}
+                </div>
+
                 <input
                   type="text"
                   value={areaName}
-                  onChange={(e) => setAreaName(e.target.value)}
-                  placeholder="مثلاً: تهران"
+                  onChange={(e) => handleAreaNameChange(e.target.value)}
+                  placeholder="مثلاً: شیراز، تبریز، اصفهان..."
                   className="w-full rounded-xl border border-neutral-300 dark:border-neutral-200 bg-neutral-100 dark:bg-[#353535] px-3.5 py-2.5 text-xs sm:text-sm text-default-text placeholder:text-neutral-800 dark:placeholder:text-neutral-600 outline-none focus:border-primary-500 transition-colors"
                 />
               </div>
@@ -168,7 +204,7 @@ export function LocationFormModal({
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-xs font-bold text-default-text">
-                    عرض جغرافیایی (Latitude)
+                    عرض جغرافیایی
                   </label>
                   <input
                     type="number"
@@ -183,7 +219,7 @@ export function LocationFormModal({
 
                 <div>
                   <label className="mb-1.5 block text-xs font-bold text-default-text">
-                    طول جغرافیایی (Longitude)
+                    طول جغرافیایی 
                   </label>
                   <input
                     type="number"
@@ -199,11 +235,13 @@ export function LocationFormModal({
 
               <div>
                 <p className="mb-1.5 text-xs font-bold text-neutral-800 dark:text-neutral-600">
-                  انتخاب نقطه روی نقشه (روی موقعیت دلخواه کلیک کنید)
+                  نقشه (با تایپ نام شهر منتقل می‌شود؛ برای دقت بیشتر روی نقطه کلیک کنید)
                 </p>
                 <LocationMapPicker
                   lat={Number(lat)}
                   lng={Number(lng)}
+                  searchQuery={hasUserTypedAreaRef.current ? areaName : ""}
+                  onSearchStatusChange={setSearchStatus}
                   onChange={(newLat, newLng) => {
                     setLat(String(newLat));
                     setLng(String(newLng));

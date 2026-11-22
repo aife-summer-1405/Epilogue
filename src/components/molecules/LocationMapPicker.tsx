@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   MapContainer,
   Marker,
@@ -23,7 +23,9 @@ const customMarkerIcon = new L.Icon({
 interface LocationMapPickerProps {
   lat: number;
   lng: number;
+  searchQuery?: string;
   onChange?: (lat: number, lng: number) => void;
+  onSearchStatusChange?: (status: "idle" | "searching" | "found" | "not_found") => void;
   interactive?: boolean;
   heightClassName?: string;
 }
@@ -46,25 +48,96 @@ function MapClickHandler({
   return null;
 }
 
-function MapViewUpdater({ lat, lng }: { lat: number; lng: number }) {
+function MapViewUpdater({
+  lat,
+  lng,
+  zoom = 12,
+}: {
+  lat: number;
+  lng: number;
+  zoom?: number;
+}) {
   const map = useMap();
+
   useEffect(() => {
-    if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
-      map.flyTo([lat, lng], map.getZoom(), { duration: 0.6 });
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      map.flyTo([lat, lng], zoom, { duration: 0.7 });
     }
-  }, [lat, lng, map]);
+  }, [lat, lng, zoom, map]);
+
   return null;
 }
 
 export function LocationMapPicker({
   lat,
   lng,
+  searchQuery = "",
   onChange,
+  onSearchStatusChange,
   interactive = true,
   heightClassName = "h-56 sm:h-64",
 }: LocationMapPickerProps) {
+  const [mapZoom, setMapZoom] = useState<number>(11);
+
   const safeLat = Number.isFinite(lat) && lat !== 0 ? lat : 35.6892;
   const safeLng = Number.isFinite(lng) && lng !== 0 ? lng : 51.389;
+
+  useEffect(() => {
+    if (!interactive) return;
+
+    const trimmed = searchQuery.trim();
+    if (trimmed.length < 2) {
+      onSearchStatusChange?.("idle");
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        onSearchStatusChange?.("searching");
+        const queryWithCountry = trimmed.includes("ایران")
+          ? trimmed
+          : `${trimmed}, ایران`;
+
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(
+            queryWithCountry
+          )}`,
+          {
+            signal: controller.signal,
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (!res.ok) {
+          onSearchStatusChange?.("not_found");
+          return;
+        }
+
+        const results: Array<{ lat: string; lon: string }> = await res.json();
+        if (results.length > 0) {
+          const foundLat = Number(Number(results[0].lat).toFixed(6));
+          const foundLng = Number(Number(results[0].lon).toFixed(6));
+          setMapZoom(12);
+          onChange?.(foundLat, foundLng);
+          onSearchStatusChange?.("found");
+        } else {
+          onSearchStatusChange?.("not_found");
+        }
+      } catch (err: any) {
+        if (err?.name !== "AbortError") {
+          onSearchStatusChange?.("not_found");
+        }
+      }
+    }, 600);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [searchQuery, interactive]);
 
   return (
     <div
@@ -72,7 +145,7 @@ export function LocationMapPicker({
     >
       <MapContainer
         center={[safeLat, safeLng]}
-        zoom={11}
+        zoom={mapZoom}
         scrollWheelZoom={interactive}
         className="z-0 h-full w-full"
       >
@@ -81,7 +154,7 @@ export function LocationMapPicker({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <Marker position={[safeLat, safeLng]} icon={customMarkerIcon} />
-        <MapViewUpdater lat={safeLat} lng={safeLng} />
+        <MapViewUpdater lat={safeLat} lng={safeLng} zoom={mapZoom} />
         {interactive && <MapClickHandler onSelect={onChange} />}
       </MapContainer>
     </div>
