@@ -119,7 +119,7 @@ const menuAdminNavigationItems: INavigationItems[] = [
   {
     icon: Location01Icon,
     text: "مدیریت مکان ها",
-    path: "/panel/admin/places",
+    path: "/panel/admin/locations",
   },
   {
     icon: SaveMoneyDollarIcon,
