@@ -33,7 +33,16 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
+const isAdminRoute =
+    pathname === "/panel/dashboard/admin" ||
+    pathname.startsWith("/panel/dashboard/admin/");
+
   if (pathname === "/panel/dashboard" || pathname === "/panel/dashboard/") {
+    if (userRole === "admin") {
+      return NextResponse.redirect(
+        new URL("/panel/dashboard/admin", request.url),
+      );
+    }
     if (userRole === "buyer") {
       return NextResponse.redirect(
         new URL("/panel/dashboard/buyer", request.url),
@@ -64,6 +73,27 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(
       new URL("/panel/dashboard/buyer", request.url),
     );
+  }
+
+  if (
+    (pathname === "/panel/dashboard/buyer" ||
+      pathname === "/panel/dashboard/buyer/" ||
+      pathname === "/panel/dashboard/seller" ||
+      pathname === "/panel/dashboard/seller/") &&
+    userRole === "admin"
+  ) {
+    return NextResponse.redirect(
+      new URL("/panel/dashboard/admin", request.url),
+    );
+  }
+
+  if (isAdminRoute && userRole !== "admin") {
+    const fallbackPath =
+      userRole === "seller"
+        ? "/panel/dashboard/seller"
+        : "/panel/dashboard/buyer";
+
+    return NextResponse.redirect(new URL(fallbackPath, request.url));
   }
 
   if (
