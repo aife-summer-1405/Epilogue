@@ -132,7 +132,6 @@ export function proxy(request: NextRequest) {
     );
   }
 
-  // سیستم ریدایرکت و دسترسی اعلانات (فقط buyer و admin)
   const isNotificationsAdminRoute =
     pathname === "/panel/notifications/admin" ||
     pathname.startsWith("/panel/notifications/admin/");
