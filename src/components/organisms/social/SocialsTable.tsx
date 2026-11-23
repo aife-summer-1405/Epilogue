@@ -84,7 +84,7 @@ export function SocialsTable({
                     <button
                       type="button"
                       onClick={() => onEdit(item)}
-                      title="ویرایش (PUT)"
+                      title="ویرایش "
                       className="rounded-xl border border-primary-300 dark:border-primary-700 bg-primary-50/70 dark:bg-primary-100/20 p-2 text-primary-600 dark:text-primary-800 hover:bg-primary-100 transition-colors cursor-pointer"
                     >
                       <HugeiconsIcon
@@ -97,7 +97,7 @@ export function SocialsTable({
                     <button
                       type="button"
                       onClick={() => onDelete(item)}
-                      title="حذف (DELETE)"
+                      title="حذف "
                       className="rounded-xl border border-danger-300 dark:border-danger-700 bg-danger-50/70 dark:bg-danger-900/20 p-2 text-danger-600 dark:text-danger-400 hover:bg-danger-100 transition-colors cursor-pointer"
                     >
                       <HugeiconsIcon

@@ -12,7 +12,7 @@ import {
 } from "@/lib/formatters/house";
 
 interface CategoryFormModalProps {
-  category: Category | null; // null => افزودن جدید (POST)، شیء => ویرایش (PUT)
+  category: Category | null; 
   onClose: () => void;
 }
 
