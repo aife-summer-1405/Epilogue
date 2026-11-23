@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Megaphone01Icon,
@@ -28,7 +28,6 @@ export interface HeaderUser {
 interface HeaderProps {
   user?: HeaderUser;
   onLoginClick?: () => void;
-  onProfileClick?: () => void;
   onSellerClick?: () => void;
 }
 
@@ -42,9 +41,9 @@ const navItems = [
 export default function Header({
   user: userProp,
   onLoginClick,
-  onProfileClick,
   onSellerClick,
 }: HeaderProps) {
+  const router = useRouter();
   const {
     data: currentUser,
     isPending,
@@ -137,7 +136,7 @@ export default function Header({
           name={user.name}
           phoneNumber={user.phoneNumber}
           avatarUrl={user.profilePicture}
-          onClick={onProfileClick}
+          onClick={() => router.push("/panel/dashboard")}
         />
       );
     }
