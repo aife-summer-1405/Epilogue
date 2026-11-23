@@ -103,35 +103,6 @@ const BuyerReservePage = () => {
     },
   });
 
-  const { mutate: payReserveMutate } = useMutation({
-    mutationKey: [`PayRequestReserved`],
-    mutationFn: (body: PayRequestBody) => payReserveRequestById(body),
-    onMutate: () => {
-      toast.loading("درحال ارسال درخواست پرداخت", {
-        toastId: "DeletingReserveToast",
-      });
-    },
-    onSuccess: () => {
-      toast.update("DeletingReserveToast", {
-        render: "پرداخت شما با موفقیت انجام شد منتظر تایید پرداخت باشید",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["BuyerReservedManagement", params],
-      });
-    },
-    onError: () => {
-      toast.update("DeletingReserveToast", {
-        render: "پرداخت با خطا روبرو شد",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    },
-  });
-
   const totalPages = useMemo(() => {
     if (!data) return 1;
     return Math.max(
@@ -371,12 +342,7 @@ const BuyerReservePage = () => {
                                       label: "پرداخت کردن",
                                       icon: CreditCardIcon,
                                       onClick: () =>
-                                        payReserveMutate({
-                                          amount: Number(value.house.price),
-                                          bookingId: String(value.id),
-                                          description: `Pay Request For Reserve ID ${value.id}, Amount ${value.house.price}`,
-                                          callbackUrl: `/mock-payment/${value.id}`,
-                                        }),
+                                        router.push(`/pay/${value.id}`),
                                     },
                                   ]
                                 : []),

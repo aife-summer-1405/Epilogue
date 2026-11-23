@@ -25,5 +25,5 @@ export type PayRequestBody = {
   amount: number;
   description: string;
   callbackUrl: string;
-  bookingId: string;
+  bookingId: number | string;
 };
