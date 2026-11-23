@@ -88,9 +88,6 @@ export function SocialFormModal({ item, onClose }: SocialFormModalProps) {
                 ? `ویرایش شبکه اجتماعی #${toPersianDigits(item!.id)}`
                 : "افزودن شبکه اجتماعی جدید"}
             </h2>
-            <p className="mt-0.5 text-xs text-neutral-800 dark:text-neutral-600">
-              {isEdit ? "بروزرسانی با متد PUT" : "ثبت با متد POST"}
-            </p>
           </div>
           <button
             type="button"
