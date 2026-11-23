@@ -44,7 +44,7 @@ export function SocialsTable({
             <tr className="border-b border-neutral-200 dark:border-neutral-100 bg-neutral-100/70 dark:bg-neutral-50/50 text-xs font-extrabold text-neutral-800 dark:text-neutral-600">
               <th className="px-4 py-3.5">شناسه</th>
               <th className="px-4 py-3.5">پلتفرم</th>
-              <th className="px-4 py-3.5">آدرس لینک (URL)</th>
+              <th className="px-4 py-3.5">آدرس لینک </th>
               <th className="px-4 py-3.5 text-center">عملیات</th>
             </tr>
           </thead>
