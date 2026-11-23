@@ -25,6 +25,7 @@ import {
   SaveMoneyDollarIcon,
   UserEdit01Icon,
   UserMultiple02Icon,
+  VisualStudioCodeIcon,
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import HomeLogo from "@/components/atoms/Logo/home-logo";
@@ -100,6 +101,11 @@ const menuBuyerNavigationItems: INavigationItems[] = [
     icon: SaveMoneyDollarIcon,
     text: "مدیریت پرداخت ها",
     path: "/panel/paymentManagement",
+  },
+  {
+    icon: VisualStudioCodeIcon,
+    text: "مدیریت بازدید ها",
+    path: "/panel/visitManagement",
   },
   { icon: HeartIcon, text: "علاقه مندی ها", path: "/panel/favorites" },
   {
