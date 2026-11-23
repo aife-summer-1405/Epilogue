@@ -50,7 +50,7 @@ export function CategoriesTable({
                 className="hover:bg-neutral-100/50 dark:hover:bg-neutral-50/30 transition-colors"
               >
                 <td className="px-4 py-3.5 font-bold text-default-text">
-                  {toPersianDigits(cat.id)}
+                  {toPersianDigits(cat.id)}#
                 </td>
                 <td className="px-4 py-3.5 font-extrabold text-default-text">
                   {formatCategoryFa(cat.name)}

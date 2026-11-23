@@ -55,7 +55,7 @@ export function SocialsTable({
                 className="hover:bg-neutral-100/50 dark:hover:bg-neutral-50/30 transition-colors"
               >
                 <td className="px-4 py-3.5 font-bold text-default-text">
-                  {toPersianDigits(item.id)}
+                  {toPersianDigits(item.id)}#
                 </td>
                 <td className="px-4 py-3.5">
                   <span className="inline-flex items-center rounded-lg bg-primary-50 text-primary-700 dark:bg-primary-100/30 dark:text-primary-800 px-2.5 py-1 text-xs font-extrabold">
