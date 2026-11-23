@@ -111,11 +111,17 @@ const menuAdminNavigationItems: INavigationItems[] = [
     text: "مدیریت رزرو ها",
     path: "/panel/admin/reservations",
   },
+      {
+    icon: Location01Icon,
+    text: "مدیریت درخواست‌های فروشندگی",
+    path: "/panel/admin/seller-upgrade",
+  },
   {
     icon: UserMultiple02Icon,
     text: "مدیریت کاربران",
     path: "/panel/admin/users",
   },
+
   {
     icon: Location01Icon,
     text: "مدیریت مکان ها",
