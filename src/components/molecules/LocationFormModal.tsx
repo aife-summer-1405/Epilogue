@@ -90,12 +90,12 @@ export function LocationFormModal({
     }
 
     if (Number.isNaN(parsedLat) || parsedLat < -90 || parsedLat > 90) {
-      toast.error("عرض جغرافیایی (lat) نامعتبر است.");
+      toast.error("عرض جغرافیایی  نامعتبر است.");
       return;
     }
 
     if (Number.isNaN(parsedLng) || parsedLng < -180 || parsedLng > 180) {
-      toast.error("طول جغرافیایی (lng) نامعتبر است.");
+      toast.error("طول جغرافیایی نامعتبر است.");
       return;
     }
 
