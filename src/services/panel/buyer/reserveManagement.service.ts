@@ -71,3 +71,10 @@ export const getBuyerPaymentDetailById = async (params: ReservedDetail) => {
   });
   return response.data;
 };
+
+export const uploadContractDocument = async (formData: FormData) => {
+  const response = await instance.post("/documents/upload", formData, {
+    headers: { tokenNeeded: true },
+  });
+  return response.data;
+};
