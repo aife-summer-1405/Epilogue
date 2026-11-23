@@ -25,6 +25,7 @@ import {
   SaveMoneyDollarIcon,
   UserEdit01Icon,
   UserMultiple02Icon,
+  VisualStudioCodeIcon,
 } from "@hugeicons/core-free-icons";
 import Link from "next/link";
 import HomeLogo from "@/components/atoms/Logo/home-logo";
@@ -78,7 +79,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
     text: "مدیریت نظرات",
     path: "/panel/commentsManagement",
   },
-    {
+  {
     icon: Location01Icon,
     text: "مدیریت مکان ها",
     path: "/panel/locations/seller",
@@ -101,13 +102,18 @@ const menuBuyerNavigationItems: INavigationItems[] = [
     text: "مدیریت پرداخت ها",
     path: "/panel/paymentManagement",
   },
+  {
+    icon: VisualStudioCodeIcon,
+    text: "مدیریت بازدید ها",
+    path: "/panel/visitManagement",
+  },
   { icon: HeartIcon, text: "علاقه مندی ها", path: "/panel/favorites" },
   {
     icon: Comment01Icon,
     text: "فیدبک و نظرات",
     path: "/panel/feedback/buyer",
   },
-    {
+  {
     icon: Comment01Icon,
     text: "ارتقای حساب",
     path: "/panel/seller-upgrade",
@@ -121,7 +127,7 @@ const menuAdminNavigationItems: INavigationItems[] = [
     text: "مدیریت رزرو ها",
     path: "/panel/admin/reservations",
   },
-      {
+  {
     icon: Location01Icon,
     text: "مدیریت درخواست‌های فروشندگی",
     path: "/panel/admin/seller-upgrade",
@@ -281,7 +287,7 @@ const PanelLayout: FC<IProps> = ({ children }) => {
     <>
       <AuthError />
       <div className="mx-auto flex min-h-dvh w-full max-w-[1920px] gap-4 p-3 sm:p-4 lg:gap-8 lg:p-8">
-        <aside className="hidden w-72 max-h-dvh sticky top-3 sm:top-4 lg:top-8 shrink-0 flex-col gap-8 rounded-[40px] border border-neutral-300 bg-neutral-200 p-6 lg:flex xl:w-80 xl:p-8 2xl:w-[22%]">
+        <aside className="hidden w-72 min-h-[calc(100dvh-4rem)] h-fit sticky top-8 self-start shrink-0 flex-col gap-8 rounded-[40px] border border-neutral-300 bg-neutral-200 p-6 lg:flex xl:w-80 xl:p-8 2xl:w-[22%]">
           {sidebarContent}
         </aside>
         <div className="flex min-w-0 flex-1 flex-col gap-4 lg:gap-8">
