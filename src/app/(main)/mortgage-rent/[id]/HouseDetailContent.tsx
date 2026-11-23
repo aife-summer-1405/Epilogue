@@ -8,7 +8,6 @@ import HouseRentFeatures from "@/components/organisms/HouseRentDetail/HouseRentF
 import { HouseRent } from "@/core/types/RentHouse/house";
 import HouseRentComments from "@/components/organisms/HouseRentDetail/Comments/HouseRentComments";
 import SimilarAds from "@/components/organisms/HouseRentDetail/SimilarAds";
-import HouseReserveSidebar from "@/components/organisms/HouseReserveDetail/HouseReserveSidebar";
 import HouseRentSidebar from "@/components/organisms/HouseRentDetail/HouseRentSidebar";
 
 interface HouseDetailContentProps {
@@ -60,18 +59,18 @@ export default function HouseDetailContent({ id }: HouseDetailContentProps) {
         userId={loggedInUserId}
       />
 
-      <div className="mt-12 flex flex-col justify-between px-[42px] gap-8 lg:flex-row lg:gap-[65px]">
+      <div className="mt-12 flex flex-col justify-between px-10.5 gap-8 lg:flex-row lg:gap-16.25">
         <div className="order-2 min-w-0 w-full space-y-8 lg:order-1 lg:flex-1">
           <HouseRentInfo house={property} />
           <HouseRentFeatures house={property} />
           <HouseRentComments houseId={property.id} />
         </div>
 
-        <div className="order-1 w-full shrink-0 lg:order-2 lg:w-[380px] xl:w-[420px]">
+        <div className="order-1 w-full shrink-0 lg:order-2 lg:w-95 xl:w-105">
           <HouseRentSidebar house={property} />
         </div>
       </div>
-      
+
       <SimilarAds />
     </main>
   );
