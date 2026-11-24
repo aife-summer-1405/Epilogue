@@ -82,7 +82,7 @@ export async function createLocationAction(
     throw new Error(errorText || `خطا در ثبت موقعیت (${res.status})`);
   }
 
-  revalidatePath("/panel/admin/locations");
+  revalidatePath("/panel/locations/admin");
   return res.json();
 }
 
@@ -102,7 +102,7 @@ export async function updateLocationAction(
     throw new Error(errorText || `خطا در ویرایش موقعیت (${res.status})`);
   }
 
-  revalidatePath("/panel/admin/locations");
+  revalidatePath("/panel/locations/admin");
   return res.json();
 }
 
@@ -118,5 +118,5 @@ export async function deleteLocationAction(id: string): Promise<void> {
     throw new Error(errorText || `خطا در حذف موقعیت (${res.status})`);
   }
 
-  revalidatePath("/panel/admin/locations");
+  revalidatePath("/panel/locations/admin");
 }

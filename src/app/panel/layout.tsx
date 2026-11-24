@@ -78,6 +78,11 @@ const menuSellerNavigationItems: INavigationItems[] = [
     text: "مدیریت نظرات",
     path: "/panel/commentsManagement",
   },
+    {
+    icon: Location01Icon,
+    text: "مدیریت مکان ها",
+    path: "/panel/locations/admin",
+  },
   {
     icon: Comment01Icon,
     text: "فیدبک و نظرات",
@@ -130,7 +135,7 @@ const menuAdminNavigationItems: INavigationItems[] = [
   {
     icon: Location01Icon,
     text: "مدیریت مکان ها",
-    path: "/panel/admin/locations",
+    path: "/panel/locations/admin",
   },
   {
     icon: SaveMoneyDollarIcon,
