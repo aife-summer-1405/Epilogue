@@ -102,6 +102,11 @@ const menuBuyerNavigationItems: INavigationItems[] = [
     text: "فیدبک و نظرات",
     path: "/panel/feedback/buyer",
   },
+    {
+    icon: Comment01Icon,
+    text: "ارتقای حساب",
+    path: "/panel/seller-upgrade",
+  },
 ];
 
 const menuAdminNavigationItems: INavigationItems[] = [
