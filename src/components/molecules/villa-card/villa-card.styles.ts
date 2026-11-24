@@ -24,6 +24,6 @@ export const villaCardStyles = {
 
   title: `
     min-w-0 truncate
-    text-base font-medium text-black text-[18px]
+    text-base font-medium text-black text-[18px] dark:text-white
   `,
 };

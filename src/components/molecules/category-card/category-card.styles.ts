@@ -21,6 +21,6 @@ export const categoryCardStyles = {
 
   title: `
     min-w-0 truncate
-    text-base font-bold text-black
+    text-base font-bold text-black dark:text-white
   `,
 };
