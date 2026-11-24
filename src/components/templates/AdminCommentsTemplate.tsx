@@ -127,7 +127,6 @@ export function AdminCommentsTemplate() {
       const fresh = await getAdminCommentByIdAction(comment.id);
       setDetailComment(fresh);
     } catch {
-      // در صورت خطا همان آبجکت لیست نمایش داده می‌شود
     }
   };
 

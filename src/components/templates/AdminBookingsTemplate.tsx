@@ -169,7 +169,6 @@ export function AdminBookingsTemplate() {
       const fresh = await getAdminBookingByIdAction(booking.id);
       setDetailBooking(fresh);
     } catch {
-      // در صورت خطا همان آبجکت لیست نمایش داده می‌شود
     }
   };
 
