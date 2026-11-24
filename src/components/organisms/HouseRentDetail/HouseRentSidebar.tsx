@@ -205,7 +205,6 @@ export default function HouseRentSidebar({ house }: Props) {
         </div>
       </aside>
 
-      {/* Appointment Modal */}
       {isAppointmentModalOpen && (
         <div
           dir="rtl"
