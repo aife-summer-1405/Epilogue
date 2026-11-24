@@ -387,7 +387,7 @@ const PaymentAddCart: FC<IProps> = ({ houseInfo }) => {
             <div className="flex flex-col gap-1.5 text-[#999999] ">
               <span className="text-[18px]">پذیرنده</span>
               <span className="font-bold text-[18px] text-[#464646]">
-                BitBlaze
+                Epilogue
               </span>
             </div>
           </div>
@@ -414,7 +414,7 @@ const PaymentAddCart: FC<IProps> = ({ houseInfo }) => {
             <div className="flex flex-col gap-1.5 text-[#999999] ">
               <span className="text-[18px]">سایت پذیرنده</span>
               <span className="font-bold text-[18px] text-[#464646]">
-                BitBlaze.com
+                Epilogue.com
               </span>
             </div>
           </div>
