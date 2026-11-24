@@ -81,7 +81,7 @@ const menuSellerNavigationItems: INavigationItems[] = [
     {
     icon: Location01Icon,
     text: "مدیریت مکان ها",
-    path: "/panel/locations/admin",
+    path: "/panel/locations/seller",
   },
   {
     icon: Comment01Icon,
