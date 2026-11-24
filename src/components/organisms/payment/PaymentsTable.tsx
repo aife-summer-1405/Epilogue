@@ -63,7 +63,7 @@ export function PaymentsTable({
       <div className="hidden md:block overflow-x-auto rounded-2xl border bg-default-white border-neutral-300 dark:bg-default-dark-content dark:border-neutral-dark-400">
         <table className="w-full text-right border-collapse">
           <thead>
-            <tr className="border-b text-xs font-semibold border-neutral-200  bg-neutral-100 text-neutral-800 dark:border-neutral-dark-400 dark:bg-[#3c3c3c] ">
+            <tr className="border-b text-xs font-semibold border-neutral-200  bg-neutral-100 text-neutral-800  dark:bg-[#3c3c3c] ">
               <th className="py-3.5 px-4">شناسه</th>
               <th className="py-3.5 px-4">کاربر / رزرو</th>
               <th className="py-3.5 px-4">توضیحات</th>
@@ -97,7 +97,10 @@ export function PaymentsTable({
                       </span>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 max-w-xs truncate" title={item.description}>
+                  <td
+                    className="py-3.5 px-4 max-w-xs truncate"
+                    title={item.description}
+                  >
                     {item.description}
                   </td>
                   <td className="py-3.5 px-4 font-bold text-secondary-600 dark:text-secondary-300 whitespace-nowrap">
@@ -143,7 +146,9 @@ export function PaymentsTable({
 
               <div className="flex items-center justify-between text-xs pt-2 border-t border-neutral-200 text-neutral-800 dark:border-neutral-dark-400 dark:text-neutral-400">
                 <span>کاربر: {item.userId}</span>
-                <span>{item.bookingId ? `رزرو #${item.bookingId}` : "بدون رزرو"}</span>
+                <span>
+                  {item.bookingId ? `رزرو #${item.bookingId}` : "بدون رزرو"}
+                </span>
               </div>
 
               <div className="flex items-center justify-between pt-1">
