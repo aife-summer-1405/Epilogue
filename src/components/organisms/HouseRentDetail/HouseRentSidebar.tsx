@@ -49,12 +49,27 @@ export default function HouseRentSidebar({ house }: Props) {
   const { theme } = useTheme();
 
   const currentUserId =
-    typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
+    typeof window !== "undefined"
+      ? localStorage.getItem("user_id") || localStorage.getItem("userId")
+      : null;
+
+  const ownerId =
+    house.seller_id ??
+    (
+      house as HouseRent & {
+        sellerId?: string | number;
+        user_id?: string | number;
+      }
+    ).sellerId ??
+    (
+      house as HouseRent & {
+        sellerId?: string | number;
+        user_id?: string | number;
+      }
+    ).user_id;
 
   const isSellerUser = Boolean(
-    house.seller_id &&
-    currentUserId &&
-    String(house.seller_id) === String(currentUserId),
+    ownerId && currentUserId && String(ownerId) === String(currentUserId),
   );
 
   const handleCreateAppointment = () => {
@@ -101,14 +116,14 @@ export default function HouseRentSidebar({ house }: Props) {
     <>
       <aside
         dir="rtl"
-        className="h-fit w-full rounded-2xl border border-neutral-200 dark:bg-[#272727] bg-white p-5 lg:sticky lg:top-33"
+        className="h-fit w-full rounded-2xl border border-neutral-200 bg-white p-5 dark:bg-[#272727] lg:sticky lg:top-33"
       >
         <h2 className="mb-5 flex items-center justify-center gap-2 text-base font-bold">
           <HugeiconsIcon icon={House04Icon} size={24} />
           رزرو خونه برای {house.title}
         </h2>
 
-        <div className="mb-6 flex flex-col items-center rounded-2xl border border-neutral-200 dark:bg-[#353535] bg-white p-4 text-center shadow-xs">
+        <div className="mb-6 flex flex-col items-center rounded-2xl border border-neutral-200 bg-white p-4 text-center shadow-xs dark:bg-[#353535]">
           {house.sellerAvatar ? (
             <div className="relative mb-2 h-14 w-14 overflow-hidden rounded-full border border-neutral-100">
               <Image
@@ -141,7 +156,7 @@ export default function HouseRentSidebar({ house }: Props) {
         <p className="mb-3 text-center text-sm font-bold">قیمت</p>
 
         <div className="mb-6 space-y-2.5">
-          <div className="flex items-center justify-between rounded-xl dark:bg-[#353535] bg-neutral-100 px-4 py-3 text-sm">
+          <div className="flex items-center justify-between rounded-xl bg-neutral-100 px-4 py-3 text-sm dark:bg-[#353535]">
             <span className="flex items-center gap-2 font-medium">
               <HugeiconsIcon icon={Money02Icon} />
               قیمت رهن از
@@ -152,7 +167,7 @@ export default function HouseRentSidebar({ house }: Props) {
             </span>
           </div>
 
-          <div className="flex items-center justify-between rounded-xl dark:bg-[#353535] bg-neutral-100 px-4 py-3 text-sm">
+          <div className="flex items-center justify-between rounded-xl bg-neutral-100 px-4 py-3 text-sm dark:bg-[#353535]">
             <span className="flex items-center gap-2 font-medium">
               <HugeiconsIcon icon={MoneyExchange01Icon} />
               قیمت اجاره از
@@ -321,12 +336,11 @@ export default function HouseRentSidebar({ house }: Props) {
         </div>
       )}
 
-      <HouseQAModal
-        houseId={house.id}
-        isOpen={isQAModalOpen}
-        onClose={() => setIsQAModalOpen(false)}
-        isSeller={isSellerUser}
-      />
+<HouseQAModal
+  houseId={house.id}
+  isOpen={isQAModalOpen}
+  onClose={() => setIsQAModalOpen(false)}
+/>
     </>
   );
 }

@@ -197,7 +197,7 @@ export default function BookingSuccessModal({
               بازگشت به صفحه اصلی
             </Button>
           </Link>
-          <Link href="/profile/tickets" className="flex-1">
+          <Link href="/panel/reserveManagement/buyer" className="flex-1">
             <Button type="button" size="md" variant="outline" className="w-full">
               بلیط‌های من
             </Button>
