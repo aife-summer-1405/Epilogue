@@ -5,7 +5,8 @@ export interface CommentCardProps {
   content: string;
   authorName: string;
   date: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
+  fallbackAvatarUrl?: string;
 }
 
 const CommentCard: React.FC<CommentCardProps> = ({
@@ -13,7 +14,10 @@ const CommentCard: React.FC<CommentCardProps> = ({
   authorName,
   date,
   avatarUrl,
+  fallbackAvatarUrl,
 }) => {
+  const imageSrc = avatarUrl?.trim() || fallbackAvatarUrl;
+
   return (
     <div
       className="flex max-w-sm flex-col gap-2 rounded-[2rem] bg-[#2E7E7A] p-6 shadow-md"
@@ -34,9 +38,9 @@ const CommentCard: React.FC<CommentCardProps> = ({
 
       <div className="mt-4 flex items-center justify-start gap-3 rounded-2xl bg-[#1A4F4C] p-3">
         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-gray-200">
-          {avatarUrl && (
+          {imageSrc && (
             <Image
-              src={avatarUrl}
+              src={imageSrc}
               alt={authorName}
               fill
               className="object-cover"

@@ -143,11 +143,12 @@ export default function TestimonialsSection() {
 
                 return (
                   <div key={comment.id} className="w-full shrink-0">
-                    <CommentCard
-                      content={comment.caption}
-                      authorName={authorName}
-                      date={formatDate(comment.created_at)}
-                    />
+   <CommentCard
+  content={comment.caption}
+  authorName={`${comment.user.firstName} ${comment.user.lastName}`}
+  date={comment.created_at}
+  avatarUrl={comment.user.profilePicture}
+/>
                   </div>
                 );
               })}
