@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
@@ -98,30 +99,63 @@ export const AddHouseFormOrganism = () => {
     };
 
     setIsPending(true);
+    const toastId = toast.loading("در حال ثبت ملک...");
 
-    const result = await createHouseAction(finalPayload);
+    try {
+      const result = await createHouseAction(finalPayload);
 
-    if (result.success && result.houseId) {
-      if (selectedImages.length > 0) {
-        const uploadResult = await uploadHousePhotosAction(
-          result.houseId,
-          selectedImages,
-        );
-        if (!uploadResult.success) {
-          alert(
-            uploadResult.message ||
-            "ملک ثبت شد اما در آپلود تصاویر خطایی رخ داد",
+      if (result.success && result.houseId) {
+        if (selectedImages.length > 0) {
+          toast.update(toastId, {
+            render: "ملک ثبت شد؛ در حال آپلود تصاویر...",
+            type: "info",
+            isLoading: true,
+          });
+
+          const uploadResult = await uploadHousePhotosAction(
+            result.houseId,
+            selectedImages,
           );
-          setIsPending(false);
-          return;
-        }
-      }
 
+          if (!uploadResult.success) {
+            toast.update(toastId, {
+              render:
+                uploadResult.message ||
+                "ملک ثبت شد اما در آپلود تصاویر خطایی رخ داد",
+              type: "warning",
+              isLoading: false,
+              autoClose: 4000,
+            });
+            setIsPending(false);
+            return;
+          }
+        }
+
+        toast.update(toastId, {
+          render: "ملک با موفقیت ثبت شد",
+          type: "success",
+          isLoading: false,
+          autoClose: 3500,
+        });
+        setIsPending(false);
+        router.push("/panel/houseManagement/");
+      } else {
+        setIsPending(false);
+        toast.update(toastId, {
+          render: result.message || "خطا در ثبت اطلاعات",
+          type: "error",
+          isLoading: false,
+          autoClose: 4000,
+        });
+      }
+    } catch {
       setIsPending(false);
-      router.push("/panel/houseManagement/");
-    } else {
-      setIsPending(false);
-      alert(result.message || "خطا در ثبت اطلاعات");
+      toast.update(toastId, {
+        render: "خطای ناشناخته در ثبت اطلاعات",
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
     }
   };
 
