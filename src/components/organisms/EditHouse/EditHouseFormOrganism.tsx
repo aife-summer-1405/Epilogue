@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 
@@ -63,16 +64,21 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
 
   useEffect(() => {
     const fetchHouseData = async () => {
-      const res = await getHouseByIdAction(houseId);
-      if (res.success && res.data) {
-        reset(res.data);
-        if (res.data.photos) {
-          setExistingPhotos(res.data.photos);
+      try {
+        const res = await getHouseByIdAction(houseId);
+        if (res.success && res.data) {
+          reset(res.data);
+          if (res.data.photos) {
+            setExistingPhotos(res.data.photos);
+          }
+        } else {
+          toast.error(res.message || "خطا در بارگذاری اطلاعات ملک");
         }
-      } else {
-        alert(res.message || "خطا در بارگذاری اطلاعات ملک");
+      } catch {
+        toast.error("خطا در بارگذاری اطلاعات ملک");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchHouseData();
@@ -98,19 +104,60 @@ export const EditHouseFormOrganism = ({ houseId }: EditHouseFormProps) => {
     };
 
     setIsPending(true);
+    const toastId = toast.loading("در حال ذخیره تغییرات ملک...");
 
-    const result = await updateHouseAction(houseId, finalPayload);
+    try {
+      const result = await updateHouseAction(houseId, finalPayload);
 
-    if (result.success) {
-      if (newImages.length > 0) {
-        await uploadHousePhotosAction(houseId, newImages);
+      if (!result.success) {
+        setIsPending(false);
+        toast.update(toastId, {
+          render: result.message || "خطا در ویرایش اطلاعات",
+          type: "error",
+          isLoading: false,
+          autoClose: 4000,
+        });
+        return;
       }
 
+      if (newImages.length > 0) {
+        toast.update(toastId, {
+          render: "تغییرات ذخیره شد؛ در حال آپلود تصاویر جدید...",
+          type: "info",
+          isLoading: true,
+        });
+
+        const uploadResult = await uploadHousePhotosAction(houseId, newImages);
+        if (uploadResult && !uploadResult.success) {
+          setIsPending(false);
+          toast.update(toastId, {
+            render:
+              uploadResult.message ||
+              "اطلاعات ویرایش شد اما در آپلود تصاویر خطایی رخ داد",
+            type: "warning",
+            isLoading: false,
+            autoClose: 4000,
+          });
+          return;
+        }
+      }
+
+      toast.update(toastId, {
+        render: "تغییرات ملک با موفقیت ثبت شد",
+        type: "success",
+        isLoading: false,
+        autoClose: 3500,
+      });
       setIsPending(false);
       router.push("/panel/houseManagement/");
-    } else {
+    } catch {
       setIsPending(false);
-      alert(result.message || "خطا در ویرایش اطلاعات");
+      toast.update(toastId, {
+        render: "خطای ناشناخته در ویرایش اطلاعات",
+        type: "error",
+        isLoading: false,
+        autoClose: 4000,
+      });
     }
   };
 
