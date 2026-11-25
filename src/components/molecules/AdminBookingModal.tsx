@@ -48,7 +48,6 @@ function parseExactBookingDate(raw: string): Date | null {
   const english = toEnglishDigits(raw).trim();
   if (!english) return null;
 
-  // فرمت ISO یا تاریخ میلادی YYYY-MM-DD یا YYYY-MM-DDTHH:mm:ss...
   const isoMatch = english.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
   if (isoMatch) {
     const year = Number(isoMatch[1]);
@@ -60,7 +59,6 @@ function parseExactBookingDate(raw: string): Date | null {
     }
   }
 
-  // فرمت شمسی YYYY/MM/DD یا YYYY-MM-DD
   const slashNormalized = english.replace(/-/g, "/");
   const jalaliSlash = parse(slashNormalized, "yyyy/MM/dd", new Date(), {
     locale: faIR,
@@ -69,7 +67,6 @@ function parseExactBookingDate(raw: string): Date | null {
     return jalaliSlash;
   }
 
-  // فرمت متنی شمسی مثل «27 آبان 1405»
   const jalaliText = parse(english, "d MMMM yyyy", new Date(), {
     locale: faIR,
   });
@@ -285,7 +282,6 @@ export function AdminBookingEditModal({
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // اگر متن تاریخ‌ها دست‌نخورده باشد، دقیقاً همان تاریخ‌های اصلی رزرو حفظ می‌شوند
     const isDatesUnchanged = datesText.trim() === initialDatesText.trim();
 
     const parsedDates = isDatesUnchanged
