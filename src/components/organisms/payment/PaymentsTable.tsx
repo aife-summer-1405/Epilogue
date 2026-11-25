@@ -63,7 +63,7 @@ export function PaymentsTable({
       <div className="hidden md:block overflow-x-auto rounded-2xl border bg-default-white border-neutral-300 dark:bg-default-dark-content dark:border-neutral-dark-400">
         <table className="w-full text-right border-collapse">
           <thead>
-            <tr className="border-b text-xs font-semibold border-neutral-200 bg-neutral-100 text-neutral-800 dark:border-neutral-dark-400 dark:bg-neutral-dark-600 dark:text-neutral-200">
+            <tr className="border-b text-xs font-semibold border-neutral-200  bg-neutral-100 text-neutral-800 dark:border-neutral-dark-400 dark:bg-[#3c3c3c] ">
               <th className="py-3.5 px-4">شناسه</th>
               <th className="py-3.5 px-4">کاربر / رزرو</th>
               <th className="py-3.5 px-4">توضیحات</th>
